@@ -1,7 +1,7 @@
 package com.site.banking.model;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Component;
+
 
 import java.math.BigDecimal;
 import java.util.HashSet;
