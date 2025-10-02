@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Component
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
