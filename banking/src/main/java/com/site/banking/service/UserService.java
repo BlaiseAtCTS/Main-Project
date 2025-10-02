@@ -32,7 +32,7 @@ public class UserService {
             StringBuilder strings = new StringBuilder();
             strings.append("Username: "+user.getUserName()+" Accounts: ");
             user.getAccounts().forEach((acc) -> {
-                strings.append(acc.getBalance()+", ");
+                strings.append(acc. getBalance()+", ");
             });
             response.add(strings.toString());
         }
