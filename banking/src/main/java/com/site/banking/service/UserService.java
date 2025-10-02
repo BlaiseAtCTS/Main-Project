@@ -4,6 +4,8 @@ import com.site.banking.model.User;
 import com.site.banking.repository.AccountRepository;
 import com.site.banking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -17,25 +19,14 @@ public class UserService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public boolean createUser(User user) {
+    public ResponseEntity<String> createUser(User user) {
         if(userRepository.existsByUserName(user.getUserName())) {
-            return true;
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("User already exists");
         }
         userRepository.save(user);
-        return false;
+        return ResponseEntity.ok("User created");
     }
 
-    public List<String> views() {
-        List<User> userList = userRepository.findAll();
-        List<String> response = new ArrayList<>();
-        for(User user: userList) {
-            StringBuilder strings = new StringBuilder();
-            strings.append("Username: "+user.getUserName()+" Accounts: ");
-            user.getAccounts().forEach((acc) -> {
-                strings.append(acc.getBalance()+", ");
-            });
-            response.add(strings.toString());
-        }
-        return response;
-    }
 }

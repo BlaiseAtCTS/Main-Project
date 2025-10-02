@@ -16,18 +16,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/register") // { "userName": , "password": , "firstName": , "lastName": }
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-        if(userService.createUser(user)) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("User already exists");
-        }
-        return ResponseEntity.ok("User created");
+        return userService.createUser(user);
     }
-    // View All Users
-    @GetMapping("/views")
-    public ResponseEntity<List<String>> views() {
-        return ResponseEntity.ok(userService.views());
-    }
+
 }

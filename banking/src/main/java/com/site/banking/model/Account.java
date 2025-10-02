@@ -14,6 +14,7 @@ public class Account {
     @Column(unique = true)
     private String accountNumber;
     private BigDecimal balance;
+    private String type;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Transaction> transactions = new HashSet<>();
     @ManyToOne
@@ -42,6 +43,14 @@ public class Account {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Set<Transaction> getTransactions() {
