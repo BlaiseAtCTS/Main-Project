@@ -30,11 +30,6 @@ public class AccountController {
     public ResponseEntity<String> getAccountBalance(@RequestBody Account account) {
         return accountService.getAccountBalance(account);
     }
-    // transfer
-    @PostMapping("/transfer") // { "sourceAccountNumber": , "destinationAccountNumber": , "amount": }
-    public ResponseEntity<String> transferAmount(@RequestBody TransferRequest transferRequest) {
-        return accountService.transferAmount(transferRequest);
-    }
     // create acc
     @PostMapping("/create/{userName}") // { "accountNumber": , "balance": , "type": }
     public ResponseEntity<String> registerAccount(@PathVariable String userName, @RequestBody Account account) {
