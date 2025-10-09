@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -47,7 +49,9 @@ public class TransactionService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Source account & Destination account can't be same");
         }
 
-        Account sourceAcc = accountRepository.findByAccountNumber(transferRequest.getSourceAccountNumber());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Account sourceAcc = accountRepository.findByAccountNumberAndUserUserName(transferRequest.getSourceAccountNumber(), username);
         if(sourceAcc == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

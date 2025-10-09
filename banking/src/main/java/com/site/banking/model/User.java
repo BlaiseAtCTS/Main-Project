@@ -14,6 +14,7 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    private String role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Account> accounts = new HashSet<>();
 
@@ -55,6 +56,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Set<Account> getAccounts() {

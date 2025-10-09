@@ -4,6 +4,7 @@ import com.site.banking.dto.TransferRequest;
 import com.site.banking.model.Account;
 import com.site.banking.model.Transaction;
 import com.site.banking.model.User;
+import com.site.banking.model.UserPrincipal;
 import com.site.banking.repository.AccountRepository;
 import com.site.banking.repository.TransactionRepository;
 import com.site.banking.repository.UserRepository;
@@ -12,9 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -59,7 +63,10 @@ public class AccountService {
 
     @Transactional
     public ResponseEntity<String> getAccountBalance(Account account) {
-        Account account1 = accountRepository.findByAccountNumber(account.getAccountNumber());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        Account account1 = accountRepository.findByAccountNumberAndUserUserName(account.getAccountNumber(), username);
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -70,7 +77,10 @@ public class AccountService {
 
     @Transactional
     public ResponseEntity<String> depositAmount(Account account) {
-        Account account1 = accountRepository.findByAccountNumber(account.getAccountNumber());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        Account account1 = accountRepository.findByAccountNumberAndUserUserName(account.getAccountNumber(), username);
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -84,7 +94,9 @@ public class AccountService {
 
     @Transactional
     public ResponseEntity<String> withdrawAmount(Account account) {
-        Account account1 = accountRepository.findByAccountNumber(account.getAccountNumber());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Account account1 = accountRepository.findByAccountNumberAndUserUserName(account.getAccountNumber(), username);
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -103,8 +115,8 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<String> createAccount(String userName, Account account) {
-        User user = userRepository.findByUserName(userName);
+    public ResponseEntity<String> createAccount(Principal principal, Account account) {
+        User user = userRepository.findByUserName(principal.getName());
         if(user == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -120,12 +132,12 @@ public class AccountService {
         accountRepository.save(account);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Account created for "+userName);
+                .body("Account created for "+principal.getName());
     }
 
     @Transactional
-    public ResponseEntity<String> deleteAccount(String userName, Account account) {
-        User user = userRepository.findByUserName(userName);
+    public ResponseEntity<String> deleteAccount(Principal principal, Account account) {
+        User user = userRepository.findByUserName(principal.getName());
         if(user == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -135,7 +147,7 @@ public class AccountService {
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(userName+" has no account with this account number");
+                    .body(principal.getName()+" has no account with this account number");
         }
         accountRepository.deleteById(account1.getId());
         accountRepository.save(account);

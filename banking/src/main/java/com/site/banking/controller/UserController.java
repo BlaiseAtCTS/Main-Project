@@ -18,7 +18,9 @@ public class UserController {
 
     @PostMapping("/register") // { "userName": , "password": , "firstName": , "lastName": }
     public ResponseEntity<String> registerUser(@RequestBody User user) {
+        user.setRole("user");
         return userService.createUser(user);
     }
 
+    // admin login
 }

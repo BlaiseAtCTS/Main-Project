@@ -3,11 +3,14 @@ package com.site.banking.controller;
 import com.site.banking.dto.TransferRequest;
 import com.site.banking.model.Account;
 import com.site.banking.model.User;
+import com.site.banking.model.UserPrincipal;
 import com.site.banking.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -31,13 +34,13 @@ public class AccountController {
         return accountService.getAccountBalance(account);
     }
     // create acc
-    @PostMapping("/create/{userName}") // { "accountNumber": , "balance": , "type": }
-    public ResponseEntity<String> registerAccount(@PathVariable String userName, @RequestBody Account account) {
-        return accountService.createAccount(userName, account);
+    @PostMapping("/create") // { "accountNumber": , "balance": , "type": }
+    public ResponseEntity<String> registerAccount(Principal principal, @RequestBody Account account) {
+        return accountService.createAccount(principal, account);
     }
     // delete acc
-    @DeleteMapping("/delete/{userName}")
-    public ResponseEntity<String> deleteAccount(@PathVariable String userName, @RequestBody Account account) {
-        return accountService.deleteAccount(userName, account);
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteAccount(Principal principal, @RequestBody Account account) {
+        return accountService.deleteAccount(principal, account);
     }
 }
