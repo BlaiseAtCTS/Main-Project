@@ -22,5 +22,10 @@ public class UserController {
         return userService.createUser(user);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody User user) {
+        return userService.verifyUser(user);
+    }
+
     // admin login
 }
