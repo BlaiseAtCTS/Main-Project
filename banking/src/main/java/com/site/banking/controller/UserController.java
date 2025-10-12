@@ -22,5 +22,6 @@ public class UserController {
         return userService.createUser(user);
     }
 
+
     // admin login
 }
