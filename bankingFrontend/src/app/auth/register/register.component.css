@@ -1,0 +1,12 @@
+.register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+input, button {
+  margin: 6px;
+  padding: 8px;
+  width: 250px;
+}
