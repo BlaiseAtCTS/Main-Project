@@ -1,5 +1,6 @@
 package com.site.banking.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -7,13 +8,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Schema(description = "Account entity representing a bank account")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier for the account", example = "1")
     private Long id;
+    
     @Column(unique = true)
+    @Schema(description = "Unique account number", example = "ACC123456789")
     private String accountNumber;
+    
+    @Schema(description = "Account balance", example = "1000.00")
     private BigDecimal balance;
+    
+    @Schema(description = "Account type", example = "SAVINGS", allowableValues = {"SAVINGS", "CHECKING", "BUSINESS"})
     private String type;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Transaction> transactions = new HashSet<>();

@@ -1,5 +1,6 @@
 package com.site.banking.service;
 
+import com.site.banking.dto.ApiResponseDto;
 import com.site.banking.dto.TransferRequest;
 import com.site.banking.model.Account;
 import com.site.banking.model.Transaction;
@@ -62,95 +63,93 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<String> getAccountBalance(Account account) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
+    public ResponseEntity<ApiResponseDto> getAccountBalance(Principal principal, Account account) {
+        String username = principal.getName();
 
         Account account1 = accountRepository.findByAccountNumberAndUserUserName(account.getAccountNumber(), username);
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("Account not found");
+                    .body(new ApiResponseDto(false, "Account not found"));
         }
-        return ResponseEntity.ok("Balance: "+account1.getBalance());
+        return ResponseEntity.ok(new ApiResponseDto(true, "Balance: $" + account1.getBalance()));
     }
 
     @Transactional
-    public ResponseEntity<String> depositAmount(Account account) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
+    public ResponseEntity<ApiResponseDto> depositAmount(Principal principal, Account account) {
+        String username = principal.getName();
 
         Account account1 = accountRepository.findByAccountNumberAndUserUserName(account.getAccountNumber(), username);
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("Account not found");
+                    .body(new ApiResponseDto(false, "Account not found"));
         }
         account1.setBalance(account1.getBalance().add(account.getBalance()));
         recordDepositWithdraw(account1, account.getBalance(), DepositWithdraw.DEPOSIT);
         accountRepository.save(account1);
-        return ResponseEntity.ok("Amount deposited. Balance: "+account1.getBalance());
+        return ResponseEntity.ok(new ApiResponseDto(true, "Amount deposited. Balance: $" + account1.getBalance()));
     }
 
     @Transactional
-    public ResponseEntity<String> withdrawAmount(Account account) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public ResponseEntity<ApiResponseDto> withdrawAmount(Principal principal, Account account) {
+        String username = principal.getName();
 
         Account account1 = accountRepository.findByAccountNumberAndUserUserName(account.getAccountNumber(), username);
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("Account not found");
+                    .body(new ApiResponseDto(false, "Account not found"));
         }
         if(validAmount(account1, account)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Withdraw amount cant be greater than balance. Balance: "+account1.getBalance());
+                    .body(new ApiResponseDto(false, "Withdraw amount can't be greater than balance. Balance: $" + account1.getBalance()));
         }
         account1.setBalance(account1.getBalance().subtract(account.getBalance()));
         recordDepositWithdraw(account1, account.getBalance(), DepositWithdraw.WITHDRAW);
         accountRepository.save(account1);
 
-        return ResponseEntity.ok("Withdrawn "+account.getBalance()+". Balance: "+account1.getBalance());
+        return ResponseEntity.ok(new ApiResponseDto(true, "Withdrawn $" + account.getBalance() + ". Balance: $" + account1.getBalance()));
     }
 
     @Transactional
-    public ResponseEntity<String> createAccount(Principal principal, Account account) {
+    public ResponseEntity<ApiResponseDto> createAccount(Principal principal, Account account) {
         User user = userRepository.findByUserName(principal.getName());
         if(user == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("User doesn't exist");
+                    .body(new ApiResponseDto(false, "User doesn't exist"));
         }
         if(accountRepository.existsByAccountNumber(account.getAccountNumber())) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
-                    .body("Account already exist");
+                    .body(new ApiResponseDto(false, "Account already exists"));
         }
         account.setUser(user);
         user.getAccounts().add(account);
         accountRepository.save(account);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Account created for "+principal.getName());
+                .body(new ApiResponseDto(true, "Account created for " + principal.getName()));
     }
 
     @Transactional
-    public ResponseEntity<String> deleteAccount(Principal principal, Account account) {
+    public ResponseEntity<ApiResponseDto> deleteAccount(Principal principal, Account account) {
         User user = userRepository.findByUserName(principal.getName());
         if(user == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("User doesn't exist");
+                    .body(new ApiResponseDto(false, "User doesn't exist"));
         }
         Account account1 = accountRepository.findByAccountNumber(account.getAccountNumber());
         if(account1 == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(principal.getName()+" has no account with this account number");
+                    .body(new ApiResponseDto(false, principal.getName() + " has no account with this account number"));
         }
         accountRepository.deleteById(account1.getId());
         accountRepository.save(account);
-        return ResponseEntity.ok("Account deleted");
+        return ResponseEntity.ok(new ApiResponseDto(true, "Account deleted successfully"));
     }
 }
