@@ -29,7 +29,7 @@ public class AccountController {
         return accountService.withdrawAmount(account);
     }
     // check balance
-    @GetMapping("/balance") // { "accountNumber": }
+    @PostMapping("/balance") // { "accountNumber": }
     public ResponseEntity<String> getAccountBalance(@RequestBody Account account) {
         return accountService.getAccountBalance(account);
     }
