@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AccountService } from '../../services/account.service';
 import { Account, AccountCreateRequest, AccountOperationRequest } from '../../models/account.model';
+import { injectMutation } from '@tanstack/angular-query-experimental';
 
 @Component({
   selector: 'app-accounts',
@@ -13,7 +14,7 @@ import { Account, AccountCreateRequest, AccountOperationRequest } from '../../mo
   templateUrl: './accounts.component.html',
   styleUrls: ['./accounts.component.css'],
 })
-export class AccountsComponent implements OnInit {
+export class AccountsComponent {
   // Account creation
   newAccount: AccountCreateRequest = {
     accountNumber: '',
@@ -32,171 +33,126 @@ export class AccountsComponent implements OnInit {
 
   // UI state
   activeTab: 'create' | 'deposit' | 'withdraw' | 'balance' | 'delete' = 'create';
-  errorMessage: string = '';
-  successMessage: string = '';
-  isLoading: boolean = false;
   balanceResult: string = '';
 
   constructor(
     private authService: AuthService,
     private accountService: AccountService,
     private router: Router
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
     }
-    // Clear any stale state
-    this.clearMessages();
-    this.isLoading = false;
   }
+
+  protected createAccountMutation = injectMutation(() => ({
+    mutationFn: (account: AccountCreateRequest) => this.accountService.createAccount(account),
+  }));
+
+  protected depositMutation = injectMutation(() => ({
+    mutationFn: (data: AccountOperationRequest) =>
+      this.accountService.deposit(data.accountNumber, data.balance),
+  }));
+
+  protected withdrawMutation = injectMutation(() => ({
+    mutationFn: (data: AccountOperationRequest) =>
+      this.accountService.withdraw(data.accountNumber, data.balance),
+  }));
+
+  protected balanceMutation = injectMutation(() => ({
+    mutationFn: (accountNumber: string) => this.accountService.getAccountBalance(accountNumber),
+  }));
+
+  protected deleteAccountMutation = injectMutation(() => ({
+    mutationFn: (accountNumber: string) => this.accountService.deleteAccount(accountNumber),
+  }));
 
   setActiveTab(tab: 'create' | 'deposit' | 'withdraw' | 'balance' | 'delete'): void {
     this.activeTab = tab;
-    this.clearMessages();
-  }
-
-  clearMessages(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
     this.balanceResult = '';
+
+    // Reset mutations
+    this.createAccountMutation.reset();
+    this.depositMutation.reset();
+    this.withdrawMutation.reset();
+    this.balanceMutation.reset();
+    this.deleteAccountMutation.reset();
   }
 
-  async createAccount(): Promise<void> {
-    try {
-      this.isLoading = true;
-      this.clearMessages();
-
-      const response = await this.accountService.createAccount(this.newAccount);
-      console.log('Create account response:', response);
-
-      if (response && typeof response === 'object' && 'success' in response) {
+  createAccount(): void {
+    this.createAccountMutation.mutate(this.newAccount, {
+      onSuccess: (response) => {
         if (response.success) {
-          this.successMessage = response.message;
           this.newAccount = { accountNumber: '', initialBalance: 0, type: 'SAVINGS' };
         } else {
-          this.errorMessage = response.message || 'Failed to create account';
+          throw new Error(response.message || 'Failed to create account');
         }
-      } else {
-        this.errorMessage = 'Invalid response from server';
-      }
-    } catch (error: any) {
-      console.error('Create account error:', error);
-      this.errorMessage = error.message || 'Failed to create account. Please try again.';
-    } finally {
-      this.isLoading = false;
-    }
+      },
+      onError: (error: Error) => {
+        console.error('Create account error:', error);
+      },
+    });
   }
 
-  async depositAmount(): Promise<void> {
-    try {
-      this.isLoading = true;
-      this.clearMessages();
-
-      const response = await this.accountService.deposit(
-        this.operationAccount.accountNumber,
-        parseFloat(this.operationAccount.balance.toString())
-      );
-      console.log('Deposit response:', response);
-
-      if (response && typeof response === 'object' && 'success' in response) {
+  depositAmount(): void {
+    this.depositMutation.mutate(this.operationAccount, {
+      onSuccess: (response) => {
         if (response.success) {
-          this.successMessage = response.message;
           this.operationAccount = { accountNumber: '', balance: 0 };
         } else {
-          this.errorMessage = response.message || 'Failed to deposit amount';
+          throw new Error(response.message || 'Failed to deposit amount');
         }
-      } else {
-        this.errorMessage = 'Invalid response from server';
-      }
-    } catch (error: any) {
-      console.error('Deposit error:', error);
-      this.errorMessage = error.message || 'Failed to deposit amount. Please try again.';
-    } finally {
-      this.isLoading = false;
-    }
+      },
+      onError: (error: Error) => {
+        console.error('Deposit error:', error);
+      },
+    });
   }
 
-  async withdrawAmount(): Promise<void> {
-    try {
-      this.isLoading = true;
-      this.clearMessages();
-
-      const response = await this.accountService.withdraw(
-        this.operationAccount.accountNumber,
-        parseFloat(this.operationAccount.balance.toString())
-      );
-      console.log('Withdraw response:', response);
-
-      if (response && typeof response === 'object' && 'success' in response) {
+  withdrawAmount(): void {
+    this.withdrawMutation.mutate(this.operationAccount, {
+      onSuccess: (response) => {
         if (response.success) {
-          this.successMessage = response.message;
           this.operationAccount = { accountNumber: '', balance: 0 };
         } else {
-          this.errorMessage = response.message || 'Failed to withdraw amount';
+          throw new Error(response.message || 'Failed to withdraw amount');
         }
-      } else {
-        this.errorMessage = 'Invalid response from server';
-      }
-    } catch (error: any) {
-      console.error('Withdraw error:', error);
-      this.errorMessage = error.message || 'Failed to withdraw amount. Please try again.';
-    } finally {
-      this.isLoading = false;
-    }
+      },
+      onError: (error: Error) => {
+        console.error('Withdraw error:', error);
+      },
+    });
   }
 
-  async checkBalance(): Promise<void> {
-    try {
-      this.isLoading = true;
-      this.clearMessages();
-
-      const response = await this.accountService.getAccountBalance(this.balanceAccountNumber);
-      console.log('Balance check response:', response);
-
-      if (response && typeof response === 'object' && 'success' in response) {
+  checkBalance(): void {
+    this.balanceMutation.mutate(this.balanceAccountNumber, {
+      onSuccess: (response) => {
         if (response.success) {
           this.balanceResult = response.message;
           this.balanceAccountNumber = '';
         } else {
-          this.errorMessage = response.message || 'Failed to retrieve balance';
+          throw new Error(response.message || 'Failed to retrieve balance');
         }
-      } else {
-        this.errorMessage = 'Invalid response from server';
-      }
-    } catch (error: any) {
-      console.error('Balance check error:', error);
-      this.errorMessage = error.message || 'Failed to check balance. Please try again.';
-    } finally {
-      this.isLoading = false;
-    }
+      },
+      onError: (error: Error) => {
+        console.error('Balance check error:', error);
+      },
+    });
   }
 
-  async deleteAccount(): Promise<void> {
-    try {
-      this.isLoading = true;
-      this.clearMessages();
-
-      const response = await this.accountService.deleteAccount(this.operationAccount.accountNumber);
-      console.log('Delete account response:', response);
-
-      if (response && typeof response === 'object' && 'success' in response) {
+  deleteAccount(): void {
+    this.deleteAccountMutation.mutate(this.operationAccount.accountNumber, {
+      onSuccess: (response) => {
         if (response.success) {
-          this.successMessage = response.message;
           this.operationAccount = { accountNumber: '', balance: 0 };
         } else {
-          this.errorMessage = response.message || 'Failed to delete account';
+          throw new Error(response.message || 'Failed to delete account');
         }
-      } else {
-        this.errorMessage = 'Invalid response from server';
-      }
-    } catch (error: any) {
-      console.error('Delete account error:', error);
-      this.errorMessage = error.message || 'Failed to delete account. Please try again.';
-    } finally {
-      this.isLoading = false;
-    }
+      },
+      onError: (error: Error) => {
+        console.error('Delete account error:', error);
+      },
+    });
   }
 
   goBack(): void {

@@ -22,3 +22,4 @@ public class CustomUserDetailsService implements org.springframework.security.co
         return new UserPrincipal(user);
     }
 }
+

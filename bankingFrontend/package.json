@@ -33,6 +33,8 @@
     "@angular/platform-server": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@angular/ssr": "^20.3.5",
+    "@tanstack/angular-query-experimental": "^5.90.2",
+    "@tanstack/query-core": "^5.90.2",
     "axios": "^1.12.2",
     "express": "^5.1.0",
     "ngx-toastr": "^19.1.0",

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserLoginRequest } from '../../models/user.model';
+import { injectMutation } from '@tanstack/angular-query-experimental';
 
 @Component({
   selector: 'app-login',
@@ -18,39 +19,30 @@ export class LoginComponent {
     password: '',
   };
 
-  errorMessage: string = '';
-  isLoading: boolean = false;
-
   constructor(private authService: AuthService, private router: Router) {}
+
+  protected loginMutation = injectMutation(() => ({
+    mutationFn: (credentials: UserLoginRequest) =>
+      new Promise<any>((resolve) => {
+        this.authService.login(credentials).subscribe({
+          next: (response) => resolve(response),
+          error: (error) => {
+            throw error;
+          },
+        });
+      }),
+    onSuccess: (data) => {
+      if (data.success) {
+        this.router.navigate(['/accounts']);
+      }
+    },
+  }));
 
   onSubmit(event?: Event): void {
     if (event) {
       event.preventDefault();
     }
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.authService.login(this.loginData).subscribe({
-      next: (response: any) => {
-        if (response.success) {
-          this.router.navigate(['/accounts']);
-        } else {
-          this.errorMessage = response.message || 'Login failed. Please try again.';
-        }
-      },
-      error: (error: any) => {
-        if (error.message) {
-          this.errorMessage = error.message;
-        } else if (error.response?.data?.message) {
-          this.errorMessage = error.response.data.message;
-        } else {
-          this.errorMessage = 'Login failed. Please try again.';
-        }
-        this.isLoading = false;
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+    this.loginMutation.mutate(this.loginData);
   }
 
   navigateToRegister(): void {

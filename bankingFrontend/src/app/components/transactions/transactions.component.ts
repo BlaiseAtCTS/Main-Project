@@ -66,3 +66,4 @@ export class TransactionsComponent implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 }
+

@@ -40,3 +40,4 @@ export class AccountService {
     return await this.apiService.getTransactions(accountId);
   }
 }
+

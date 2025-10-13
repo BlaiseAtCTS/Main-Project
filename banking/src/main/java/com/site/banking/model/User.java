@@ -28,6 +28,7 @@ public class User {
     
     @Schema(description = "User role in the system", example = "user", allowableValues = {"user", "admin"})
     private String role;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Account> accounts = new HashSet<>();
 

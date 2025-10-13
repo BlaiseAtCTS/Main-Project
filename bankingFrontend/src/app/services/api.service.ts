@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import axios, { AxiosInstance } from 'axios';
 import { environment } from '../../environments/environment';
 import { ApiResponse } from '../models/api-response.model';
 import { UserLoginRequest, UserRegisterRequest } from '../models/user.model';
+import { UserProfile } from '../models/user-profile.model';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +13,7 @@ import { UserLoginRequest, UserRegisterRequest } from '../models/user.model';
 export class ApiService {
   private axiosInstance: AxiosInstance;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private storage: StorageService, private ngZone: NgZone) {
     this.axiosInstance = axios.create({
       baseURL: environment.apiUrl,
       headers: {
@@ -24,7 +26,7 @@ export class ApiService {
     // Add request interceptor to inject JWT token
     this.axiosInstance.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token');
+        const token = this.storage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,14 +39,19 @@ export class ApiService {
 
     // Add response interceptor to handle errors
     this.axiosInstance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // Ensure response handling runs inside Angular zone so change detection triggers
+        return this.ngZone.run(() => response);
+      },
       (error) => {
-        if (error.response?.status === 401) {
-          // Handle unauthorized access
-          localStorage.removeItem('token');
-          this.router.navigate(['/login']);
-        }
-        return Promise.reject(error);
+        return this.ngZone.run(() => {
+          if (error.response?.status === 401) {
+            // Handle unauthorized access
+            this.storage.removeItem('token');
+            this.router.navigate(['/login']);
+          }
+          return Promise.reject(error);
+        });
       }
     );
   }
@@ -58,7 +65,7 @@ export class ApiService {
       });
       const apiResponse = response.data;
       if (apiResponse.success && apiResponse.token) {
-        localStorage.setItem('token', apiResponse.token);
+        this.storage.setItem('token', apiResponse.token);
       }
       return apiResponse;
     } catch (error: any) {
@@ -73,8 +80,19 @@ export class ApiService {
     }
   }
 
-  async register(userData: any) {
-    return await this.axiosInstance.post('/user/register', userData);
+  async register(userData: any): Promise<ApiResponse> {
+    try {
+      const response = await this.axiosInstance.post<ApiResponse>('/user/register', userData);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.data) {
+        return error.response.data as ApiResponse;
+      }
+      return {
+        success: false,
+        message: error.message || 'An error occurred during registration',
+      };
+    }
   }
 
   // Account endpoints
@@ -154,6 +172,19 @@ export class ApiService {
 
   async getTransactions(accountNumber: string) {
     return await this.axiosInstance.get(`/account/transactions/${accountNumber}`);
+  }
+
+  async getUserProfile(): Promise<UserProfile> {
+    try {
+      const token = this.storage.getItem('token');
+      console.debug('[ApiService] getUserProfile - token present?', !!token);
+      const response = await this.axiosInstance.get<UserProfile>('/api/profile');
+      console.debug('[ApiService] getUserProfile response:', response?.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('[ApiService] getUserProfile error:', error?.response || error);
+      throw error;
+    }
   }
 
   async deleteAccount(accountNumber: string): Promise<ApiResponse> {

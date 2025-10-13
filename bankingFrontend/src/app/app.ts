@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { NavComponent } from './components/nav/nav.component';
 
 @Component({
   selector: 'app-root',
@@ -16,9 +17,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    NavComponent,
   ],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrls: ['./app.css'],
 })
 export class App {
   protected readonly title = signal('Banking Application');

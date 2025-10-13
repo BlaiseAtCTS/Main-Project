@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { UserLoginRequest, UserRegisterRequest } from '../models/user.model';
 import { ApiResponse } from '../models/api-response.model';
 import { ApiService } from './api.service';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +14,13 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<string | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private apiService: ApiService, @Inject(PLATFORM_ID) private platformId: Object) {
-    if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('token');
+  constructor(
+    private apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private storage: StorageService
+  ) {
+    if (isPlatformBrowser(this.platformId) && this.storage.isAvailable()) {
+      const token = this.storage.getItem('token');
       if (token) {
         this.currentUserSubject.next(token);
       }
@@ -31,7 +36,7 @@ export class AuthService {
       tap((response: ApiResponse) => {
         if (response.success && response.token) {
           if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem('token', response.token);
+            this.storage.setItem('token', response.token);
           }
           this.currentUserSubject.next(response.token);
         } else {
@@ -43,21 +48,21 @@ export class AuthService {
 
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('token');
+      this.storage.removeItem('token');
     }
     this.currentUserSubject.next(null);
   }
 
   isAuthenticated(): boolean {
     if (isPlatformBrowser(this.platformId)) {
-      return !!localStorage.getItem('token');
+      return !!this.storage.getItem('token');
     }
     return false;
   }
 
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('token');
+      return this.storage.getItem('token');
     }
     return null;
   }

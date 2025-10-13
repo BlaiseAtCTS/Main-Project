@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserRegisterRequest } from '../../models/user.model';
+import { injectMutation } from '@tanstack/angular-query-experimental';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -21,33 +23,32 @@ export class RegisterComponent {
   };
 
   confirmPassword: string = '';
-  errorMessage: string = '';
-  successMessage: string = '';
-  isLoading: boolean = false;
+  protected passwordError: string | null = null;
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  async onSubmit(): Promise<void> {
-    if (this.registerData.password !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
-      return;
-    }
-
-    try {
-      this.isLoading = true;
-      this.errorMessage = '';
-      this.successMessage = '';
-
-      await this.authService.register(this.registerData);
-      this.successMessage = 'Registration successful! Please login to continue.';
+  protected registerMutation = injectMutation(() => ({
+    mutationFn: async (data: UserRegisterRequest) => {
+      const response = await firstValueFrom(this.authService.register(data));
+      if (!response.success) {
+        throw new Error(response.message || 'Registration failed. Please try again.');
+      }
+      return response;
+    },
+    onSuccess: (data) => {
       setTimeout(() => {
         this.router.navigate(['/login']);
       }, 2000);
-    } catch (error: any) {
-      this.errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
-    } finally {
-      this.isLoading = false;
+    },
+  }));
+
+  onSubmit(): void {
+    if (this.registerData.password !== this.confirmPassword) {
+      this.passwordError = 'Passwords do not match';
+      return;
     }
+    this.passwordError = null;
+    this.registerMutation.mutate(this.registerData);
   }
 
   navigateToLogin(): void {

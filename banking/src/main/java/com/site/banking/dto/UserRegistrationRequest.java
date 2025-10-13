@@ -58,3 +58,4 @@ public class UserRegistrationRequest {
         this.lastName = lastName;
     }
 }
+

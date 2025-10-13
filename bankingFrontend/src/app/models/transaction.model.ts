@@ -12,3 +12,4 @@ export interface TransferRequest {
   destinationAccountNumber: string;
   amount: number;
 }
+

@@ -16,3 +16,4 @@ export interface AccountOperationRequest {
   accountNumber: string;
   balance: number;
 }
+

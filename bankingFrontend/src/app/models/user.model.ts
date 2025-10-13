@@ -18,3 +18,4 @@ export interface UserRegisterRequest {
   firstName: string;
   lastName: string;
 }
+

@@ -85,19 +85,28 @@
       </div>
 
       <!-- Messages -->
-      <div
-        *ngIf="errorMessage"
-        class="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg"
-      >
-        {{ errorMessage }}
+      @if (createAccountMutation.error() || depositMutation.error() || withdrawMutation.error() ||
+      balanceMutation.error() || deleteAccountMutation.error()) {
+      <div class="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+        {{
+          createAccountMutation.error()?.message ||
+            depositMutation.error()?.message ||
+            withdrawMutation.error()?.message ||
+            balanceMutation.error()?.message ||
+            deleteAccountMutation.error()?.message
+        }}
       </div>
-
-      <div
-        *ngIf="successMessage"
-        class="mb-6 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg"
-      >
-        {{ successMessage }}
+      } @if (createAccountMutation.data()?.success || depositMutation.data()?.success ||
+      withdrawMutation.data()?.success || deleteAccountMutation.data()?.success) {
+      <div class="mb-6 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg">
+        {{
+          createAccountMutation.data()?.message ||
+            depositMutation.data()?.message ||
+            withdrawMutation.data()?.message ||
+            deleteAccountMutation.data()?.message
+        }}
       </div>
+      }
 
       <div
         *ngIf="balanceResult"
@@ -160,11 +169,11 @@
           </div>
           <button
             type="submit"
-            [disabled]="!createForm.form.valid || isLoading"
+            [disabled]="!createForm.form.valid || createAccountMutation.isPending()"
             class="btn-primary"
           >
-            <span *ngIf="!isLoading">Create Account</span>
-            <span *ngIf="isLoading">Creating...</span>
+            <span *ngIf="!createAccountMutation.isPending()">Create Account</span>
+            <span *ngIf="createAccountMutation.isPending()">Creating...</span>
           </button>
         </form>
       </div>
@@ -207,11 +216,11 @@
           </div>
           <button
             type="submit"
-            [disabled]="!depositForm.form.valid || isLoading"
+            [disabled]="!depositForm.form.valid || depositMutation.isPending()"
             class="btn-primary"
           >
-            <span *ngIf="!isLoading">Deposit</span>
-            <span *ngIf="isLoading">Processing...</span>
+            <span *ngIf="!depositMutation.isPending()">Deposit</span>
+            <span *ngIf="depositMutation.isPending()">Processing...</span>
           </button>
         </form>
       </div>
@@ -254,11 +263,11 @@
           </div>
           <button
             type="submit"
-            [disabled]="!withdrawForm.form.valid || isLoading"
+            [disabled]="!withdrawForm.form.valid || withdrawMutation.isPending()"
             class="btn-primary"
           >
-            <span *ngIf="!isLoading">Withdraw</span>
-            <span *ngIf="isLoading">Processing...</span>
+            <span *ngIf="!withdrawMutation.isPending()">Withdraw</span>
+            <span *ngIf="withdrawMutation.isPending()">Processing...</span>
           </button>
         </form>
       </div>
@@ -283,11 +292,11 @@
           </div>
           <button
             type="submit"
-            [disabled]="!balanceForm.form.valid || isLoading"
+            [disabled]="!balanceForm.form.valid || balanceMutation.isPending()"
             class="btn-primary"
           >
-            <span *ngIf="!isLoading">Check Balance</span>
-            <span *ngIf="isLoading">Checking...</span>
+            <span *ngIf="!balanceMutation.isPending()">Check Balance</span>
+            <span *ngIf="balanceMutation.isPending()">Checking...</span>
           </button>
         </form>
       </div>
@@ -318,11 +327,11 @@
           </div>
           <button
             type="submit"
-            [disabled]="!deleteForm.form.valid || isLoading"
+            [disabled]="!deleteForm.form.valid || deleteAccountMutation.isPending()"
             class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
           >
-            <span *ngIf="!isLoading">Delete Account</span>
-            <span *ngIf="isLoading">Deleting...</span>
+            <span *ngIf="!deleteAccountMutation.isPending()">Delete Account</span>
+            <span *ngIf="deleteAccountMutation.isPending()">Deleting...</span>
           </button>
         </form>
       </div>
