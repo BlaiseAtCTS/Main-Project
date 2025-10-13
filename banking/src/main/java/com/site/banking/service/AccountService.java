@@ -1,16 +1,16 @@
 package com.site.banking.service;
 
-import com.site.banking.dto.TransferRequest;
+import com.site.banking.dto.AccountCreationDto;
+import com.site.banking.dto.AccountNumberDto;
+import com.site.banking.dto.AccountDepositWithdrawDto;
 import com.site.banking.model.Account;
 import com.site.banking.model.Transaction;
 import com.site.banking.model.User;
-import com.site.banking.model.UserPrincipal;
 import com.site.banking.repository.AccountRepository;
 import com.site.banking.repository.TransactionRepository;
 import com.site.banking.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Service
 public class AccountService {
@@ -32,7 +31,7 @@ public class AccountService {
     private TransactionRepository transactionRepository;
 
     // BigDecimal comparison
-    public boolean validAmount(Account a,Account b){
+    public boolean validAmount(Account a, AccountDepositWithdrawDto b){
         if(a.getBalance().compareTo(b.getBalance()) > 0){
             return false;
         }
@@ -62,7 +61,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<String> getAccountBalance(Account account) {
+    public ResponseEntity<String> getAccountBalance(AccountNumberDto account) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
@@ -76,7 +75,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<String> depositAmount(Account account) {
+    public ResponseEntity<String> depositAmount(AccountDepositWithdrawDto account) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
@@ -93,7 +92,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<String> withdrawAmount(Account account) {
+    public ResponseEntity<String> withdrawAmount(AccountDepositWithdrawDto account) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Account account1 = accountRepository.findByAccountNumberAndUserUserName(account.getAccountNumber(), username);
@@ -115,7 +114,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ResponseEntity<String> createAccount(Principal principal, Account account) {
+    public ResponseEntity<String> createAccount(Principal principal, AccountCreationDto account) {
         User user = userRepository.findByUserName(principal.getName());
         if(user == null) {
             return ResponseEntity
@@ -127,16 +126,17 @@ public class AccountService {
                     .status(HttpStatus.CONFLICT)
                     .body("Account already exist");
         }
-        account.setUser(user);
-        user.getAccounts().add(account);
-        accountRepository.save(account);
+        Account account1 = accountRepository.findByAccountNumber(account.getAccountNumber());
+        account1.setUser(user);
+        user.getAccounts().add(account1);
+        accountRepository.save(account1);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body("Account created for "+principal.getName());
     }
 
     @Transactional
-    public ResponseEntity<String> deleteAccount(Principal principal, Account account) {
+    public ResponseEntity<String> deleteAccount(Principal principal, AccountNumberDto account) {
         User user = userRepository.findByUserName(principal.getName());
         if(user == null) {
             return ResponseEntity
@@ -150,7 +150,6 @@ public class AccountService {
                     .body(principal.getName()+" has no account with this account number");
         }
         accountRepository.deleteById(account1.getId());
-        accountRepository.save(account);
         return ResponseEntity.ok("Account deleted");
     }
 }
