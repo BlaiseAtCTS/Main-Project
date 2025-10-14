@@ -1,0 +1,96 @@
+<div class="admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Admin Dashboard</h1>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="loadAllRequests()" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          Refresh
+        </button>
+        <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="error" class="alert alert-danger">
+    <strong>Error:</strong> {{ error }}
+  </div>
+  
+  <div *ngIf="successMessage" class="alert alert-success">
+    <strong>Success:</strong> {{ successMessage }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading account requests...</p>
+  </div>
+
+  <!-- Bank Account Requests Section -->
+  <div class="dashboard-section">
+    <div class="section-header">
+      <h2>Bank Account Requests</h2>
+      <span class="badge badge-info">{{ accountRequests.length }} pending</span>
+    </div>
+    
+    <div *ngIf="!loading && accountRequests.length === 0" class="empty-state">
+      <div class="empty-icon">💳</div>
+      <h3>No Pending Requests</h3>
+      <p>There are no pending bank account creation or deletion requests.</p>
+    </div>
+
+    <div *ngIf="!loading && accountRequests.length > 0" class="requests-table">
+      <div class="table-container">
+        <table class="requests-table-content">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User ID</th>
+              <th>Account Number</th>
+              <th>Account Type</th>
+              <th>Action</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let request of accountRequests" class="request-row">
+              <td class="request-id">{{ request.id }}</td>
+              <td>{{ request.userId }}</td>
+              <td>{{ request.accountNumber }}</td>
+              <td>{{ request.accountType || 'N/A' }}</td>
+              <td>
+                <span class="type-badge" [ngClass]="request.requestType === 'CREATE' ? 'type-register' : 'type-delete'">
+                  {{ request.requestType }}
+                </span>
+              </td>
+              <td class="request-status">
+                <span class="status-badge" [ngClass]="getStatusBadgeClass(request.status)">
+                  {{ request.status }}
+                </span>
+              </td>
+              <td>{{ request.createdAt ? (request.createdAt | date:'short') : '-' }}</td>
+              <td class="request-actions">
+                <div *ngIf="request.status === 'PENDING'" class="action-buttons">
+                  <button class="btn-approve" (click)="approveAccountRequest(request.id)">
+                    ✓ Approve
+                  </button>
+                  <button class="btn-decline" (click)="declineAccountRequest(request.id)">
+                    ✗ Decline
+                  </button>
+                </div>
+                <div *ngIf="request.status !== 'PENDING'" class="processed-info">
+                  <span class="processed-label">{{ request.status }}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

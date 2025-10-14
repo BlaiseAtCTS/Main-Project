@@ -23,17 +23,30 @@ export class LoginComponent {
 
   protected loginMutation = injectMutation(() => ({
     mutationFn: (credentials: UserLoginRequest) =>
-      new Promise<any>((resolve) => {
+      new Promise<any>((resolve, reject) => {
         this.authService.login(credentials).subscribe({
           next: (response) => resolve(response),
-          error: (error) => {
-            throw error;
-          },
+          error: (error) => reject(error),
         });
       }),
     onSuccess: (data) => {
+      console.log('Login response:', data); // 👀 check what backend sends
+
       if (data.success) {
-        this.router.navigate(['/accounts']);
+        // Save token
+        localStorage.setItem('token', data.token);
+
+        // Determine role — from response or from token payload
+        const role = data.role || this.decodeRoleFromToken(data.token);
+        console.log('Detected role:', role); // 👀 verify this in console
+        localStorage.setItem('role', role);
+
+        // Redirect based on role
+        if (role === 'ADMIN') {
+          this.router.navigate(['/admin/dashboard']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       }
     },
   }));
@@ -47,5 +60,15 @@ export class LoginComponent {
 
   navigateToRegister(): void {
     this.router.navigate(['/register']);
+  }
+
+  // Helper to decode role if backend doesn't return it directly
+  private decodeRoleFromToken(token: string): string {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || 'USER';
+    } catch {
+      return 'USER';
+    }
   }
 }
