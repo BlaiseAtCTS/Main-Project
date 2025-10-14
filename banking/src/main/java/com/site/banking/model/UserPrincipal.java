@@ -1,11 +1,11 @@
 package com.site.banking.model;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
 
 public class UserPrincipal implements UserDetails {
     private User user;
@@ -36,7 +36,13 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole()));
+        // Normalize stored role (e.g., "user" / "admin") to Spring Security convention ROLE_*
+        String rawRole = user.getRole() == null ? "USER" : user.getRole().trim();
+        String normalized = rawRole.toUpperCase();
+        if (!normalized.startsWith("ROLE_")) {
+            normalized = "ROLE_" + normalized;
+        }
+        return List.of(new SimpleGrantedAuthority(normalized));
     }
 
     @Override
