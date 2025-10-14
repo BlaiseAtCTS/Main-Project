@@ -1,6 +1,7 @@
 package com.site.banking.service;
 
 import com.site.banking.dto.ApiResponseDto;
+import com.site.banking.dto.UserRegistrationRequest;
 import com.site.banking.model.User;
 import com.site.banking.repository.AccountRepository;
 import com.site.banking.repository.UserRepository;
@@ -10,13 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class UserService {
@@ -114,5 +111,29 @@ public class UserService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponseDto(false, "An error occurred during login. Please try again.", "Login Failed"));
         }
+    }
+
+    public ResponseEntity<String> updateUser(UserRegistrationRequest userPatchDto) {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUserName(userName);
+        if(user == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("User doesn't exist");
+        }
+        if(userPatchDto.getUserName() != null) {
+            user.setUserName(userPatchDto.getUserName());
+        }
+        if(userPatchDto.getPassword() != null) {
+            user.setPassword(userPatchDto.getPassword());
+        }
+        if(userPatchDto.getFirstName() != null) {
+            user.setFirstName(userPatchDto.getFirstName());
+        }
+        if(userPatchDto.getLastName() != null) {
+            user.setLastName(userPatchDto.getLastName());
+        }
+        userRepository.save(user);
+        return ResponseEntity.ok("Updated User");
     }
 }

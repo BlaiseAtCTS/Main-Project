@@ -30,8 +30,6 @@ export class AccountsComponent {
 
   // Balance check
   balanceAccountNumber: string = '';
-
-  // UI state
   activeTab: 'create' | 'deposit' | 'withdraw' | 'balance' | 'delete' = 'create';
   balanceResult: string = '';
 

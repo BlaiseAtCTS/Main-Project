@@ -55,5 +55,10 @@ public class UserController {
         return userService.verifyUser(user);
     }
 
+    @PatchMapping("/update")
+    public ResponseEntity<String> updateUser(@RequestBody UserRegistrationRequest userPatchDto) {
+        return userService.updateUser(userPatchDto);
+    }
+
     // admin login
 }

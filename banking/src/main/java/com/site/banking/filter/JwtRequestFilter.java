@@ -1,4 +1,4 @@
-package com.site.banking.security;
+package com.site.banking.filter;
 
 import com.site.banking.service.CustomUserDetailsService;
 import com.site.banking.service.JWTService;
