@@ -37,8 +37,15 @@ export class AuthService {
         if (response.success && response.token) {
           if (isPlatformBrowser(this.platformId)) {
             this.storage.setItem('token', response.token);
+            // Also save role if available
+            if (response.role) {
+              this.storage.setItem('role', response.role);
+              localStorage.setItem('role', response.role);
+            }
           }
+          // Emit token change to notify all subscribers
           this.currentUserSubject.next(response.token);
+          console.log('🔔 Auth service: Login successful, notified subscribers');
         } else {
           throw new Error(response.message || 'Login failed');
         }
@@ -47,10 +54,16 @@ export class AuthService {
   }
 
   logout(): void {
+    console.log('🔔 Auth service: Logout called');
     if (isPlatformBrowser(this.platformId)) {
       this.storage.removeItem('token');
+      this.storage.removeItem('role');
+      localStorage.clear();
+      sessionStorage.clear();
     }
+    // Emit null to notify all subscribers
     this.currentUserSubject.next(null);
+    console.log('🔔 Auth service: Logout complete, notified subscribers');
   }
 
   isAuthenticated(): boolean {

@@ -1,0 +1,87 @@
+<!-- Main container for the dashboard -->
+<div class="dashboard-container">
+  
+  <!-- Navigation Bar -->
+  <nav class="admin-nav">
+    <div class="nav-content">
+      <h1>Admin Portal</h1>
+      <div class="nav-links">
+        <a routerLink="/admin/dashboard" class="nav-link active">Pending Requests</a>
+        <a routerLink="/admin/users" class="nav-link">All Users</a>
+      </div>
+      <button (click)="logout()" class="logout-button">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main content area -->
+  <main class="dashboard-content">
+
+    <h2>Pending Account Requests</h2>
+
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading requests...</p>
+    </div>
+
+    <!-- Error message display -->
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <!-- Success message display -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <!-- Data table for account requests -->
+    <div *ngIf="!loading && !error" class="table-container">
+      <table class="requests-table">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>User ID</th>
+            <th>Account Number</th>
+            <th>Account Type</th>
+            <th>Initial Balance</th>
+            <th>Request Type</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loop through each request -->
+          <tr *ngFor="let request of accountRequests">
+            <td>{{ request.id }}</td>
+            <td>{{ request.userId }}</td>
+            <td>{{ request.accountNumber || 'N/A' }}</td>
+            <td>{{ request.accountType || 'N/A' }}</td>
+            <td>
+              <span *ngIf="request.requestType === 'CREATE'" class="balance-amount">
+                ${{ request.initialBalance || 0 | number:'1.2-2' }}
+              </span>
+              <span *ngIf="request.requestType !== 'CREATE'" class="text-muted">-</span>
+            </td>
+            <td>{{ request.requestType }}</td>
+            <td>
+              <span [class]="getStatusBadgeClass(request.status)">
+                {{ request.status }}
+              </span>
+            </td>
+            <td>{{ formatDate(request.createdAt) }}</td>
+            <td class="actions-cell">
+              <!-- Action buttons -->
+              <button (click)="approveAccountRequest(request.id)" class="btn btn-success">Approve</button>
+              <button (click)="declineAccountRequest(request.id)" class="btn btn-danger">Decline</button>
+            </td>
+          </tr>
+          <!-- Message for when there are no requests -->
+          <tr *ngIf="accountRequests.length === 0">
+            <td colspan="9" class="no-requests">No pending account requests found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

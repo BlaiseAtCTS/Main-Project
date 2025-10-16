@@ -19,6 +19,16 @@ public class ApiResponseDto {
     @Schema(description = "Additional data like JWT token", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     private String token;
 
+    private String role;   // 👈 add this line
+
+public String getRole() {
+    return role;
+}
+
+public void setRole(String role) {
+    this.role = role;
+}
+
     // Constructors
     public ApiResponseDto() {}
 

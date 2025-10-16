@@ -1,25 +1,28 @@
 package com.site.banking.controller;
 
-import com.site.banking.dto.ApiResponseDto;
-import com.site.banking.dto.TransferRequest;
-import com.site.banking.dto.AccountOperationRequest;
+import java.security.Principal;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.site.banking.dto.AccountCreateRequest;
+import com.site.banking.dto.AccountOperationRequest;
+import com.site.banking.dto.ApiResponseDto;
 import com.site.banking.model.Account;
-import com.site.banking.model.User;
-import com.site.banking.model.UserPrincipal;
+import com.site.banking.service.AccountRequestService;
 import com.site.banking.service.AccountService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -29,6 +32,9 @@ import java.security.Principal;
 public class AccountController {
     @Autowired
     private AccountService accountService;
+    
+    @Autowired
+    private AccountRequestService requestService;
     @PostMapping("/deposit")
     @Operation(summary = "Deposit amount", description = "Deposits the specified amount to the given account")
     @ApiResponses(value = {
@@ -79,9 +85,9 @@ public class AccountController {
     }
 
     @PostMapping("/create")
-    @Operation(summary = "Create new account", description = "Creates a new bank account for the authenticated user")
+    @Operation(summary = "Request account creation", description = "Submits a request for admin approval to create a new bank account")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Account created successfully"),
+            @ApiResponse(responseCode = "200", description = "Account creation request submitted successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid account details"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
@@ -89,17 +95,14 @@ public class AccountController {
     public ResponseEntity<ApiResponseDto> registerAccount(
             @Parameter(hidden = true) Principal principal, 
             @RequestBody AccountCreateRequest request) {
-        Account account = new Account();
-        account.setAccountNumber(request.getAccountNumber());
-        account.setBalance(request.getInitialBalance());
-        account.setType(request.getType());
-        return accountService.createAccount(principal, account);
+        // Submit request for admin approval instead of direct creation
+        return requestService.submitCreateRequest(principal, request.getAccountNumber(), request.getType());
     }
 
     @PostMapping("/delete")
-    @Operation(summary = "Delete account", description = "Deletes the specified account (only by account owner)")
+    @Operation(summary = "Request account deletion", description = "Submits a request for admin approval to delete an account")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Account deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Account deletion request submitted successfully"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden - Account doesn't belong to user"),
             @ApiResponse(responseCode = "404", description = "Account not found"),
@@ -108,8 +111,7 @@ public class AccountController {
     public ResponseEntity<ApiResponseDto> deleteAccount(
             @Parameter(hidden = true) Principal principal, 
             @RequestBody AccountCreateRequest request) {
-        Account account = new Account();
-        account.setAccountNumber(request.getAccountNumber());
-        return accountService.deleteAccount(principal, account);
+        // Submit request for admin approval instead of direct deletion
+        return requestService.submitDeleteRequest(principal, request.getAccountNumber());
     }
 }

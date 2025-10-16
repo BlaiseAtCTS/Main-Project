@@ -1,10 +1,5 @@
 package com.site.banking.service;
 
-import com.site.banking.dto.ApiResponseDto;
-import com.site.banking.dto.UserRegistrationRequest;
-import com.site.banking.model.User;
-import com.site.banking.repository.AccountRepository;
-import com.site.banking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.site.banking.dto.ApiResponseDto;
+import com.site.banking.dto.UserRegistrationRequest;
+import com.site.banking.model.User;
+import com.site.banking.repository.AccountRepository;
+import com.site.banking.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -50,13 +51,13 @@ public class UserService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Last name is required", "Validation Error", "lastName"));
         }
-        
+
         if(userRepository.existsByUserName(user.getUserName())) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body(new ApiResponseDto(false, "Username '" + user.getUserName() + "' already exists. Please choose a different username.", "Registration Failed", "userName"));
         }
-        
+
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
@@ -69,6 +70,18 @@ public class UserService {
     }
 
     public ResponseEntity<ApiResponseDto> verifyUser(User user) {
+        // 👇 ADDED for temporary admin
+      if ("admin".equalsIgnoreCase(user.getUserName()) && "admin123".equals(user.getPassword())) {
+    String token = jwtService.generateTokenWithRole("admin", "ADMIN");
+    ApiResponseDto response = new ApiResponseDto(true, "Welcome, Admin!");
+    response.setToken(token);
+    response.setRole("ADMIN");
+    System.out.println("✅ Admin logged in with role ADMIN, token: " + token);
+    return ResponseEntity.ok(response);
+}
+
+        // 👆 ADDED for temporary admin
+
         // Validate input
         if(user.getUserName() == null || user.getUserName().trim().isEmpty()) {
             return ResponseEntity
@@ -80,22 +93,30 @@ public class UserService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Password is required", "Validation Error", "password"));
         }
-        
+
         // Check if user exists
         if(!userRepository.existsByUserName(user.getUserName())) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponseDto(false, "Username '" + user.getUserName() + "' does not exist. Please check your username or register first.", "Login Failed", "userName"));
         }
-        
+
         try {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
             Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-            
+
             if(authentication.isAuthenticated()) {
-                String token = jwtService.generateToken(user.getUserName());
+                com.site.banking.model.User dbUser = userRepository.findByUserName(user.getUserName());
+                String role = dbUser != null && dbUser.getRole() != null ? dbUser.getRole().toUpperCase() : "USER";
+                // Normalize for token claim (no ROLE_ prefix inside claim)
+                if (role.startsWith("ROLE_")) {
+                    role = role.substring(5);
+                }
+                String token = jwtService.generateTokenWithRole(user.getUserName(), role);
                 ApiResponseDto response = new ApiResponseDto(true, "Welcome back, " + user.getUserName() + "!");
                 response.setToken(token);
+                response.setRole(role);
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity
@@ -135,5 +156,9 @@ public class UserService {
         }
         userRepository.save(user);
         return ResponseEntity.ok("Updated User");
+    }
+    
+    public boolean userExists(String userName) {
+        return userRepository.existsByUserName(userName);
     }
 }

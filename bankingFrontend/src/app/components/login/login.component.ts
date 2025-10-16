@@ -23,17 +23,45 @@ export class LoginComponent {
 
   protected loginMutation = injectMutation(() => ({
     mutationFn: (credentials: UserLoginRequest) =>
-      new Promise<any>((resolve) => {
+      new Promise<any>((resolve, reject) => {
         this.authService.login(credentials).subscribe({
           next: (response) => resolve(response),
-          error: (error) => {
-            throw error;
-          },
+          error: (error) => reject(error),
         });
       }),
     onSuccess: (data) => {
+      console.log('✅ Login response:', data);
+
       if (data.success) {
-        this.router.navigate(['/accounts']);
+        // Clear any old data first
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Save token
+        localStorage.setItem('token', data.token);
+
+        // Determine role — from response or from token payload
+        const role = data.role || this.decodeRoleFromToken(data.token);
+        console.log('👤 Detected role:', role);
+        console.log('🎫 Token saved:', data.token.substring(0, 20) + '...');
+        localStorage.setItem('role', role);
+
+        console.log('💾 Stored in localStorage:', {
+          hasToken: !!localStorage.getItem('token'),
+          role: localStorage.getItem('role')
+        });
+
+        // Small delay to ensure storage is updated
+        setTimeout(() => {
+          // Redirect based on role
+          if (role === 'ADMIN') {
+            console.log('🔄 Redirecting to admin dashboard...');
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            console.log('🔄 Redirecting to user dashboard...');
+            this.router.navigate(['/dashboard']);
+          }
+        }, 100);
       }
     },
   }));
@@ -47,5 +75,15 @@ export class LoginComponent {
 
   navigateToRegister(): void {
     this.router.navigate(['/register']);
+  }
+
+  // Helper to decode role if backend doesn't return it directly
+  private decodeRoleFromToken(token: string): string {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || 'USER';
+    } catch {
+      return 'USER';
+    }
   }
 }
