@@ -4,4 +4,5 @@ export interface ApiResponse {
   error?: string;
   field?: string;
   token?: string;
+  role?: string;
 }

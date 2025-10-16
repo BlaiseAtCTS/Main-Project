@@ -1,7 +1,8 @@
-import { Component, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -18,7 +19,8 @@ import { AuthService } from '../../services/auth.service';
               <div class="hidden md:block ml-10 flex items-baseline space-x-4">
                 <!-- Admin Navigation -->
                 <ng-container *ngIf="isAdmin">
-                  <a routerLink="/admin/dashboard" class="text-yellow-400 hover:text-white px-3 py-2 font-medium">Admin Dashboard</a>
+                  <a routerLink="/admin/dashboard" class="text-yellow-400 hover:text-white px-3 py-2 font-medium">Pending Requests</a>
+                  <a routerLink="/admin/users" class="text-yellow-400 hover:text-white px-3 py-2 font-medium">All Users</a>
                   <a routerLink="/profile" class="text-gray-300 hover:text-white px-3 py-2">Profile</a>
                 </ng-container>
                 <!-- Regular User Navigation -->
@@ -53,40 +55,100 @@ import { AuthService } from '../../services/auth.service';
     </ng-template>
   `
 })
-export class NavComponent implements OnDestroy {
+export class NavComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   isAdmin = false;
-  private sub: Subscription | null = null;
+  private subscriptions: Subscription[] = [];
   private isBrowser = false;
 
   constructor(
     private auth: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: Object // ✅ Inject platform
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId); // ✅ detect environment
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
-    this.sub = this.auth.currentUser$.subscribe(() => {
-      if (this.isBrowser) { // ✅ only use localStorage in browser
-        this.isLoggedIn = !!localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-        this.isAdmin = role === 'ADMIN';
-        console.log('Navigation - Role check:', { role, isAdmin: this.isAdmin, isLoggedIn: this.isLoggedIn });
-      }
-      setTimeout(() => this.cdr.detectChanges(), 0);
+  ngOnInit() {
+    // Initial check
+    this.checkAuthStatus();
 
+    // Listen to route changes
+    const routerSub = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.checkAuthStatus();
+      });
+    this.subscriptions.push(routerSub);
+
+    // Listen to auth service changes
+    const authSub = this.auth.currentUser$.subscribe(() => {
+      this.checkAuthStatus();
     });
+    this.subscriptions.push(authSub);
+
+    // Also check every 500ms to catch any changes (as a fallback)
+    if (this.isBrowser) {
+      const interval = setInterval(() => {
+        this.checkAuthStatus();
+      }, 500);
+      
+      // Clean up interval on destroy
+      this.subscriptions.push({
+        unsubscribe: () => clearInterval(interval)
+      } as Subscription);
+    }
+  }
+
+  private checkAuthStatus() {
+    if (this.isBrowser) {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      
+      const wasLoggedIn = this.isLoggedIn;
+      const wasAdmin = this.isAdmin;
+      
+      this.isLoggedIn = !!token;
+      this.isAdmin = role === 'ADMIN';
+      
+      // Only log if something changed
+      if (wasLoggedIn !== this.isLoggedIn || wasAdmin !== this.isAdmin) {
+        console.log('🔄 Nav state updated:', { 
+          isLoggedIn: this.isLoggedIn, 
+          isAdmin: this.isAdmin, 
+          role: role,
+          hasToken: !!token 
+        });
+        this.cdr.detectChanges();
+      }
+    }
   }
 
   logout() {
+    console.log('🚪 Logout clicked');
     if (this.isBrowser) {
+      // Clear all auth data
+      localStorage.clear(); // Clear everything to be sure
+      sessionStorage.clear();
       this.auth.logout();
+      
+      // Reset component state
+      this.isLoggedIn = false;
+      this.isAdmin = false;
+      
+      console.log('✅ Logged out - all storage cleared');
     }
-    this.router.navigate(['/login']);
+    // Navigate to login
+    this.router.navigate(['/login']).then(() => {
+      // Force change detection after navigation
+      this.checkAuthStatus();
+      this.cdr.detectChanges();
+    });
   }
 
   ngOnDestroy() {
-    this.sub?.unsubscribe();
+    // Unsubscribe from all subscriptions
+    this.subscriptions.forEach(sub => sub?.unsubscribe());
   }
 }

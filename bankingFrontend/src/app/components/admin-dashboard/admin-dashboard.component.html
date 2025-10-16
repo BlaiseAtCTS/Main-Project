@@ -1,11 +1,17 @@
 <!-- Main container for the dashboard -->
 <div class="dashboard-container">
   
-  <!-- Header section -->
-  <header class="dashboard-header">
-    <h1>Admin Dashboard</h1>
-    <button (click)="logout()" class="logout-button">Logout</button>
-  </header>
+  <!-- Navigation Bar -->
+  <nav class="admin-nav">
+    <div class="nav-content">
+      <h1>Admin Portal</h1>
+      <div class="nav-links">
+        <a routerLink="/admin/dashboard" class="nav-link active">Pending Requests</a>
+        <a routerLink="/admin/users" class="nav-link">All Users</a>
+      </div>
+      <button (click)="logout()" class="logout-button">Logout</button>
+    </div>
+  </nav>
 
   <!-- Main content area -->
   <main class="dashboard-content">
@@ -37,6 +43,7 @@
             <th>User ID</th>
             <th>Account Number</th>
             <th>Account Type</th>
+            <th>Initial Balance</th>
             <th>Request Type</th>
             <th>Status</th>
             <th>Created At</th>
@@ -50,6 +57,12 @@
             <td>{{ request.userId }}</td>
             <td>{{ request.accountNumber || 'N/A' }}</td>
             <td>{{ request.accountType || 'N/A' }}</td>
+            <td>
+              <span *ngIf="request.requestType === 'CREATE'" class="balance-amount">
+                ${{ request.initialBalance || 0 | number:'1.2-2' }}
+              </span>
+              <span *ngIf="request.requestType !== 'CREATE'" class="text-muted">-</span>
+            </td>
             <td>{{ request.requestType }}</td>
             <td>
               <span [class]="getStatusBadgeClass(request.status)">
@@ -65,7 +78,7 @@
           </tr>
           <!-- Message for when there are no requests -->
           <tr *ngIf="accountRequests.length === 0">
-            <td colspan="8" class="no-requests">No pending account requests found.</td>
+            <td colspan="9" class="no-requests">No pending account requests found.</td>
           </tr>
         </tbody>
       </table>

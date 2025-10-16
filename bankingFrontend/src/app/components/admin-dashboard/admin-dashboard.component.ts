@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 // Account request interface
 interface AccountRequestItem {
@@ -9,6 +9,7 @@ interface AccountRequestItem {
   userId: number;
   accountNumber: string;
   accountType: string;
+  initialBalance?: number;
   requestType: string;
   status: string;
   createdAt?: string;
@@ -17,7 +18,7 @@ interface AccountRequestItem {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, RouterModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })

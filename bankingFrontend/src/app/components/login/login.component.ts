@@ -30,23 +30,38 @@ export class LoginComponent {
         });
       }),
     onSuccess: (data) => {
-      console.log('Login response:', data); // 👀 check what backend sends
+      console.log('✅ Login response:', data);
 
       if (data.success) {
+        // Clear any old data first
+        localStorage.clear();
+        sessionStorage.clear();
+        
         // Save token
         localStorage.setItem('token', data.token);
 
         // Determine role — from response or from token payload
         const role = data.role || this.decodeRoleFromToken(data.token);
-        console.log('Detected role:', role); // 👀 verify this in console
+        console.log('👤 Detected role:', role);
+        console.log('🎫 Token saved:', data.token.substring(0, 20) + '...');
         localStorage.setItem('role', role);
 
-        // Redirect based on role
-        if (role === 'ADMIN') {
-          this.router.navigate(['/admin/dashboard']);
-        } else {
-          this.router.navigate(['/dashboard']);
-        }
+        console.log('💾 Stored in localStorage:', {
+          hasToken: !!localStorage.getItem('token'),
+          role: localStorage.getItem('role')
+        });
+
+        // Small delay to ensure storage is updated
+        setTimeout(() => {
+          // Redirect based on role
+          if (role === 'ADMIN') {
+            console.log('🔄 Redirecting to admin dashboard...');
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            console.log('🔄 Redirecting to user dashboard...');
+            this.router.navigate(['/dashboard']);
+          }
+        }, 100);
       }
     },
   }));

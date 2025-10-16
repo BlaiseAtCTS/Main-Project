@@ -7,6 +7,64 @@
 }
 
 .dashboard-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Navigation Bar */
+.admin-nav {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-content h1 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.nav-link {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #4a5568;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.nav-link.active {
+  background: #667eea;
+  color: white;
+}
+
+.dashboard-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -127,6 +185,18 @@
 .status-badge-success { background-color: #28a745; }
 .status-badge-danger { background-color: #dc3545; }
 .status-badge-secondary { background-color: #6c757d; }
+
+/* Balance display */
+.balance-amount {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 0.95rem;
+}
+
+.text-muted {
+  color: #6c757d;
+  font-style: italic;
+}
 
 /* Loading and alert message styling */
 .loading-container {

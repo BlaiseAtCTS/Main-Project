@@ -5,6 +5,10 @@
       <tr>
         <th>ID</th>
         <th>User ID</th>
+        <th>Account Number</th>
+        <th>Account Type</th>
+        <th>Initial Balance</th>
+        <th>Created At</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -12,6 +16,10 @@
       <tr *ngFor="let req of createRequests">
         <td>{{ req.id }}</td>
         <td>{{ req.userId }}</td>
+        <td>{{ req.accountNumber }}</td>
+        <td>{{ req.accountType }}</td>
+        <td>{{ req.initialBalance || 0 | currency:'USD':'symbol':'1.2-2' }}</td>
+        <td>{{ req.createdAt | date:'short' }}</td>
         <td>
           <button class="btn btn-success btn-sm" (click)="updateStatus(req.id, 'APPROVED')">✔</button>
           <button class="btn btn-danger btn-sm" (click)="updateStatus(req.id, 'DECLINED')">✖</button>
@@ -26,6 +34,8 @@
       <tr>
         <th>ID</th>
         <th>User ID</th>
+        <th>Account Number</th>
+        <th>Created At</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -33,6 +43,8 @@
       <tr *ngFor="let req of deleteRequests">
         <td>{{ req.id }}</td>
         <td>{{ req.userId }}</td>
+        <td>{{ req.accountNumber }}</td>
+        <td>{{ req.createdAt | date:'short' }}</td>
         <td>
           <button class="btn btn-success btn-sm" (click)="updateStatus(req.id, 'APPROVED')">✔</button>
           <button class="btn btn-danger btn-sm" (click)="updateStatus(req.id, 'DECLINED')">✖</button>
