@@ -35,15 +35,15 @@
     </div>
 
     <!-- Users List -->
-    <div *ngIf="!loading && users.length === 0 && !error" class="empty-state">
+    <div *ngIf="!loading && groupedUsers.length === 0 && !error" class="empty-state">
       <div class="empty-icon">👥</div>
       <h3>No Users Found</h3>
       <p>There are no users with accounts in the system.</p>
     </div>
 
     <!-- Users Cards -->
-    <div *ngIf="!loading && users.length > 0" class="users-grid">
-      <div *ngFor="let user of users" class="user-card">
+    <div *ngIf="!loading && groupedUsers.length > 0" class="users-grid">
+      <div *ngFor="let user of groupedUsers" class="user-card">
         <div class="user-header">
           <div class="user-icon">👤</div>
           <div class="user-info">
@@ -51,22 +51,21 @@
             <p class="user-id">User ID: {{ user.userId }}</p>
           </div>
         </div>
-        <div class="account-info">
-          <div class="info-row">
-            <span class="label">Account Type:</span>
-            <span class="value account-type">{{ user.accountType }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Account Number:</span>
-            <span class="value">{{ user.accountNumber }}</span>
+        <div class="accounts-section">
+          <div *ngFor="let account of user.accounts" class="account-item">
+            <div class="account-type-badge">{{ account.accountType }}</div>
+            <div class="account-details">
+              <span class="account-label">Account Number:</span>
+              <span class="account-number">{{ account.accountNumber }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Summary -->
-    <div *ngIf="!loading && users.length > 0" class="summary">
-      <p>Total Users: <strong>{{ users.length }}</strong></p>
+    <div *ngIf="!loading && groupedUsers.length > 0" class="summary">
+      <p>Total Unique Users: <strong>{{ uniqueUserCount }}</strong></p>
     </div>
   </main>
 </div>

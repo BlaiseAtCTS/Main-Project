@@ -226,35 +226,56 @@
   font-size: 0.875rem;
 }
 
-.account-info {
+.accounts-section {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.account-item {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  transition: all 0.2s ease;
 }
 
-.label {
-  color: #718096;
-  font-size: 0.875rem;
-  font-weight: 500;
+.account-item:hover {
+  background: #edf2f7;
+  transform: translateX(4px);
 }
 
-.value {
-  color: #2d3748;
-  font-weight: 600;
-}
-
-.account-type {
+.account-type-badge {
   background: #667eea;
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 6px;
   font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.account-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.account-label {
+  color: #718096;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.account-number {
+  color: #2d3748;
+  font-weight: 700;
+  font-size: 1.125rem;
+  font-family: 'Courier New', monospace;
 }
 
 /* Summary */

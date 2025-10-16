@@ -11,6 +11,16 @@ interface UserAccount {
   accountNumber: string;
 }
 
+// Grouped user interface
+interface GroupedUser {
+  userId: number;
+  username: string;
+  accounts: {
+    accountType: string;
+    accountNumber: string;
+  }[];
+}
+
 @Component({
   selector: 'app-admin-users',
   standalone: true,
@@ -20,6 +30,8 @@ interface UserAccount {
 })
 export class AdminUsersComponent implements OnInit {
   users: UserAccount[] = [];
+  groupedUsers: GroupedUser[] = [];
+  uniqueUserCount = 0;
   loading = false;
   error: string | null = null;
 
@@ -79,7 +91,9 @@ export class AdminUsersComponent implements OnInit {
         next: (data) => {
           console.log('Users data response:', data);
           this.users = Array.isArray(data) ? data : [];
+          this.groupUsersByUserId();
           console.log('Loaded users:', this.users);
+          console.log('Grouped users:', this.groupedUsers);
           this.loading = false;
         },
         error: (error) => {
@@ -104,6 +118,29 @@ export class AdminUsersComponent implements OnInit {
           this.users = [];
         }
       });
+  }
+
+  private groupUsersByUserId() {
+    const userMap = new Map<number, GroupedUser>();
+
+    this.users.forEach(userAccount => {
+      if (!userMap.has(userAccount.userId)) {
+        userMap.set(userAccount.userId, {
+          userId: userAccount.userId,
+          username: userAccount.username,
+          accounts: []
+        });
+      }
+
+      const groupedUser = userMap.get(userAccount.userId)!;
+      groupedUser.accounts.push({
+        accountType: userAccount.accountType,
+        accountNumber: userAccount.accountNumber
+      });
+    });
+
+    this.groupedUsers = Array.from(userMap.values());
+    this.uniqueUserCount = this.groupedUsers.length;
   }
 
   logout() {
