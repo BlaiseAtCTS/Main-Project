@@ -1,13 +1,13 @@
 package com.site.banking.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Pattern;
+
 import java.math.BigDecimal;
 
 @Schema(description = "Request object for creating or deleting an account")
 public class AccountCreateRequest {
-
-    @Schema(description = "Account number to create/delete", example = "ACC123456789", required = true)
-    private String accountNumber;
 
     @Schema(description = "Initial balance for account creation", example = "0.00")
     private BigDecimal initialBalance;
@@ -17,18 +17,9 @@ public class AccountCreateRequest {
 
     public AccountCreateRequest() {}
 
-    public AccountCreateRequest(String accountNumber, BigDecimal initialBalance, String type) {
-        this.accountNumber = accountNumber;
+    public AccountCreateRequest(BigDecimal initialBalance, String type) {
         this.initialBalance = initialBalance;
         this.type = type;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
     }
 
     public BigDecimal getInitialBalance() {

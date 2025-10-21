@@ -40,7 +40,7 @@ public class UserPrincipal implements UserDetails {
         String rawRole = user.getRole() == null ? "USER" : user.getRole().trim();
         String normalized = rawRole.toUpperCase();
         if (!normalized.startsWith("ROLE_")) {
-            normalized = "ROLE_" + normalized;
+            normalized = "ROLE_" + normalized; // change to Spring Convention: ROLE_USER (or) ROLE_ADMIN
         }
         return List.of(new SimpleGrantedAuthority(normalized));
     }

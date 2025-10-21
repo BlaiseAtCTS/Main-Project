@@ -43,7 +43,11 @@ public class UserController {
         user.setPassword(request.getPassword());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        user.setRole("user");
+        user.setEmail(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setDob(request.getDob());
+        user.setAddress(request.getAddress());
+        user.setRole("user"); // stored in db as user
         return userService.createUser(user);
     }
 

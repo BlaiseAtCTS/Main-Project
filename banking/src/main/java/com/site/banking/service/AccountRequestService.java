@@ -63,13 +63,12 @@ public class AccountRequestService {
                     .body(new ApiResponseDto(false, "User not found"));
         }
         
-        // Use initialBalance if provided, otherwise default to ZERO
-        BigDecimal balance = (initialBalance != null) ? initialBalance : BigDecimal.ZERO;
+        // Use initialBalance if provided, otherwise default to 1000 (Min balance)
+        BigDecimal balance = (initialBalance != null) ? initialBalance : BigDecimal.valueOf(1000);
         
         AccountRequest req = new AccountRequest(user.getId(), "CREATE", "PENDING", accountNumber, accountType, balance);
         requestRepo.save(req);
-        log.info("Saved CREATE account request id={} userId={} accountNumber={} type={} initialBalance={}", 
-                req.getId(), user.getId(), accountNumber, accountType, balance);
+        log.info("Saved CREATE account request id={} userId={} accountNumber={} type={} initialBalance={}", req.getId(), user.getId(), accountNumber, accountType, balance);
 
         return ResponseEntity.ok(new ApiResponseDto(true, "Account creation request submitted for admin approval"));
     }

@@ -2,6 +2,7 @@ package com.site.banking.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ public class Account {
     private Long id;
     
     @Column(unique = true)
+    @Pattern(regexp = "^\\d{10}$", message = "Invalid account number")
     @Schema(description = "Unique account number", example = "ACC123456789")
     private String accountNumber;
     

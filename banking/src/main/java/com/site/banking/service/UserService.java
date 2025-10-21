@@ -31,28 +31,28 @@ public class UserService {
 
     public ResponseEntity<ApiResponseDto> createUser(User user) {
         // Validate input
-        if(user.getUserName() == null || user.getUserName().trim().isEmpty()) {
+        if (user.getUserName() == null || user.getUserName().trim().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Username is required", "Validation Error", "userName"));
         }
-        if(user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Password is required", "Validation Error", "password"));
         }
-        if(user.getFirstName() == null || user.getFirstName().trim().isEmpty()) {
+        if (user.getFirstName() == null || user.getFirstName().trim().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "First name is required", "Validation Error", "firstName"));
         }
-        if(user.getLastName() == null || user.getLastName().trim().isEmpty()) {
+        if (user.getLastName() == null || user.getLastName().trim().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Last name is required", "Validation Error", "lastName"));
         }
 
-        if(userRepository.existsByUserName(user.getUserName())) {
+        if (userExists(user.getUserName())) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body(new ApiResponseDto(false, "Username '" + user.getUserName() + "' already exists. Please choose a different username.", "Registration Failed", "userName"));
@@ -60,6 +60,12 @@ public class UserService {
 
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            // ⚠️ Creating Admin Role for first acc which has username as 'admin'
+            if (user.getUserName().equals("admin")) {
+                user.setRole("admin");
+            }
+
             userRepository.save(user);
             return ResponseEntity.ok(new ApiResponseDto(true, "User '" + user.getUserName() + "' has been created successfully"));
         } catch (Exception e) {
@@ -70,51 +76,61 @@ public class UserService {
     }
 
     public ResponseEntity<ApiResponseDto> verifyUser(User user) {
-        // 👇 ADDED for temporary admin
-      if ("admin".equalsIgnoreCase(user.getUserName()) && "admin123".equals(user.getPassword())) {
-    String token = jwtService.generateTokenWithRole("admin", "ADMIN");
-    ApiResponseDto response = new ApiResponseDto(true, "Welcome, Admin!");
-    response.setToken(token);
-    response.setRole("ADMIN");
-    System.out.println("✅ Admin logged in with role ADMIN, token: " + token);
-    return ResponseEntity.ok(response);
-}
+        /*
+        if ("admin".equalsIgnoreCase(user.getUserName()) && "admin123".equals(user.getPassword())) {
+            String token = jwtService.generateTokenWithRole("admin", "ADMIN");
+            ApiResponseDto response = new ApiResponseDto(true, "Welcome, Admin!");
+            response.setToken(token);
+            response.setRole("ADMIN");
+            System.out.println("✅ Admin logged in with role ADMIN, token: " + token);
+            return ResponseEntity.ok(response);
+        }
+         */
 
-        // 👆 ADDED for temporary admin
-
-        // Validate input
-        if(user.getUserName() == null || user.getUserName().trim().isEmpty()) {
+        // Validate input for both ADMIN or USER
+        if (user.getUserName() == null || user.getUserName().trim().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Username is required", "Validation Error", "userName"));
         }
-        if(user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Password is required", "Validation Error", "password"));
         }
 
         // Check if user exists
-        if(!userRepository.existsByUserName(user.getUserName())) {
+        if (!userExists(user.getUserName())) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponseDto(false, "Username '" + user.getUserName() + "' does not exist. Please check your username or register first.", "Login Failed", "userName"));
         }
 
         try {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
+            // Checking username and password matches in db
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword());
             Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
-            if(authentication.isAuthenticated()) {
-                com.site.banking.model.User dbUser = userRepository.findByUserName(user.getUserName());
-                String role = dbUser != null && dbUser.getRole() != null ? dbUser.getRole().toUpperCase() : "USER";
-                // Normalize for token claim (no ROLE_ prefix inside claim)
+            if (authentication.isAuthenticated()) {
+                User dbUser = userRepository.findByUserName(user.getUserName());
+
+                // ADMIN Validation
+                if (dbUser.getRole().equalsIgnoreCase("admin")) {
+                    String token = jwtService.generateTokenWithRole(dbUser.getUserName(), "ADMIN");
+                    ApiResponseDto response = new ApiResponseDto(true, "Welcome, Admin!");
+                    response.setToken(token);
+                    response.setRole("ADMIN");
+                    System.out.println("✅ Admin logged in with role ADMIN, token: " + token);
+                    return ResponseEntity.ok(response);
+                }
+
+                String role = dbUser.getRole() != null ? dbUser.getRole().toUpperCase() : "USER";
+                // Conversion from ROLE_USER to USER for claims
                 if (role.startsWith("ROLE_")) {
                     role = role.substring(5);
                 }
-                String token = jwtService.generateTokenWithRole(user.getUserName(), role);
-                ApiResponseDto response = new ApiResponseDto(true, "Welcome back, " + user.getUserName() + "!");
+                String token = jwtService.generateTokenWithRole(dbUser.getUserName(), role);
+                ApiResponseDto response = new ApiResponseDto(true, "Welcome back, " + dbUser.getUserName() + "!");
                 response.setToken(token);
                 response.setRole(role);
                 return ResponseEntity.ok(response);
@@ -137,27 +153,27 @@ public class UserService {
     public ResponseEntity<String> updateUser(UserRegistrationRequest userPatchDto) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUserName(userName);
-        if(user == null) {
+        if (user == null) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("User doesn't exist");
         }
-        if(userPatchDto.getUserName() != null) {
+        if (userPatchDto.getUserName() != null) {
             user.setUserName(userPatchDto.getUserName());
         }
-        if(userPatchDto.getPassword() != null) {
+        if (userPatchDto.getPassword() != null) {
             user.setPassword(userPatchDto.getPassword());
         }
-        if(userPatchDto.getFirstName() != null) {
+        if (userPatchDto.getFirstName() != null) {
             user.setFirstName(userPatchDto.getFirstName());
         }
-        if(userPatchDto.getLastName() != null) {
+        if (userPatchDto.getLastName() != null) {
             user.setLastName(userPatchDto.getLastName());
         }
         userRepository.save(user);
         return ResponseEntity.ok("Updated User");
     }
-    
+
     public boolean userExists(String userName) {
         return userRepository.existsByUserName(userName);
     }

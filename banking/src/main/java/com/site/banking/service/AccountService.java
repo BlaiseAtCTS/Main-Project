@@ -40,6 +40,23 @@ public class AccountService {
         return true;
     }
 
+    public String generateAccountNumber(String username, String accountType) {
+        int typeCode;
+        switch (accountType.toUpperCase()) {
+            case "SAVINGS": typeCode = 1; break;
+            case "CURRENT": typeCode = 0; break;
+            case "BUSINESS": typeCode = 4; break;
+            default: typeCode = 9;
+        }
+        long timestamp = System.currentTimeMillis();
+        String rawInput = username + timestamp + typeCode;
+        String accountNumber = String.valueOf(Math.abs(rawInput.hashCode()));
+        while (accountNumber.length() < 10) {
+            accountNumber = "0" + accountNumber;
+        }
+        return accountNumber;
+    }
+
     enum DepositWithdraw { DEPOSIT, WITHDRAW };
 
     // Deposit & Withdraw logging

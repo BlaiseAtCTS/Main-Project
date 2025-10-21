@@ -80,8 +80,11 @@ public class AdminApprovalController {
             if (user.getAccounts() != null && !user.getAccounts().isEmpty()) {
                 for (Account account : user.getAccounts()) {
                     Map<String, Object> userAccount = new HashMap<>();
-                    userAccount.put("userId", user.getId());
                     userAccount.put("username", user.getUserName());
+                    userAccount.put("phoneNumber", user.getPhoneNumber());
+                    userAccount.put("dob", user.getDob());
+                    userAccount.put("email", user.getEmail());
+                    userAccount.put("address", user.getAddress());
                     userAccount.put("accountType", account.getType());
                     userAccount.put("accountNumber", account.getAccountNumber());
                     result.add(userAccount);

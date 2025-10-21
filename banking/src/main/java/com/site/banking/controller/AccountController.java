@@ -95,8 +95,10 @@ public class AccountController {
     public ResponseEntity<ApiResponseDto> registerAccount(
             @Parameter(hidden = true) Principal principal, 
             @RequestBody AccountCreateRequest request) {
+        String accountNumber = accountService.generateAccountNumber(principal.getName(), request.getType());
+
         // Submit request for admin approval instead of direct creation
-        return requestService.submitCreateRequest(principal, request.getAccountNumber(), request.getType(), request.getInitialBalance());
+        return requestService.submitCreateRequest(principal, accountNumber, request.getType(), request.getInitialBalance());
     }
 
     @PostMapping("/delete")
@@ -110,7 +112,7 @@ public class AccountController {
     })
     public ResponseEntity<ApiResponseDto> deleteAccount(
             @Parameter(hidden = true) Principal principal, 
-            @RequestBody AccountCreateRequest request) {
+            @RequestBody AccountOperationRequest request) {
         // Submit request for admin approval instead of direct deletion
         return requestService.submitDeleteRequest(principal, request.getAccountNumber());
     }
