@@ -66,7 +66,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        // ✅ --- ADMIN BYPASS START ---
+        // ADMIN BYPASS START
     if ("admin".equalsIgnoreCase(username)) {
             logger.debug("Bypassing DB lookup for admin user");
             UserDetails adminUser = User.builder()
@@ -83,8 +83,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
-        // ✅ --- ADMIN BYPASS END ---
-
+        // ADMIN BYPASS END
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication =
