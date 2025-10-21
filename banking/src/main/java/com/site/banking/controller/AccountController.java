@@ -96,7 +96,7 @@ public class AccountController {
             @Parameter(hidden = true) Principal principal, 
             @RequestBody AccountCreateRequest request) {
         // Submit request for admin approval instead of direct creation
-        return requestService.submitCreateRequest(principal, request.getAccountNumber(), request.getType());
+        return requestService.submitCreateRequest(principal, request.getAccountNumber(), request.getType(), request.getInitialBalance());
     }
 
     @PostMapping("/delete")
