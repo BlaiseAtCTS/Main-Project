@@ -71,6 +71,58 @@
         </div>
 
         <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            [(ngModel)]="registerData.email"
+            class="input-field mt-1"
+            placeholder="Enter your email"
+          />
+        </div>
+
+        <div>
+          <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+          <input
+            id="phoneNumber"
+            name="phoneNumber"
+            type="tel"
+            required
+            [(ngModel)]="registerData.phoneNumber"
+            class="input-field mt-1"
+            placeholder="Enter your phone number"
+          />
+        </div>
+
+        <div>
+          <label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+          <input
+            id="dob"
+            name="dob"
+            type="date"
+            required
+            [(ngModel)]="registerData.dob"
+            class="input-field mt-1"
+            placeholder="Select your date of birth"
+          />
+        </div>
+
+        <div>
+          <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+          <input
+            id="address"
+            name="address"
+            type="text"
+            required
+            [(ngModel)]="registerData.address"
+            class="input-field mt-1"
+            placeholder="Enter your address"
+          />
+        </div>
+
+        <div>
           <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
           <input
             id="password"

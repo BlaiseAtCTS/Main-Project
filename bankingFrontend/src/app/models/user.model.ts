@@ -4,6 +4,10 @@ export interface User {
   password: string;
   firstName: string;
   lastName: string;
+  email: string;
+  phoneNumber: number | null;
+  dob: Date | null;
+  address: string;
   role?: string;
 }
 
@@ -17,5 +21,9 @@ export interface UserRegisterRequest {
   password: string;
   firstName: string;
   lastName: string;
+  email: string;
+  phoneNumber: number | null;
+  dob: Date | null;
+  address: string;
 }
 
