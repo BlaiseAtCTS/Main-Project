@@ -15,7 +15,7 @@ import { AuthService } from '../../services/auth.service';
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between h-16">
             <div class="flex items-center">
-              <span class="text-white font-bold">Banking App</span>
+              <span class="text-white font-bold">Ferrero Bank</span>
               <div class="hidden md:block ml-10 flex items-baseline space-x-4">
                 <!-- Admin Navigation -->
                 <ng-container *ngIf="isAdmin">
@@ -44,7 +44,7 @@ import { AuthService } from '../../services/auth.service';
       <header class="bg-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div class="flex items-center justify-between">
-            <div class="text-lg font-bold">Banking App</div>
+            <div class="text-lg font-bold">Ferroro Bank</div>
             <div class="space-x-3">
               <a routerLink="/login" class="text-sm text-blue-600">Login</a>
               <a routerLink="/register" class="text-sm text-blue-600">Register</a>

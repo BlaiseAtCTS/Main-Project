@@ -1,9 +1,13 @@
 package com.site.banking.model;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "account_requests")
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public class AccountRequest {
 
     @Id
@@ -23,6 +28,9 @@ public class AccountRequest {
     private String status; // "PENDING", "APPROVED", "DECLINED"
     private String accountNumber; // Account number for create/delete
     private String accountType; // Account type (SAVINGS, CHECKING, etc.) for CREATE requests
+    
+    @Column(precision = 19, scale = 2)
+    private BigDecimal initialBalance; // Initial balance for CREATE requests
     @CreationTimestamp
     private Instant createdAt; // When the request was submitted
 
@@ -40,6 +48,15 @@ public class AccountRequest {
         this.status = status;
         this.accountNumber = accountNumber;
         this.accountType = accountType;
+    }
+    
+    public AccountRequest(Long userId, String requestType, String status, String accountNumber, String accountType, BigDecimal initialBalance) {
+        this.userId = userId;
+        this.requestType = requestType;
+        this.status = status;
+        this.accountNumber = accountNumber;
+        this.accountType = accountType;
+        this.initialBalance = initialBalance;
     }
 
     public Long getId() {
@@ -77,6 +94,12 @@ public class AccountRequest {
     }
     public void setAccountType(String accountType) {
         this.accountType = accountType;
+    }
+    public BigDecimal getInitialBalance() {
+        return initialBalance != null ? initialBalance : BigDecimal.ZERO;
+    }
+    public void setInitialBalance(BigDecimal initialBalance) {
+        this.initialBalance = initialBalance;
     }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }

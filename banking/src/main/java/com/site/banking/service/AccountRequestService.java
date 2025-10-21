@@ -56,16 +56,20 @@ public class AccountRequestService {
     }
     
     // New method for account creation requests with account details
-    public ResponseEntity<ApiResponseDto> submitCreateRequest(Principal principal, String accountNumber, String accountType) {
+    public ResponseEntity<ApiResponseDto> submitCreateRequest(Principal principal, String accountNumber, String accountType, BigDecimal initialBalance) {
         User user = userRepository.findByUserName(principal.getName());
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponseDto(false, "User not found"));
         }
         
-        AccountRequest req = new AccountRequest(user.getId(), "CREATE", "PENDING", accountNumber, accountType);
+        // Use initialBalance if provided, otherwise default to ZERO
+        BigDecimal balance = (initialBalance != null) ? initialBalance : BigDecimal.ZERO;
+        
+        AccountRequest req = new AccountRequest(user.getId(), "CREATE", "PENDING", accountNumber, accountType, balance);
         requestRepo.save(req);
-        log.info("Saved CREATE account request id={} userId={} accountNumber={} type={}", req.getId(), user.getId(), accountNumber, accountType);
+        log.info("Saved CREATE account request id={} userId={} accountNumber={} type={} initialBalance={}", 
+                req.getId(), user.getId(), accountNumber, accountType, balance);
 
         return ResponseEntity.ok(new ApiResponseDto(true, "Account creation request submitted for admin approval"));
     }
@@ -94,15 +98,25 @@ public class AccountRequestService {
                 Account account = new Account();
                 account.setAccountNumber(request.getAccountNumber());
                 account.setType(request.getAccountType());
-                account.setBalance(BigDecimal.ZERO);
+                
+                // Use the initial balance from the request, or default to ZERO if not specified
+                BigDecimal initialBalance = (request.getInitialBalance() != null) 
+                        ? request.getInitialBalance() 
+                        : BigDecimal.ZERO;
+                account.setBalance(initialBalance);
+                
                 account.setUser(user);
                 accountRepository.save(account);
+                
+                log.info("Created account {} with initial balance {} for user {}", 
+                        account.getAccountNumber(), initialBalance, user.getUserName());
             }
         } else if ("DELETE".equals(request.getRequestType())) {
             // Delete the account
             Account account = accountRepository.findByAccountNumber(request.getAccountNumber());
             if (account != null) {
                 accountRepository.delete(account);
+                log.info("Deleted account {}", request.getAccountNumber());
             }
         }
     }
