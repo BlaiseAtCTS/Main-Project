@@ -65,7 +65,7 @@ export class ApiService {
       });
       const apiResponse = response.data;
       if (apiResponse.success && apiResponse.token) {
-        this.storage.setItem('token', apiResponse.token);
+        this.storage.setItem('jwt_token', apiResponse.token);
       }
       return apiResponse;
     } catch (error: any) {
@@ -176,7 +176,7 @@ export class ApiService {
 
   async getUserProfile(): Promise<UserProfile> {
     try {
-      const token = this.storage.getItem('token');
+      const token = this.storage.getItem('jwt_token');
       console.debug('[ApiService] getUserProfile - token present?', !!token);
       const response = await this.axiosInstance.get<UserProfile>('/api/profile');
       console.debug('[ApiService] getUserProfile response:', response?.data);
@@ -200,6 +200,21 @@ export class ApiService {
       return {
         success: false,
         message: error.message || 'An error occurred while deleting account',
+      };
+    }
+  }
+
+  async generateAccountNumber(type: string): Promise<ApiResponse> {
+    try {
+      const response = await this.axiosInstance.post<ApiResponse>('/account/generate-account-number', { type });
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.data) {
+        return error.response.data as ApiResponse;
+      }
+      return {
+        success: false,
+        message: error.message || 'An error occurred while generating account number',
       };
     }
   }

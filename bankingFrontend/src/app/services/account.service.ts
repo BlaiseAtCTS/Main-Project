@@ -39,5 +39,9 @@ export class AccountService {
   async getTransactions(accountId: string) {
     return await this.apiService.getTransactions(accountId);
   }
+
+  async generateAccountNumber(type: string) {
+    return await this.apiService.generateAccountNumber(type);
+  }
 }
 

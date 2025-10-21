@@ -101,6 +101,17 @@ public class AccountController {
         return requestService.submitCreateRequest(principal, accountNumber, request.getType(), request.getInitialBalance());
     }
 
+    @PostMapping("/generate-account-number")
+    @Operation(summary = "Generate account number", description = "Generates a new account number based on user and account type")
+    public ResponseEntity<ApiResponseDto> generateAccountNumber(
+            @Parameter(hidden = true) Principal principal,
+            @RequestBody AccountCreateRequest request) {
+        String accountNumber = accountService.generateAccountNumber(principal.getName(), request.getType());
+        ApiResponseDto response = new ApiResponseDto(true, "Account number generated successfully");
+        response.setData(accountNumber);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/delete")
     @Operation(summary = "Request account deletion", description = "Submits a request for admin approval to delete an account")
     @ApiResponses(value = {

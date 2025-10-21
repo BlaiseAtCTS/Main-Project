@@ -1,12 +1,6 @@
 <div class="container mx-auto px-4 py-8">
   @if (profileQuery.isPending()) {
-  <div class="flex justify-center ite              <select class="form-input" [(ngModel)]="editableProfile.gender" title="Select your gender">
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-                <option value="Prefer not to say">Prefer not to say</option>
-              </select>er h-64">
+  <div class="flex justify-center items-center h-64">
     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
   </div>
   } @if (profileQuery.error()) {

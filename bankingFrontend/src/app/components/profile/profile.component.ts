@@ -39,6 +39,34 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
                 <label class="block text-gray-600">Username</label>
                 <div class="text-gray-900">{{ profileQuery.data()?.userName }}</div>
               </div>
+              <div>
+                <label class="block text-gray-600">Email</label>
+                <div class="text-gray-900">{{ profileQuery.data()?.email || 'Not provided' }}</div>
+              </div>
+              <div>
+                <label class="block text-gray-600">Phone Number</label>
+                <div class="text-gray-900">{{ profileQuery.data()?.phoneNumber || 'Not provided' }}</div>
+              </div>
+              <div>
+                <label class="block text-gray-600">Date of Birth</label>
+                <div class="text-gray-900">{{ profileQuery.data()?.dateOfBirth || 'Not provided' }}</div>
+              </div>
+              <div>
+                <label class="block text-gray-600">Age</label>
+                <div class="text-gray-900">{{ profileQuery.data()?.age || 'Not provided' }}</div>
+              </div>
+              <div>
+                <label class="block text-gray-600">Gender</label>
+                <div class="text-gray-900">{{ profileQuery.data()?.gender || 'Not provided' }}</div>
+              </div>
+              <div>
+                <label class="block text-gray-600">Occupation</label>
+                <div class="text-gray-900">{{ profileQuery.data()?.occupation || 'Not provided' }}</div>
+              </div>
+              <div>
+                <label class="block text-gray-600">Address</label>
+                <div class="text-gray-900">{{ profileQuery.data()?.address || 'Not provided' }}</div>
+              </div>
             </div>
           </div>
 
