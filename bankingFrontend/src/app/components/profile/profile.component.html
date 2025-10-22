@@ -171,21 +171,18 @@
               </div>
               <div class="text-right">
                 <div 
-                  class="account-balance" 
-                  [ngClass]="{
-                    'balance-low': account.balance !== null && account.balance < 1000, 
-                    'balance-good': account.balance !== null && account.balance >= 1000
-                  }">
+                  class="account-balance"
+                  [class.low-balance]="(account.balance ?? 0) < 1000">
                   {{ account.balance != null ? '$' + (account.balance | number : '1.2-2') : '$0.00' }}
                 </div>
                 @if (account.balance !== null && account.balance < 1000) {
-                  <div class="low-balance-badge">⚠️ Low Balance</div>
+                  <div class="low-balance-badge low-balance">Low Balance</div>
                 }
               </div>
             </div>
           </div>
           }
-          @if (profileQuery.data()?.accounts.length === 0) {
+          @if (!profileQuery.data()?.accounts || profileQuery.data()?.accounts.length === 0) {
             <div class="no-accounts">
               <p>No accounts found</p>
             </div>
