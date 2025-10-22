@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
 import { TransferRequest } from '../../models/transaction.model';
+import { injectMutation } from '@tanstack/angular-query-experimental';
 
 @Component({
   selector: 'app-transactions',
@@ -20,10 +21,6 @@ export class TransactionsComponent implements OnInit {
     amount: 0
   };
 
-  errorMessage: string = '';
-  successMessage: string = '';
-  isLoading: boolean = false;
-
   constructor(
     private authService: AuthService,
     private transactionService: TransactionService,
@@ -36,29 +33,26 @@ export class TransactionsComponent implements OnInit {
     }
   }
 
-  clearMessages(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
-  }
+  protected transferMutation = injectMutation(() => ({
+    mutationFn: (transfer: TransferRequest) => this.transactionService.transfer(transfer),
+  }));
 
   transferAmount(): void {
-    this.isLoading = true;
-    this.clearMessages();
-
-    this.transactionService.transfer(this.transferRequest).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        this.successMessage = 'Transfer completed successfully!';
-        this.transferRequest = {
-          sourceAccountNumber: '',
-          destinationAccountNumber: '',
-          amount: 0
-        };
+    this.transferMutation.mutate(this.transferRequest, {
+      onSuccess: (response) => {
+        if (response.success) {
+          this.transferRequest = {
+            sourceAccountNumber: '',
+            destinationAccountNumber: '',
+            amount: 0
+          };
+        } else {
+          throw new Error(response.message || 'Failed to transfer amount');
+        }
       },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = error.error || 'Failed to transfer amount. Please try again.';
-      }
+      onError: (error: Error) => {
+        console.error('Transfer error:', error);
+      },
     });
   }
 

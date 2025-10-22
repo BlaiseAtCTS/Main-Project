@@ -1,17 +1,15 @@
 package com.site.banking.service;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import com.site.banking.dto.ApiResponseDto;
 import com.site.banking.dto.TransferRequest;
 import com.site.banking.model.Account;
 import com.site.banking.model.Transaction;
 import com.site.banking.repository.AccountRepository;
 import com.site.banking.repository.TransactionRepository;
-import com.site.banking.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -22,8 +20,6 @@ import java.math.BigDecimal;
 public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private AccountRepository accountRepository;
 
@@ -42,30 +38,31 @@ public class TransactionService {
     }
 
     @Transactional
-    public ResponseEntity<String> transferAmount(TransferRequest transferRequest) {
+    public ResponseEntity<ApiResponseDto> transferAmount(TransferRequest transferRequest) {
         if(transferRequest.getAmount() == null || transferRequest.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Amount not valid");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Amount not valid", null, null));
         } else if(transferRequest.getSourceAccountNumber().equals(transferRequest.getDestinationAccountNumber())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Source account & Destination account can't be same");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Source account & Destination account can't be same", null, null));
         }
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Account sourceAcc = accountRepository.findByAccountNumberAndUserUserName(transferRequest.getSourceAccountNumber(), username);
         if(sourceAcc == null) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Source account not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDto(false, "Source account not found", null, null));
         }
         Account destAcc = accountRepository.findByAccountNumber(transferRequest.getDestinationAccountNumber());
         if(destAcc == null) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Destination account not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDto(false, "Destination account not found", null, null));
         }
 
         if(sourceAcc.getBalance().compareTo(transferRequest.getAmount()) < 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Balance is insufficient");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Balance is insufficient", null, null));
         }
 
         sourceAcc.setBalance(sourceAcc.getBalance().subtract(transferRequest.getAmount()));
@@ -76,6 +73,6 @@ public class TransactionService {
 
         recordTransfer(transferRequest);
 
-        return ResponseEntity.ok("Transferred fund: $"+transferRequest.getAmount());
+        return ResponseEntity.ok(new ApiResponseDto(true, "Transferred fund: $"+transferRequest.getAmount(), null, null));
     }
 }
