@@ -63,6 +63,13 @@
               <span class="account-label">Account Number:</span>
               <span class="account-number">{{ account.accountNumber }}</span>
             </div>
+            <div class="account-details">
+              <span class="account-label">Balance:</span>
+              <span class="account-balance">${{ account.balance | number: '1.2-2'}}</span>
+            </div>
+            <div *ngIf="account.balance !== null && account.balance < 1000" class="low-balance-badge">
+              ⚠️ Low Balance
+            </div>
           </div>
         </div>
       </div>

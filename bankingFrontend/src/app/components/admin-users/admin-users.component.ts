@@ -12,6 +12,7 @@ interface UserAccount {
   address: string | null;
   accountType: string;
   accountNumber: string;
+  balance: number | null;
 }
 
 // Grouped user interface
@@ -25,6 +26,7 @@ interface GroupedUser {
   accounts: {
     accountType: string;
     accountNumber: string;
+    balance: number | null;
   }[];
 }
 
@@ -158,7 +160,8 @@ export class AdminUsersComponent implements OnInit {
       const groupedUser = userMap.get(identifier)!;
       groupedUser.accounts.push({
         accountType: userAccount.accountType,
-        accountNumber: userAccount.accountNumber
+        accountNumber: userAccount.accountNumber,
+        balance: userAccount.balance,
       });
     });
 

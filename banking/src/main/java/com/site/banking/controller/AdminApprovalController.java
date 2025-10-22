@@ -87,6 +87,7 @@ public class AdminApprovalController {
                     userAccount.put("address", user.getAddress());
                     userAccount.put("accountType", account.getType());
                     userAccount.put("accountNumber", account.getAccountNumber());
+                    userAccount.put("balance", account.getBalance());
                     result.add(userAccount);
                 }
             } else {
@@ -99,6 +100,7 @@ public class AdminApprovalController {
                 userInfo.put("address", user.getAddress());
                 userInfo.put("accountType", "N/A");
                 userInfo.put("accountNumber", "N/A");
+                userInfo.put("balance", "N/A");
                 result.add(userInfo);
             }
         }
