@@ -1,189 +1,110 @@
 <div class="container mx-auto px-4 py-8">
   @if (profileQuery.isPending()) {
   <div class="flex justify-center items-center h-64">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    <div class="spinner"></div>
+    <p class="loading-text">Loading your profile...</p>
   </div>
   } @if (profileQuery.error()) {
-  <div class="mt-4 p-4 bg-red-100 text-red-700 rounded">
+  <div class="alert alert-error">
     {{ profileQuery.error()?.message || 'An error occurred while loading your profile.' }}
   </div>
   } @if (profileQuery.data()) {
-  <div class="bg-white shadow rounded-lg p-6">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">Profile Information</h2>
-      <button 
-        (click)="toggleEditMode()" 
-        class="btn-edit"
-        [ngClass]="{'btn-save': isEditMode}">
-        {{ isEditMode ? '💾 Save Changes' : '✏️ Edit Profile' }}
-      </button>
+  <div class="profile-container">
+    <div class="profile-header">
+      <h2 class="profile-title">Profile Information</h2>
     </div>
 
-    <!-- Success Message -->
-    @if (successMessage) {
-      <div class="alert alert-success mb-4">
-        {{ successMessage }}
-      </div>
-    }
-
-    <!-- Error Message -->
-    @if (errorMessage) {
-      <div class="alert alert-error mb-4">
-        {{ errorMessage }}
-      </div>
-    }
-
-    <div class="grid md:grid-cols-2 gap-6">
+    <div class="profile-grid">
       <!-- Personal Details Section -->
-      <div>
-        <h3 class="text-lg font-semibold mb-4">Personal Details</h3>
-        <div class="space-y-3">
-          <!-- Full Name (Read-only) -->
-          <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <div class="form-value">
-              {{ profileQuery.data()?.firstName }} {{ profileQuery.data()?.lastName }}
+      <div class="profile-section">
+        <h3 class="section-title">Personal Details</h3>
+        <div class="details-list">
+          <!-- Full Name -->
+          <div class="detail-item">
+            <div class="detail-icon">👤</div>
+            <div class="detail-content">
+              <label class="detail-label">Full Name</label>
+              <div class="detail-value">
+                {{ profileQuery.data()?.firstName }} {{ profileQuery.data()?.lastName }}
+              </div>
             </div>
           </div>
 
-          <!-- Username (Read-only) -->
-          <div class="form-group">
-            <label class="form-label">Username</label>
-            <div class="form-value">{{ profileQuery.data()?.userName }}</div>
+          <!-- Username -->
+          <div class="detail-item">
+            <div class="detail-icon">🔖</div>
+            <div class="detail-content">
+              <label class="detail-label">Username</label>
+              <div class="detail-value">{{ profileQuery.data()?.userName }}</div>
+            </div>
           </div>
 
           <!-- Email -->
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            @if (isEditMode) {
-              <input 
-                type="email" 
-                class="form-input"
-                [(ngModel)]="editableProfile.email"
-                placeholder="Enter your email">
-            } @else {
-              <div class="form-value">{{ profileQuery.data()?.email || 'Not provided' }}</div>
-            }
+          <div class="detail-item">
+            <div class="detail-icon">📧</div>
+            <div class="detail-content">
+              <label class="detail-label">Email</label>
+              <div class="detail-value">{{ profileQuery.data()?.email || 'Not provided' }}</div>
+            </div>
           </div>
 
           <!-- Phone Number -->
-          <div class="form-group">
-            <label class="form-label">Phone Number</label>
-            @if (isEditMode) {
-              <input 
-                type="tel" 
-                class="form-input"
-                [(ngModel)]="editableProfile.phoneNumber"
-                placeholder="Enter your phone number">
-            } @else {
-              <div class="form-value">{{ profileQuery.data()?.phoneNumber || 'Not provided' }}</div>
-            }
+          <div class="detail-item">
+            <div class="detail-icon">📱</div>
+            <div class="detail-content">
+              <label class="detail-label">Phone Number</label>
+              <div class="detail-value">{{ profileQuery.data()?.phoneNumber || 'Not provided' }}</div>
+            </div>
           </div>
 
           <!-- Date of Birth -->
-          <div class="form-group">
-            <label class="form-label">Date of Birth</label>
-            @if (isEditMode) {
-              <input 
-                type="date" 
-                class="form-input"
-                [(ngModel)]="editableProfile.dateOfBirth"
-                placeholder="Enter your date of birth">
-            } @else {
-              <div class="form-value">{{ profileQuery.data()?.dateOfBirth || 'Not provided' }}</div>
-            }
-          </div>
-
-          <!-- Age -->
-          <div class="form-group">
-            <label class="form-label">Age</label>
-            @if (isEditMode) {
-              <input 
-                type="number" 
-                class="form-input"
-                [(ngModel)]="editableProfile.age"
-                placeholder="Enter your age"
-                min="18"
-                max="120">
-            } @else {
-              <div class="form-value">{{ profileQuery.data()?.age || 'Not provided' }}</div>
-            }
-          </div>
-
-          <!-- Gender -->
-          <div class="form-group">
-            <label class="form-label">Gender</label>
-            @if (isEditMode) {
-              <select class="form-input" [(ngModel)]="editableProfile.gender">
-                <option value="">Select gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-                <option value="Prefer not to say">Prefer not to say</option>
-              </select>
-            } @else {
-              <div class="form-value">{{ profileQuery.data()?.gender || 'Not provided' }}</div>
-            }
-          </div>
-
-          <!-- Occupation -->
-          <div class="form-group">
-            <label class="form-label">Occupation</label>
-            @if (isEditMode) {
-              <input 
-                type="text" 
-                class="form-input"
-                [(ngModel)]="editableProfile.occupation"
-                placeholder="Enter your occupation">
-            } @else {
-              <div class="form-value">{{ profileQuery.data()?.occupation || 'Not provided' }}</div>
-            }
+          <div class="detail-item">
+            <div class="detail-icon">🎂</div>
+            <div class="detail-content">
+              <label class="detail-label">Date of Birth</label>
+              <div class="detail-value">{{ formatDate(profileQuery.data()?.dob) }}</div>
+            </div>
           </div>
 
           <!-- Address -->
-          <div class="form-group">
-            <label class="form-label">Address</label>
-            @if (isEditMode) {
-              <textarea 
-                class="form-input"
-                [(ngModel)]="editableProfile.address"
-                placeholder="Enter your address"
-                rows="3"></textarea>
-            } @else {
-              <div class="form-value">{{ profileQuery.data()?.address || 'Not provided' }}</div>
-            }
+          <div class="detail-item">
+            <div class="detail-icon">📍</div>
+            <div class="detail-content">
+              <label class="detail-label">Address</label>
+              <div class="detail-value">{{ profileQuery.data()?.address || 'Not provided' }}</div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Accounts Section -->
-      <div>
-        <h3 class="text-lg font-semibold mb-4">Accounts</h3>
-        <div class="space-y-4">
+      <div class="profile-section">
+        <h3 class="section-title">Accounts</h3>
+        <div class="accounts-list">
           @for (account of profileQuery.data()?.accounts || []; track account.accountNumber) {
-          <div 
-            class="account-card" 
-            [ngClass]="{'low-balance-card': account.balance !== null && account.balance < 1000}">
-            <div class="flex justify-between items-center">
-              <div>
-                <div class="account-type">{{ account.type }}</div>
-                <div class="account-number">{{ account.accountNumber }}</div>
+          <div class="account-card">
+            <div class="account-header">
+              <div class="account-type-badge">{{ account.type }}</div>
+            </div>
+            <div class="account-info">
+              <div class="account-number-label">Account Number</div>
+              <div class="account-number">{{ account.accountNumber }}</div>
+            </div>
+            <div class="account-balance-section">
+              <div class="balance-label">Current Balance</div>
+              <div class="balance-amount" 
+                   [class.low-balance]="account.balance !== null && account.balance < 1000">
+                ${{ account.balance != null ? (account.balance | number : '1.2-2') : '0.00' }}
               </div>
-              <div class="text-right">
-                <div 
-                  class="account-balance"
-                  [class.low-balance]="(account.balance ?? 0) < 1000">
-                  {{ account.balance != null ? '$' + (account.balance | number : '1.2-2') : '$0.00' }}
-                </div>
-                @if (account.balance !== null && account.balance < 1000) {
-                  <div class="low-balance-badge low-balance">Low Balance</div>
-                }
-              </div>
+              @if (account.balance !== null && account.balance < 1000) {
+                <div class="low-balance-badge">⚠️ Low Balance</div>
+              }
             </div>
           </div>
           }
-          @if (!profileQuery.data()?.accounts || profileQuery.data()?.accounts.length === 0) {
+          @if (!profileQuery.data()?.accounts || (profileQuery.data()?.accounts && profileQuery.data()!.accounts.length === 0)) {
             <div class="no-accounts">
+              <div class="no-accounts-icon">🏦</div>
               <p>No accounts found</p>
             </div>
           }

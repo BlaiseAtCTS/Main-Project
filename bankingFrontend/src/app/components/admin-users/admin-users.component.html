@@ -47,8 +47,13 @@
         <div class="user-header">
           <div class="user-icon">👤</div>
           <div class="user-info">
-            <h3>{{ user.username }}</h3>
-            <!-- <p class="user-id">User ID: {{ user.userId }}</p> -->
+            <h3>{{ user.displayName }}</h3>
+            <div class="user-details">
+              <p *ngIf="user.email" class="user-detail">📧 {{ user.email }}</p>
+              <p *ngIf="user.phoneNumber" class="user-detail">📱 {{ user.phoneNumber }}</p>
+              <p *ngIf="user.address" class="user-detail">📍 {{ user.address }}</p>
+              <p *ngIf="user.dob" class="user-detail">🎂 {{ user.dob }}</p>
+            </div>
           </div>
         </div>
         <div class="accounts-section">

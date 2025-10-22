@@ -3,18 +3,25 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 
-// User with accounts interface
+// User with accounts interface matching backend response
 interface UserAccount {
-  userId: number;
-  username: string;
+  username: string | null;
+  phoneNumber: string | null;
+  dob: string | null;
+  email: string | null;
+  address: string | null;
   accountType: string;
   accountNumber: string;
 }
 
 // Grouped user interface
 interface GroupedUser {
-  userId: number;
-  username: string;
+  identifier: string; // username, email, or phone
+  displayName: string;
+  phoneNumber: string | null;
+  email: string | null;
+  address: string | null;
+  dob: string | null;
   accounts: {
     accountType: string;
     accountNumber: string;
@@ -121,18 +128,34 @@ export class AdminUsersComponent implements OnInit {
   }
 
   private groupUsersByUserId() {
-    const userMap = new Map<number, GroupedUser>();
+    const userMap = new Map<string, GroupedUser>();
 
     this.users.forEach(userAccount => {
-      if (!userMap.has(userAccount.userId)) {
-        userMap.set(userAccount.userId, {
-          userId: userAccount.userId,
-          username: userAccount.username,
+      // Create a unique identifier for each user
+      // Priority: username > email > phoneNumber > accountNumber
+      const identifier = userAccount.username 
+        || userAccount.email 
+        || userAccount.phoneNumber 
+        || `User-${userAccount.accountNumber}`;
+      
+      const displayName = userAccount.username 
+        || userAccount.email 
+        || userAccount.phoneNumber 
+        || 'Unknown User';
+
+      if (!userMap.has(identifier)) {
+        userMap.set(identifier, {
+          identifier: identifier,
+          displayName: displayName,
+          phoneNumber: userAccount.phoneNumber,
+          email: userAccount.email,
+          address: userAccount.address,
+          dob: userAccount.dob,
           accounts: []
         });
       }
 
-      const groupedUser = userMap.get(userAccount.userId)!;
+      const groupedUser = userMap.get(identifier)!;
       groupedUser.accounts.push({
         accountType: userAccount.accountType,
         accountNumber: userAccount.accountNumber

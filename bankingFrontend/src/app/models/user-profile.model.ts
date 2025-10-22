@@ -2,13 +2,10 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   userName: string;
-  email: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  age: number;
-  gender: string;
-  occupation: string;
-  address: string;
+  email: string | null;
+  phoneNumber: number | null;
+  dob: string | null;
+  address: string | null;
   accounts: Account[];
 }
 

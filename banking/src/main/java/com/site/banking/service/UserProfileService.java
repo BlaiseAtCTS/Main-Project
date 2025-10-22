@@ -38,6 +38,10 @@ public class UserProfileService {
             user.getFirstName(),
             user.getLastName(),
             user.getUserName(),
+            user.getEmail(),
+            user.getPhoneNumber(),
+            user.getDob(),
+            user.getAddress(),
             accountDtos
         );
     }
