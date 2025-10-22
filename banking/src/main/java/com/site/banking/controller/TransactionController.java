@@ -1,6 +1,7 @@
 package com.site.banking.controller;
 
 import com.site.banking.dto.ApiResponseDto;
+import com.site.banking.dto.GetTransactionsDto;
 import com.site.banking.dto.TransferRequest;
 import com.site.banking.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,5 +32,10 @@ public class TransactionController {
     })
     public ResponseEntity<ApiResponseDto> transferAmount(@RequestBody TransferRequest transferRequest) {
         return transactionService.transferAmount(transferRequest);
+    }
+
+    @GetMapping("/get-transactions")
+    public ResponseEntity<ApiResponseDto> getTransactions(@RequestBody GetTransactionsDto transactionsDto) {
+        return transactionService.getTransactions(transactionsDto);
     }
 }

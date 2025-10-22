@@ -30,6 +30,8 @@ public class UserService {
     private JWTService jwtService;
 
     public ResponseEntity<ApiResponseDto> createUser(User user) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
         // Validate input
         if (user.getUserName() == null || user.getUserName().trim().isEmpty()) {
             return ResponseEntity
@@ -50,6 +52,16 @@ public class UserService {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Last name is required", "Validation Error", "lastName"));
+        }
+        if (!user.getEmail().matches(emailRegex)) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Email must be in proper format", "Validation Error", "email"));
+        }
+        if (user.getPhoneNumber() < 1000000000L || user.getPhoneNumber() > 9999999999L) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Phone number must have 10 digits", "Validation Error", "phoneNumber"));
         }
 
         if (userExists(user.getUserName())) {

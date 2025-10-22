@@ -1,6 +1,7 @@
 package com.site.banking.service;
 
 import com.site.banking.dto.ApiResponseDto;
+import com.site.banking.dto.GetTransactionsDto;
 import com.site.banking.dto.TransferRequest;
 import com.site.banking.model.Account;
 import com.site.banking.model.Transaction;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class TransactionService {
@@ -74,5 +76,14 @@ public class TransactionService {
         recordTransfer(transferRequest);
 
         return ResponseEntity.ok(new ApiResponseDto(true, "Transferred fund: $"+transferRequest.getAmount(), null, null));
+    }
+
+    public ResponseEntity<ApiResponseDto> getTransactions(GetTransactionsDto transactionsDto) {
+        if(transactionsDto.getSourceAccountNumber() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDto(false, "Account cannot be empty", null, null));
+        }
+        List<Transaction> transactionList = transactionRepository.findBySourceAccountNumber(transactionsDto.getSourceAccountNumber());
+        return ResponseEntity.ok(new ApiResponseDto(true, "Transaction List Fetched", null));
     }
 }

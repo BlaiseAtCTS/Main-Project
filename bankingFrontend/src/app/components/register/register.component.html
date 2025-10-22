@@ -15,61 +15,119 @@
       </div>
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Register Account</h2>
       <p class="mt-2 text-center text-sm text-gray-600">
-        Create your account to get started.
+        Create your account to get started. <br>
         <button
           (click)="navigateToLogin()" cursor="pointer"
-          class="font-medium text-primary-600 hover:text-primary-500"
-        >
-          Already have an account? Sign in
+          class="font-medium text-indigo-600 hover:text-indigo-500">
+          Already have an account? Log in
         </button>
       </p>
     </div>
 
-    <form class="mt-8 space-y-6" (ngSubmit)="onSubmit()" #registerForm="ngForm">
-      <div class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="firstName" class="block text-sm font-medium text-gray-700"
-              >First Name</label
-            >
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              required
-              [(ngModel)]="registerData.firstName"
-              class="input-field mt-1"
-              placeholder="First name"
-            />
-          </div>
+    <form class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg space-y-6" (ngSubmit)="onSubmit()" #registerForm="ngForm">
 
-          <div>
-            <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              required
-              [(ngModel)]="registerData.lastName"
-              class="input-field mt-1"
-              placeholder="Last name"
-            />
-          </div>
-        </div>
-
+      <!-- First and Last Name -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="userName" class="block text-sm font-medium text-gray-700">Username</label>
+          <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
           <input
-            id="userName"
-            name="userName"
+            id="firstName"
+            name="firstName"
             type="text"
             required
-            [(ngModel)]="registerData.userName"
-            class="input-field mt-1"
-            placeholder="Choose a username"
+            [(ngModel)]="registerData.firstName"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+            placeholder="Enter first name"
           />
         </div>
 
+        <div>
+          <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+          <input
+            id="lastName"
+            name="lastName"
+            type="text"
+            required
+            [(ngModel)]="registerData.lastName"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+            placeholder="Enter last name"
+          />
+        </div>
+      </div>
+
+      <!-- Username -->
+      <div>
+        <label for="userName" class="block text-sm font-medium text-gray-700">Username</label>
+        <input
+          id="userName"
+          name="userName"
+          type="text"
+          required
+          [(ngModel)]="registerData.userName"
+          class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+          placeholder="Enter a username"
+        />
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          [(ngModel)]="registerData.email"
+          class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+          placeholder="Enter email here"
+        />
+      </div>
+
+      <!-- Phone and DOB -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+          <input
+            id="phoneNumber"
+            name="phoneNumber"
+            type="tel"
+            required
+            [(ngModel)]="registerData.phoneNumber"
+            pattern="^\d+"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+            placeholder="10-digits"
+          />
+        </div>
+
+        <div>
+          <label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+          <input
+            id="dob"
+            name="dob"
+            type="date"
+            required
+            [(ngModel)]="registerData.dob"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+          />
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div>
+        <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+        <input
+          id="address"
+          name="address"
+          type="text"
+          required
+          [(ngModel)]="registerData.address"
+          class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+          placeholder="Enter address here"
+        />
+      </div>
+
+      <!-- Password and Confirm Password -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
           <input
@@ -78,23 +136,21 @@
             type="password"
             required
             [(ngModel)]="registerData.password"
-            class="input-field mt-1"
-            placeholder="Create a password"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+            placeholder="At least 8 characters"
           />
         </div>
 
         <div>
-          <label for="confirmPassword" class="block text-sm font-medium text-gray-700"
-            >Confirm Password</label
-          >
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
           <input
             id="confirmPassword"
             name="confirmPassword"
             type="password"
             required
             [(ngModel)]="confirmPassword"
-            class="input-field mt-1"
-            placeholder="Confirm your password"
+            class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-small"
+            placeholder="Confirm password"
           />
         </div>
       </div>

@@ -1,8 +1,10 @@
 package com.site.banking.controller;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +67,14 @@ public class AccountController {
             @RequestBody AccountOperationRequest request) {
         Account account = new Account();
         account.setAccountNumber(request.getAccountNumber());
+
+        // Check if request amount > 2 Lakhs
+        if(request.getAmount().compareTo(BigDecimal.valueOf(200000)) > 0) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Cannot withdraw more than 2 Lakhs"));
+        }
+
         account.setBalance(request.getAmount());
         return accountService.withdrawAmount(principal, account);
     }

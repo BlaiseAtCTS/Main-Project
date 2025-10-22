@@ -20,6 +20,10 @@ export class RegisterComponent {
     password: '',
     firstName: '',
     lastName: '',
+    email: '',
+    phoneNumber: null,
+    dob: '',
+    address: '',
   };
 
   confirmPassword: string = '';
