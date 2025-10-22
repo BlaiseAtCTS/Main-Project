@@ -64,7 +64,7 @@ public class AccountRequestService {
         }
         
         // Use initialBalance if provided, otherwise default to 1000 (Min balance)
-        BigDecimal balance = (initialBalance != null) ? initialBalance : BigDecimal.valueOf(1000);
+        BigDecimal balance = (initialBalance.compareTo(BigDecimal.valueOf(1000)) > 0) ? initialBalance : BigDecimal.valueOf(1000);
         
         AccountRequest req = new AccountRequest(user.getId(), "CREATE", "PENDING", accountNumber, accountType, balance);
         requestRepo.save(req);
