@@ -69,15 +69,15 @@ public class AdminApprovalController {
     public List<Map<String, Object>> getAllUsersWithAccounts() {
         List<User> users = userRepository.findAll();
         List<Map<String, Object>> result = new ArrayList<>();
-        
+
         for (User user : users) {
-            // Skip admin user
-            if ("admin".equalsIgnoreCase(user.getUserName())) {
+            // Skip admin users
+            if ("admin".equalsIgnoreCase(user.getRole())) {
                 continue;
             }
-            
-            // Get user's accounts
+
             if (user.getAccounts() != null && !user.getAccounts().isEmpty()) {
+                // Add one entry per account
                 for (Account account : user.getAccounts()) {
                     Map<String, Object> userAccount = new HashMap<>();
                     userAccount.put("username", user.getUserName());
@@ -89,9 +89,20 @@ public class AdminApprovalController {
                     userAccount.put("accountNumber", account.getAccountNumber());
                     result.add(userAccount);
                 }
+            } else {
+                // Add users without accounts
+                Map<String, Object> userInfo = new HashMap<>();
+                userInfo.put("username", user.getUserName());
+                userInfo.put("phoneNumber", user.getPhoneNumber());
+                userInfo.put("dob", user.getDob());
+                userInfo.put("email", user.getEmail());
+                userInfo.put("address", user.getAddress());
+                userInfo.put("accountType", "N/A");
+                userInfo.put("accountNumber", "N/A");
+                result.add(userInfo);
             }
         }
-        
+
         return result;
     }
 }

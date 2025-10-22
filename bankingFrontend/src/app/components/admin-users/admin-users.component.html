@@ -49,10 +49,10 @@
           <div class="user-info">
             <h3>{{ user.displayName }}</h3>
             <div class="user-details">
-              <p *ngIf="user.email" class="user-detail">📧 {{ user.email }}</p>
-              <p *ngIf="user.phoneNumber" class="user-detail">📱 {{ user.phoneNumber }}</p>
-              <p *ngIf="user.address" class="user-detail">📍 {{ user.address }}</p>
-              <p *ngIf="user.dob" class="user-detail">🎂 {{ user.dob }}</p>
+              <p *ngIf="user.email" class="user-detail">Email📧: {{ user.email }}</p>
+              <p *ngIf="user.phoneNumber" class="user-detail">Phone📱: {{ user.phoneNumber }}</p>
+              <p *ngIf="user.address" class="user-detail">Address📍: {{ user.address }}</p>
+              <p *ngIf="user.dob" class="user-detail">DOB🎂: {{ user.dob }}</p>
             </div>
           </div>
         </div>
@@ -70,7 +70,7 @@
 
     <!-- Summary -->
     <div *ngIf="!loading && groupedUsers.length > 0" class="summary">
-      <p>Total Unique Users: <strong>{{ uniqueUserCount }}</strong></p>
+      <p>Total Users: <strong>{{ uniqueUserCount }}</strong></p>
     </div>
   </main>
 </div>
