@@ -65,6 +65,18 @@ export class AccountsComponent {
     mutationFn: (accountNumber: string) => this.accountService.deleteAccount(accountNumber),
   }));
 
+  generateAccountNumber(): void {
+    this.accountService.generateAccountNumber(this.newAccount.type).then(response => {
+      if (response.success) {
+        this.newAccount.accountNumber = response.data;
+      } else {
+        console.error('Failed to generate account number:', response.message);
+      }
+    }).catch(error => {
+      console.error('Generate account number error:', error);
+    });
+  }
+
   setActiveTab(tab: 'create' | 'deposit' | 'withdraw' | 'balance' | 'delete'): void {
     this.activeTab = tab;
     this.balanceResult = '';

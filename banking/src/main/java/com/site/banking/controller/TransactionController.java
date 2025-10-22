@@ -1,8 +1,7 @@
 package com.site.banking.controller;
 
+import com.site.banking.dto.ApiResponseDto;
 import com.site.banking.dto.TransferRequest;
-import com.site.banking.model.Account;
-import com.site.banking.model.Transaction;
 import com.site.banking.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +29,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "404", description = "Source or destination account not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<String> transferAmount(@RequestBody TransferRequest transferRequest) {
+    public ResponseEntity<ApiResponseDto> transferAmount(@RequestBody TransferRequest transferRequest) {
         return transactionService.transferAmount(transferRequest);
     }
 }

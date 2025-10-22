@@ -63,7 +63,10 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label for="accountNumber" class="block text-sm font-medium text-gray-700">Account Number</label>
-              <input id="accountNumber" name="accountNumber" type="text" required [(ngModel)]="newAccount.accountNumber" class="input-field mt-1" placeholder="Enter account number" />
+              <div class="flex items-center">
+                <input id="accountNumber" name="accountNumber" type="text" required [(ngModel)]="newAccount.accountNumber" class="input-field mt-1 rounded-r-none" placeholder="Enter account number" />
+                <button type="button" (click)="generateAccountNumber()" class="btn-secondary rounded-l-none">Generate</button>
+              </div>
             </div>
             <div>
               <label for="accountType" class="block text-sm font-medium text-gray-700">Account Type</label>

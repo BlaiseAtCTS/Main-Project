@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { TransferRequest } from '../models/transaction.model';
+import { ApiResponse } from '../models/api-response.model';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -23,9 +24,11 @@ export class TransactionService {
     return new HttpHeaders(headers);
   }
 
-  transfer(transferRequest: TransferRequest): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/transaction/transfer`, transferRequest, {
-      headers: this.getHeaders(),
-    });
+  async transfer(transferRequest: TransferRequest): Promise<ApiResponse> {
+    return await firstValueFrom(
+      this.http.post<ApiResponse>(`${this.apiUrl}/transaction/transfer`, transferRequest, {
+        headers: this.getHeaders(),
+      })
+    );
   }
 }

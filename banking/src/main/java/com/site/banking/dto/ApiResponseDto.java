@@ -21,13 +21,8 @@ public class ApiResponseDto {
 
     private String role;   // 👈 add this line
 
-public String getRole() {
-    return role;
-}
-
-public void setRole(String role) {
-    this.role = role;
-}
+    @Schema(description = "Generic data payload for responses")
+    private Object data;
 
     // Constructors
     public ApiResponseDto() {}
@@ -89,5 +84,21 @@ public void setRole(String role) {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }
