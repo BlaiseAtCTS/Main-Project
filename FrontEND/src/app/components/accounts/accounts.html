@@ -1,0 +1,169 @@
+<div class="accounts-container min-vh-100 gradient-bg">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-university fa-2x text-white mb-2"></i>
+      <h4 class="text-white">Account Management</h4>
+    </div>
+    
+    <ul class="nav flex-column mt-4">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard">
+          <i class="fas fa-home me-2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active">
+          <i class="fas fa-wallet me-2"></i> My Accounts
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts/create">
+          <i class="fas fa-plus-circle me-2"></i> Create Account
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts/deposit">
+          <i class="fas fa-arrow-down me-2"></i> Deposit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts/withdraw">
+          <i class="fas fa-arrow-up me-2"></i> Withdraw
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts/delete">
+          <i class="fas fa-trash-alt me-2"></i> Delete Account
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/transactions">
+          <i class="fas fa-list me-2"></i> Transactions
+        </a>
+      </li>
+      <li class="nav-item mt-auto">
+        <a class="nav-link text-danger cursor-pointer" (click)="logout()">
+          <i class="fas fa-sign-out-alt me-2"></i> Logout
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <div class="content-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="mb-0"><i class="fas fa-wallet me-2"></i>My Accounts</h2>
+          <p class="text-muted mb-0">Manage and view all your accounts</p>
+        </div>
+        <button class="btn btn-primary" routerLink="/accounts/create">
+          <i class="fas fa-plus me-2"></i>Create New Account
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="text-center py-5">
+      <div class="spinner-border spinner-large text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading accounts...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="container-fluid px-4">
+      <div *ngIf="error()" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>{{ error() }}
+        <button type="button" class="btn-close" (click)="error.set(null)"></button>
+      </div>
+    </div>
+
+    <!-- No Accounts State -->
+    <div *ngIf="!loading() && accounts().length === 0 && !error()" class="text-center py-5">
+      <i class="fas fa-wallet fa-5x text-muted mb-3"></i>
+      <h4 class="text-muted">No Accounts Found</h4>
+      <p class="text-muted">You don't have any accounts yet. Create your first account to get started!</p>
+      <button class="btn btn-primary btn-lg" routerLink="/accounts/create">
+        <i class="fas fa-plus me-2"></i>Create Your First Account
+      </button>
+    </div>
+
+    <!-- Accounts Grid -->
+    <div *ngIf="!loading() && accounts().length > 0" class="container-fluid px-4">
+      <!-- Summary Card -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-lg bg-gradient-primary text-white">
+            <div class="card-body p-4">
+              <div class="row align-items-center">
+                <div class="col-md-6">
+                  <h3 class="mb-1">Total Balance Across All Accounts</h3>
+                  <h1 class="display-4 mb-0">{{ formatCurrency(getTotalBalance()) }}</h1>
+                </div>
+                <div class="col-md-6 text-md-end">
+                  <p class="mb-1 opacity-75">Total Active Accounts</p>
+                  <h2 class="mb-0">{{ accounts().length }}</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accounts Cards -->
+      <div class="row g-4">
+        <div *ngFor="let account of accounts()" class="col-md-6 col-lg-4">
+          <div class="card account-card border-0 shadow-lg h-100">
+            <div class="card-header bg-gradient-primary text-white">
+              <div class="d-flex align-items-center">
+                <div class="account-icon-large me-3">
+                  <i [class]="getAccountTypeIcon(account.type) + ' fa-2x'"></i>
+                </div>
+                <div>
+                  <h5 class="mb-0">{{ account.type }}</h5>
+                  <small class="opacity-75">Account</small>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-4">
+              <!-- Account Number -->
+              <div class="mb-3">
+                <p class="text-muted small mb-1">Account Number</p>
+                <p class="font-monospace fw-bold mb-0">{{ account.accountNumber }}</p>
+              </div>
+
+              <!-- Balance -->
+              <div class="mb-3">
+                <p class="text-muted small mb-1">Current Balance</p>
+                <h3 class="mb-0" 
+                    [class.text-success]="(account.balance || 0) >= 1000" 
+                    [class.text-danger]="(account.balance || 0) < 1000">
+                  {{ formatCurrency(account.balance) }}
+                </h3>
+                <small class="text-danger fw-bold" *ngIf="(account.balance || 0) < 1000">
+                  <i class="fas fa-exclamation-triangle me-1"></i>Low Balance Alert
+                </small>
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-sm btn-success" routerLink="/accounts/deposit">
+                  <i class="fas fa-arrow-down me-2"></i>Deposit
+                </button>
+                <button class="btn btn-sm btn-warning" routerLink="/accounts/withdraw">
+                  <i class="fas fa-arrow-up me-2"></i>Withdraw
+                </button>
+                <button class="btn btn-sm btn-outline-danger" routerLink="/accounts/delete">
+                  <i class="fas fa-trash me-2"></i>Delete Request
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

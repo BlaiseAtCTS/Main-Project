@@ -16,11 +16,11 @@
   <main class="main-content">
     <div class="content-header">
       <h2>All Users & Their Accounts</h2>
-      <button (click)="loadAllUsers()" class="refresh-button" [disabled]="loading">
+      <!-- <button (click)="loadAllUsers()" class="refresh-button" [disabled]="loading">
         <span *ngIf="loading">⏳</span>
         <span *ngIf="!loading">🔄</span>
         Refresh
-      </button>
+      </button> -->
     </div>
 
     <!-- Loading State -->
@@ -65,7 +65,8 @@
             </div>
             <div class="account-details">
               <span class="account-label">Balance:</span>
-              <span class="account-balance">${{ account.balance | number: '1.2-2'}}</span>
+              <span class="account-balance" *ngIf="account.balance !== null">${{ account.balance | number: '1.2-2'}}</span>
+              <span class="account-balance" *ngIf="account.balance === null">N/A</span>
             </div>
             <div *ngIf="account.balance !== null && account.balance < 1000" class="low-balance-badge">
               ⚠️ Low Balance

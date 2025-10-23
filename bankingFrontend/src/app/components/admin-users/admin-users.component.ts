@@ -171,11 +171,15 @@ export class AdminUsersComponent implements OnInit {
 
   logout() {
     console.log('Admin users logout clicked');
+    // Clear all authentication data
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('userId');
     sessionStorage.clear();
+    
+    // Navigate to login and force reload to clear any cached state
     this.router.navigate(['/login']).then(() => {
-      window.location.reload(); // Force full page reload to clear all state
+      window.location.reload();
     });
   }
 }
