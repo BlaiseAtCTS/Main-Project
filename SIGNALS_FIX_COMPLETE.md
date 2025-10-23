@@ -12,7 +12,7 @@ Converted all admin components to use **Angular Signals** for reactive state man
 ### Components Fixed
 
 #### 1. ✅ Admin Dashboard Component
-**File**: `Frontnigg/src/app/components/admin-dashboard/admin-dashboard.component.ts`
+**File**: `FrontEND/src/app/components/admin-dashboard/admin-dashboard.component.ts`
 
 **Changes**:
 - Converted all state variables to signals:
@@ -36,7 +36,7 @@ Converted all admin components to use **Angular Signals** for reactive state man
   ```
 
 #### 2. ✅ Admin Users Component
-**File**: `Frontnigg/src/app/components/admin-users/admin-users.component.ts`
+**File**: `FrontEND/src/app/components/admin-users/admin-users.component.ts`
 
 **Changes**:
 - Converted state to signals:
@@ -62,7 +62,7 @@ Converted all admin components to use **Angular Signals** for reactive state man
   ```
 
 #### 3. ✅ Profile Component
-**File**: `Frontnigg/src/app/components/profile/profile.component.ts`
+**File**: `FrontEND/src/app/components/profile/profile.component.ts`
 
 **Changes**:
 - Converted state to signals:
@@ -146,14 +146,14 @@ count.update(n => n + 1);  // Update based on current value
 ## Files Modified
 
 ### TypeScript Components (3 files):
-1. `Frontnigg/src/app/components/admin-dashboard/admin-dashboard.component.ts`
-2. `Frontnigg/src/app/components/admin-users/admin-users.component.ts`
-3. `Frontnigg/src/app/components/profile/profile.component.ts`
+1. `FrontEND/src/app/components/admin-dashboard/admin-dashboard.component.ts`
+2. `FrontEND/src/app/components/admin-users/admin-users.component.ts`
+3. `FrontEND/src/app/components/profile/profile.component.ts`
 
 ### HTML Templates (3 files):
-1. `Frontnigg/src/app/components/admin-dashboard/admin-dashboard.html`
-2. `Frontnigg/src/app/components/admin-users/admin-users.html`
-3. `Frontnigg/src/app/components/profile/profile.html`
+1. `FrontEND/src/app/components/admin-dashboard/admin-dashboard.html`
+2. `FrontEND/src/app/components/admin-users/admin-users.html`
+3. `FrontEND/src/app/components/profile/profile.html`
 
 ## Verification Steps
 

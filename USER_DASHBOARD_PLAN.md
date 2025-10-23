@@ -3,7 +3,7 @@
 ## ✅ Components Built
 
 ### 1. Dashboard Component (Main Landing Page)
-**Location**: `Frontnigg/src/app/components/dashboard/`
+**Location**: `FrontEND/src/app/components/dashboard/`
 **Features**:
 - Auto-loads user profile with accounts
 - Displays total balance across all accounts
@@ -15,7 +15,7 @@
 - Uses Angular Signals for instant reactivity
 
 ### 2. Accounts Component (Main Accounts Page)
-**Location**: `Frontnigg/src/app/components/accounts/`
+**Location**: `FrontEND/src/app/components/accounts/`
 **Features**:
 - Sidebar navigation to all account sub-pages
 - Auto-loads all user accounts
