@@ -1,23 +1,27 @@
 package com.site.banking.service;
 
-import java.math.BigDecimal;
-import java.security.Principal;
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import com.site.banking.dto.ApiResponseDto;
+import com.site.banking.dto.TransferRequest;
 import com.site.banking.model.Account;
 import com.site.banking.model.Transaction;
 import com.site.banking.model.User;
+import com.site.banking.model.UserPrincipal;
 import com.site.banking.repository.AccountRepository;
 import com.site.banking.repository.TransactionRepository;
 import com.site.banking.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class AccountService {
@@ -29,13 +33,11 @@ public class AccountService {
     private TransactionRepository transactionRepository;
 
     // BigDecimal comparison
-    // Returns true if withdrawal is valid (balance >= withdrawal amount)
-    // Returns false if withdrawal is invalid (balance < withdrawal amount)
     public boolean validAmount(Account a,Account b){
-        if(a.getBalance().compareTo(b.getBalance()) >= 0){
-            return true;  // Valid: balance >= withdrawal amount
+        if(a.getBalance().compareTo(b.getBalance()) > 0){
+            return false;
         }
-        return false;  // Invalid: balance < withdrawal amount
+        return true;
     }
 
     public String generateAccountNumber(String username, String accountType) {
@@ -116,7 +118,7 @@ public class AccountService {
                     .status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponseDto(false, "Account not found"));
         }
-        if(!validAmount(account1, account)) {
+        if(validAmount(account1, account)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Withdraw amount can't be greater than balance. Balance: $" + account1.getBalance()));

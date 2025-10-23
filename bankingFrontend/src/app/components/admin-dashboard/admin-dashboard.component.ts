@@ -135,15 +135,8 @@ export class AdminDashboardComponent implements OnInit {
   }
   
   logout() {
-    // Clear all authentication data
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    localStorage.removeItem('userId');
-    sessionStorage.clear();
-    
-    // Navigate to login and force reload to clear any cached state
-    this.router.navigate(['/login']).then(() => {
-      window.location.reload();
-    });
+    this.router.navigate(['/login']);
   }
 }

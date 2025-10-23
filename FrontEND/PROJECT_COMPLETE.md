@@ -1,4 +1,4 @@
-# 🎉 FrontEND - Modern Banking Frontend
+# 🎉 Frontnigg - Modern Banking Frontend
 
 ## ✅ PROJECT SUCCESSFULLY CREATED!
 
@@ -53,7 +53,7 @@ FrontEND/
 
 1. **Navigate to Project:**
 ```bash
-cd C:\Users\2446131\final\anotherMain-Project\Main-Project\FrontEND
+cd C:\Users\2446131\final\anotherMain-Project\Main-Project\Frontnigg
 ```
 
 2. **Start Development Server:**
@@ -221,7 +221,7 @@ For detailed implementation guides, see:
 
 ## 🎊 Success!
 
-Your new frontend "FrontEND" has been successfully created with:
+Your new frontend "Frontnigg" has been successfully created with:
 - ✅ Modern Angular 19 architecture
 - ✅ Bootstrap 5 styling
 - ✅ Complete backend integration

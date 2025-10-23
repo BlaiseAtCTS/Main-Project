@@ -1,4 +1,4 @@
-# FrontEND - Complete Angular Banking Frontend
+# Frontnigg - Complete Angular Banking Frontend
 
 ## ✅ Created Files
 
@@ -20,7 +20,7 @@
 Run these Angular CLI commands to generate the remaining components:
 
 ```bash
-cd C:\Users\2446131\final\anotherMain-Project\Main-Project\FrontEND
+cd C:\Users\2446131\final\anotherMain-Project\Main-Project\Frontnigg
 
 # Generate remaining components
 ng generate component components/dashboard --standalone
