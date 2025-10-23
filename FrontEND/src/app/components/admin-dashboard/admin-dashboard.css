@@ -1,0 +1,154 @@
+.admin-container {
+  display: flex;
+  background: #f8f9fa;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 1rem 1.5rem;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+}
+
+.sidebar .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-left-color: white;
+}
+
+.sidebar .nav-link.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-left-color: white;
+  font-weight: 500;
+}
+
+.sidebar .nav-link.text-danger:hover {
+  background: rgba(220, 53, 69, 0.2);
+  border-left-color: #dc3545;
+}
+
+/* Main Content Styles */
+.main-content {
+  margin-left: 280px;
+  flex: 1;
+  min-height: 100vh;
+}
+
+.content-header {
+  background: white;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+/* Table Styles */
+.table-hover tbody tr {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+  background: rgba(102, 126, 234, 0.05);
+  transform: scale(1.01);
+}
+
+.table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Card Hover Effects */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Button Styles */
+.btn-group .btn {
+  transition: all 0.2s ease;
+}
+
+.btn-group .btn:hover {
+  transform: scale(1.1);
+}
+
+/* Animation */
+.fade-in {
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badge Styles */
+.badge {
+  padding: 0.5rem 0.8rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+/* Large Spinner */
+.spinner-large {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Cursor Pointer */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+  }
+
+  .sidebar-header h4 {
+    display: none;
+  }
+
+  .sidebar .nav-link {
+    text-align: center;
+    padding: 1rem 0.5rem;
+  }
+
+  .sidebar .nav-link i {
+    margin: 0 !important;
+  }
+
+  .main-content {
+    margin-left: 60px;
+  }
+}

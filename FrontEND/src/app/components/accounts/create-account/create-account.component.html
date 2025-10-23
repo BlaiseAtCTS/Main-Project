@@ -1,0 +1,169 @@
+<div class="create-account-container min-vh-100 gradient-bg">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-university fa-2x text-white mb-2"></i>
+      <h4 class="text-white">Account Management</h4>
+    </div>
+    
+    <ul class="nav flex-column mt-4">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard">
+          <i class="fas fa-home me-2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts">
+          <i class="fas fa-wallet me-2"></i> My Accounts
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active">
+          <i class="fas fa-plus-circle me-2"></i> Create Account
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts/deposit">
+          <i class="fas fa-arrow-down me-2"></i> Deposit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts/withdraw">
+          <i class="fas fa-arrow-up me-2"></i> Withdraw
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/accounts/delete">
+          <i class="fas fa-trash-alt me-2"></i> Delete Account
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/transactions">
+          <i class="fas fa-list me-2"></i> Transactions
+        </a>
+      </li>
+      <li class="nav-item mt-auto">
+        <a class="nav-link text-danger cursor-pointer" (click)="logout()">
+          <i class="fas fa-sign-out-alt me-2"></i> Logout
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container py-4">
+      <!-- Header -->
+      <div class="content-header mb-4">
+        <h2 class="mb-1"><i class="fas fa-plus-circle me-2"></i>Create New Account</h2>
+        <p class="text-muted mb-0">Submit a request to create a new bank account</p>
+      </div>
+
+      <!-- Info Alert -->
+      <div class="alert alert-info mb-4">
+        <i class="fas fa-info-circle me-2"></i>
+        Your account creation request will be sent to an administrator for approval. 
+        You'll be notified once your account is created.
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="success()" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>{{ success() }}
+        <button type="button" class="btn-close" (click)="success.set(null)"></button>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error()" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>{{ error() }}
+        <button type="button" class="btn-close" (click)="error.set(null)"></button>
+      </div>
+
+      <!-- Create Account Form -->
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card border-0 shadow-lg">
+            <div class="card-header bg-gradient-primary text-white">
+              <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Account Details</h5>
+            </div>
+            <div class="card-body p-4">
+              <form [formGroup]="createAccountForm" (ngSubmit)="onSubmit()">
+                <!-- Account Type -->
+                <div class="mb-4">
+                  <label for="accountType" class="form-label fw-bold">
+                    <i class="fas fa-tag me-2 text-primary"></i>Account Type
+                  </label>
+                  <select 
+                    id="accountType" 
+                    class="form-select form-select-lg" 
+                    formControlName="type">
+                    <option *ngFor="let type of accountTypes" [value]="type">
+                      {{ type }}
+                    </option>
+                  </select>
+                  <div class="form-text">Choose the type of account you want to create</div>
+                </div>
+
+                <!-- Initial Balance -->
+                <div class="mb-4">
+                  <label for="initialBalance" class="form-label fw-bold">
+                    <i class="fas fa-dollar-sign me-2 text-success"></i>Initial Balance
+                  </label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text">$</span>
+                    <input 
+                      type="number" 
+                      id="initialBalance" 
+                      class="form-control" 
+                      formControlName="initialBalance"
+                      placeholder="1000"
+                      min="100"
+                      step="100">
+                  </div>
+                  <div class="form-text">Minimum initial deposit: $1000</div>
+                  <div *ngIf="createAccountForm.get('initialBalance')?.invalid && createAccountForm.get('initialBalance')?.touched" 
+                       class="text-danger small mt-1">
+                    <i class="fas fa-exclamation-circle me-1"></i>
+                    Initial balance must be at least $1000
+                  </div>
+                </div>
+
+                <!-- Account Info Box -->
+                <div class="info-box mb-4">
+                  <h6 class="fw-bold mb-2"><i class="fas fa-lightbulb me-2"></i>Account Features:</h6>
+                  <ul class="mb-0 small">
+                    <li>Account number will be auto-generated</li>
+                    <li>Request requires admin approval</li>
+                    <li>You'll receive confirmation once approved</li>
+                    <li>Initial balance will be credited after approval</li>
+                  </ul>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-grid gap-2">
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary btn-lg" 
+                    [disabled]="loading() || createAccountForm.invalid">
+                    <span *ngIf="!loading()">
+                      <i class="fas fa-paper-plane me-2"></i>Submit Request
+                    </span>
+                    <span *ngIf="loading()">
+                      <span class="spinner-border spinner-border-sm me-2"></span>
+                      Submitting...
+                    </span>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary" 
+                    routerLink="/accounts">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Accounts
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
