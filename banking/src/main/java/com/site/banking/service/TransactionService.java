@@ -1,5 +1,15 @@
 package com.site.banking.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.site.banking.dto.ApiResponseDto;
 import com.site.banking.dto.GetTransactionsDto;
 import com.site.banking.dto.TransferRequest;
@@ -7,16 +17,8 @@ import com.site.banking.model.Account;
 import com.site.banking.model.Transaction;
 import com.site.banking.repository.AccountRepository;
 import com.site.banking.repository.TransactionRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 
-import java.math.BigDecimal;
-import java.util.List;
+import jakarta.transaction.Transactional;
 
 @Service
 public class TransactionService {
@@ -80,10 +82,29 @@ public class TransactionService {
 
     public ResponseEntity<ApiResponseDto> getTransactions(GetTransactionsDto transactionsDto) {
         if(transactionsDto.getSourceAccountNumber() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponseDto(false, "Account cannot be empty", null, null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Account number cannot be empty", null, null));
         }
-        List<Transaction> transactionList = transactionRepository.findBySourceAccountNumber(transactionsDto.getSourceAccountNumber());
-        return ResponseEntity.ok(new ApiResponseDto(true, "Transaction List Fetched", null));
+
+        // Get the authenticated user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Verify the user owns this account
+        Account account = accountRepository.findByAccountNumberAndUserUserName(
+                transactionsDto.getSourceAccountNumber(), username);
+        
+        if(account == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponseDto(false, "Unauthorized: You don't own this account", null, null));
+        }
+
+        // Get all transactions where this account is the source
+        List<Transaction> transactionList = transactionRepository.findBySourceAccountNumber(
+                transactionsDto.getSourceAccountNumber());
+        
+        ApiResponseDto response = new ApiResponseDto(true, "Transaction List Fetched", null, null);
+        response.setData(transactionList);
+        
+        return ResponseEntity.ok(response);
     }
 }
