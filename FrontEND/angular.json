@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Frontnigg": {
+    "FrontEND": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -58,10 +58,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Frontnigg:build:production"
+              "buildTarget": "FrontEND:build:production"
             },
             "development": {
-              "buildTarget": "Frontnigg:build:development"
+              "buildTarget": "FrontEND:build:development"
             }
           },
           "defaultConfiguration": "development"
