@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { TransactionService } from '../../services/transaction.service';
@@ -9,13 +10,14 @@ import { Transaction } from '../../models/transaction.model';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class DashboardComponent implements OnInit {
   accounts = signal<Account[]>([]);
   recentTransactions = signal<Transaction[]>([]);
+  selectedAccountForTransactions = signal<Account | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
   totalBalance = signal(0);
@@ -50,7 +52,14 @@ export class DashboardComponent implements OnInit {
         this.accounts.set(profile.accounts || []);
         this.username.set(profile.username);
         this.calculateStats();
-        this.loadRecentTransactions();
+        
+        // Set the first account as default for transactions
+        if (profile.accounts && profile.accounts.length > 0) {
+          this.selectedAccountForTransactions.set(profile.accounts[0]);
+          this.loadRecentTransactions(profile.accounts[0].accountNumber);
+        } else {
+          this.loading.set(false);
+        }
       },
       error: (err) => {
         console.error('Error loading profile:', err);
@@ -60,16 +69,17 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  loadRecentTransactions(): void {
+  loadRecentTransactions(accountNumber?: string): void {
     const accs = this.accounts();
     if (accs.length === 0) {
       this.loading.set(false);
       return;
     }
 
-    // Load transactions from the first account (or you can load from all and combine)
-    const firstAccount = accs[0];
-    this.transactionService.getTransactions({ accountNumber: firstAccount.accountNumber }).subscribe({
+    // Use the provided account number or fall back to the first account
+    const targetAccountNumber = accountNumber || accs[0].accountNumber;
+    
+    this.transactionService.getTransactions({ accountNumber: targetAccountNumber }).subscribe({
       next: (response) => {
         const transactions = response.data as Transaction[];
         if (transactions && Array.isArray(transactions)) {
@@ -89,6 +99,14 @@ export class DashboardComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  onAccountChangeForTransactions(accountNumber: string): void {
+    const account = this.accounts().find(a => a.accountNumber === accountNumber);
+    if (account) {
+      this.selectedAccountForTransactions.set(account);
+      this.loadRecentTransactions(accountNumber);
+    }
   }
 
   calculateStats(): void {

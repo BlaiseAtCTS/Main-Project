@@ -3,8 +3,8 @@
   <nav class="top-nav">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
-        <i class="fas fa-university fa-2x text-white me-3"></i>
-        <h4 class="text-white mb-0">Banking Portal</h4>
+        <i class="fas fa-gem fa-2x text-white me-3"></i>
+        <h4 class="text-white mb-0 fw-bold">Ferroro Bank</h4>
       </div>
       <div class="d-flex align-items-center gap-3">
         <span class="text-white"><i class="fas fa-user-circle me-2"></i>{{ username() }}</span>
@@ -107,8 +107,8 @@
                 </div>
                 <div class="col-md-3">
                   <button class="action-btn w-100" routerLink="/transactions">
-                    <i class="fas fa-list fa-2x mb-2 text-info"></i>
-                    <p class="mb-0 fw-bold">View Transactions</p>
+                    <i class="fas fa-exchange-alt fa-2x mb-2 text-info"></i>
+                    <p class="mb-0 fw-bold">Transfer Money</p>
                   </button>
                 </div>
               </div>
@@ -166,6 +166,37 @@
               <button class="btn btn-sm btn-light" routerLink="/transactions">View All</button>
             </div>
             <div class="card-body p-4">
+              <!-- Account Filter Dropdown -->
+              <div *ngIf="accounts().length > 0" class="mb-4">
+                <label for="transactionAccountSelect" class="form-label fw-bold">
+                  <i class="fas fa-filter me-2"></i>Filter by Account
+                </label>
+                <select 
+                  id="transactionAccountSelect"
+                  class="form-select form-select-lg"
+                  [value]="selectedAccountForTransactions()?.accountNumber"
+                  (change)="onAccountChangeForTransactions($any($event.target).value)"
+                >
+                  <option *ngFor="let account of accounts()" [value]="account.accountNumber">
+                    {{ account.accountNumber }} - {{ account.type }}
+                  </option>
+                </select>
+                
+                <!-- Selected Account Info -->
+                <div *ngIf="selectedAccountForTransactions()" class="mt-3 p-3 bg-light rounded">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <p class="mb-0 fw-bold">Account: {{ selectedAccountForTransactions()?.accountNumber }}</p>
+                      <span class="badge bg-info">{{ selectedAccountForTransactions()?.type }}</span>
+                    </div>
+                    <div class="text-end">
+                      <p class="mb-0 text-muted small">Balance</p>
+                      <h5 class="mb-0 text-success">{{ formatCurrency(selectedAccountForTransactions()?.balance || 0) }}</h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div *ngIf="recentTransactions().length === 0" class="text-center py-4">
                 <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
                 <p class="text-muted">No transactions yet</p>
