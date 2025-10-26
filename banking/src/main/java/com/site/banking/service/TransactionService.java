@@ -29,16 +29,29 @@ public class TransactionService {
 
     // Transfer logging
     private void recordTransfer(TransferRequest transferRequest) {
-        // Create transaction record
+        LocalDateTime localDateTime = LocalDateTime.now();
+        // Create transaction record for sender
         Transaction transaction = new Transaction();
         transaction.setSourceAccountNumber(transferRequest.getSourceAccountNumber());
         transaction.setDestinationAccountNumber(transferRequest.getDestinationAccountNumber());
         transaction.setAmount(transferRequest.getAmount());
-        transaction.setType("Transfer");
-        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setType("Payment Sent");
+        transaction.setTimestamp(localDateTime);
         Account account1 = accountRepository.findByAccountNumber(transferRequest.getSourceAccountNumber());
         transaction.setAccount(account1);
+
+        // Create transaction record for receiver
+        Transaction transaction1 = new Transaction();
+        transaction1.setSourceAccountNumber(transferRequest.getDestinationAccountNumber());
+        transaction1.setDestinationAccountNumber(transferRequest.getSourceAccountNumber());
+        transaction1.setAmount(transferRequest.getAmount());
+        transaction1.setType("Payment Received");
+        transaction1.setTimestamp(localDateTime);
+        Account account2 = accountRepository.findByAccountNumber(transferRequest.getDestinationAccountNumber());
+        transaction1.setAccount(account2);
+
         transactionRepository.save(transaction);
+        transactionRepository.save(transaction1);
     }
 
     @Transactional
