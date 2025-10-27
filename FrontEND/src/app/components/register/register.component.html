@@ -9,12 +9,30 @@
             <p class="text-muted">Create your account today!</p>
           </div>
 
-          <div *ngIf="error" class="alert alert-danger" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+          <!-- Status Messages Above Form -->
+          <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-exclamation-circle me-2 mt-1"></i>
+              <div class="flex-grow-1">
+                <strong>{{ validationError || 'Error' }}</strong>
+                <p class="mb-0">{{ error }}</p>
+                <small *ngIf="fieldError" class="text-muted">
+                  <i class="fas fa-info-circle me-1"></i>Issue with field: <strong>{{ fieldError }}</strong>
+                </small>
+              </div>
+            </div>
+            <button type="button" class="btn-close" (click)="error = null; validationError = null; fieldError = null" aria-label="Close"></button>
           </div>
 
-          <div *ngIf="success" class="alert alert-success" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ success }}
+          <div *ngIf="success" class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-check-circle me-2 mt-1"></i>
+              <div class="flex-grow-1">
+                <strong>Success!</strong>
+                <p class="mb-0">{{ success }}</p>
+              </div>
+            </div>
+            <button type="button" class="btn-close" (click)="success = null" aria-label="Close"></button>
           </div>
 
           <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
@@ -24,7 +42,7 @@
                   <i class="fas fa-user me-2"></i>First Name
                 </label>
                 <input type="text" class="form-control" id="firstName" name="firstName"
-                  [(ngModel)]="registerData.firstName" required />
+                  [(ngModel)]="registerData.firstName" />
               </div>
 
               <div class="col-md-6 mb-3">
@@ -32,7 +50,7 @@
                   <i class="fas fa-user me-2"></i>Last Name
                 </label>
                 <input type="text" class="form-control" id="lastName" name="lastName"
-                  [(ngModel)]="registerData.lastName" required />
+                  [(ngModel)]="registerData.lastName" />
               </div>
             </div>
 
@@ -41,7 +59,7 @@
                 <i class="fas fa-id-card me-2"></i>Username
               </label>
               <input type="text" class="form-control" id="userName" name="userName"
-                [(ngModel)]="registerData.userName" required />
+                [(ngModel)]="registerData.userName" />
             </div>
 
             <div class="mb-3">
@@ -49,7 +67,7 @@
                 <i class="fas fa-envelope me-2"></i>Email
               </label>
               <input type="email" class="form-control" id="email" name="email"
-                [(ngModel)]="registerData.email" required />
+                [(ngModel)]="registerData.email" />
             </div>
 
             <div class="mb-3">
@@ -57,7 +75,7 @@
                 <i class="fas fa-phone me-2"></i>Phone Number
               </label>
               <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber"
-                [(ngModel)]="registerData.phoneNumber" required />
+                [(ngModel)]="registerData.phoneNumber" />
             </div>
 
             <div class="mb-3">
@@ -65,7 +83,7 @@
                 <i class="fas fa-calendar me-2"></i>Date of Birth
               </label>
               <input type="date" class="form-control" id="dob" name="dob"
-                [(ngModel)]="registerData.dob" required />
+                [(ngModel)]="registerData.dob" />
             </div>
 
             <div class="mb-3">
@@ -73,7 +91,7 @@
                 <i class="fas fa-home me-2"></i>Address
               </label>
               <textarea class="form-control" id="address" name="address" rows="2"
-                [(ngModel)]="registerData.address" required></textarea>
+                [(ngModel)]="registerData.address"></textarea>
             </div>
 
             <div class="mb-4">
@@ -81,18 +99,11 @@
                 <i class="fas fa-lock me-2"></i>Password
               </label>
               <input type="password" class="form-control" id="password" name="password"
-                [(ngModel)]="registerData.password" required />
+                [(ngModel)]="registerData.password" />
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg w-100 gradient-primary border-0"
-              [disabled]="loading || !registerForm.valid">
-              <span *ngIf="!loading">
-                <i class="fas fa-user-plus me-2"></i>Register
-              </span>
-              <span *ngIf="loading">
-                <span class="spinner-border spinner-border-sm me-2"></span>
-                Creating account...
-              </span>
+            <button type="submit" class="btn btn-primary btn-lg w-100 gradient-primary border-0">
+              <i class="fas fa-user-plus me-2"></i>Register
             </button>
           </form>
 

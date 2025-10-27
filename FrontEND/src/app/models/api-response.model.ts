@@ -5,4 +5,6 @@ export interface ApiResponse {
   token?: string;
   role?: string;
   data?: any;
+  error?: string;      // Validation error type (e.g., "Validation Error", "Registration Failed")
+  field?: string;      // Field name causing the error (e.g., "userName", "email")
 }
