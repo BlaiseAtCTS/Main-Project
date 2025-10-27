@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { AccountCreateRequest, AccountOperationRequest } from '../models/account.model';
 import { ApiResponse } from '../models/api-response.model';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  private apiUrl = 'http://localhost:8080/account';
+  private apiUrl = `${environment.apiBaseUrl}/account`;
 
   constructor(
     private http: HttpClient,
