@@ -38,11 +38,6 @@ public class UserService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Username is required", "Validation Error", "userName"));
         }
-        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponseDto(false, "Password is required", "Validation Error", "password"));
-        }
         if (user.getFirstName() == null || user.getFirstName().trim().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -53,15 +48,56 @@ public class UserService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Last name is required", "Validation Error", "lastName"));
         }
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Email is required", "Validation Error", "email"));
+        }
         if (!user.getEmail().matches(emailRegex)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Email must be in proper format", "Validation Error", "email"));
         }
+        if (user.getPhoneNumber() == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Phone number is required", "Validation Error", "phoneNumber"));
+        }
         if (user.getPhoneNumber() < 1000000000L || user.getPhoneNumber() > 9999999999L) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponseDto(false, "Phone number must have 10 digits", "Validation Error", "phoneNumber"));
+        }
+        if (user.getDob() == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Date of Birth is required", "Validation Error", "dob"));
+        }
+        // Age validation: must be 18 or above
+        try {
+            java.util.Date dobDate = user.getDob();
+            java.time.LocalDate dob = dobDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+            java.time.LocalDate today = java.time.LocalDate.now();
+            int age = java.time.Period.between(dob, today).getYears();
+            if (age < 18) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiResponseDto(false, "You should be 18 or above to apply", "Validation Error", "dob"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Invalid date of birth format", "Validation Error", "dob"));
+        }
+        if (user.getAddress() == null || user.getAddress().trim().isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Address is required", "Validation Error", "address"));
+        }
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseDto(false, "Password is required", "Validation Error", "password"));
         }
 
         if (userExists(user.getUserName())) {
