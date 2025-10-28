@@ -1,5 +1,6 @@
 package pages;
 
+import core.config.Config;
 import core.driver.DriverManager;
 import core.util.ExplicitWait;
 import org.openqa.selenium.By;
@@ -20,7 +21,7 @@ public class RegisterPage {
     private By statusMessage = By.xpath("//div[@role='alert']//child::p");
 
     public String registerPageUrl() {
-        return "http://localhost:4200/register";
+        return Config.registerPageUrl();
     }
 
     public void enterFirstName(String string) {
@@ -56,13 +57,9 @@ public class RegisterPage {
     }
 
     public void clickRegisterButton() {
-        ExplicitWait.getWait().until(ExpectedConditions.elementToBeClickable(registerButton));
-        try {
-            DriverManager.get().findElement(registerButton).click();
-        } catch(Exception e) {
-            JavascriptExecutor executor = (JavascriptExecutor) DriverManager.get();
-            executor.executeScript("arguments[0].click()", DriverManager.get().findElement(registerButton));
-        }
+        JavascriptExecutor executor = (JavascriptExecutor) DriverManager.get();
+        executor.executeScript("arguments[0].scrollIntoView(true);", DriverManager.get().findElement(registerButton));
+        executor.executeScript("arguments[0].click();", DriverManager.get().findElement(registerButton));
     }
 
     public void waitForLoginPage() {
