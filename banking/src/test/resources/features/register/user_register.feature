@@ -1,14 +1,14 @@
-@register
+@register @smoke
 Feature: User Registration
 
   As a new user
   I want to register with valid details
-  So that I can create an account and log in to the banking application
+  So that I can create an account in the banking application
 
   Background:
     Given User is on the Login page
     When User clicks on the Sign Up link
-  @register1
+  @register_valid @full
   Scenario Outline: Successful user registration with valid details
     When User enters first name "<firstName>"
     And User enters last name "<lastName>"
@@ -22,16 +22,17 @@ Feature: User Registration
     Then User should be redirected to the Login page
 
     Examples:
-      | firstName | lastName | userName  | email            | phoneNumber | dob        | address    | password  |
-      | John      | Doe      | johndoe01 | john@example.com | 9876543210  | 15-06-1998 | 123 Street | Pass@1234 |
+      | firstName | lastName | userName    | email            | phoneNumber | dob        | address    | password  |
+      | John      | Doe      | johndoe01   | john@example.com | 9876543210  | 15-06-1998 | 123 Street | Pass@1234 |
+#      | Adam      | Smith    | adamsmith01 | adam@example.com | 9171652478  | 07-01-2000 | 125 Street | Pass@4321 |
 
-  @register2
+  @register_invalid_1
   Scenario: Registration fails when required fields are empty
     When User leaves all fields empty
     And User clicks on the Register button
-    Then A status message requiring to enter values should be displayed
+    But A status message requiring to enter values should be displayed
 
-  @register3
+  @register_invalid_2
   Scenario Outline: Registration fails when email format is invalid
 
     When User enters first name "<firstName>"
@@ -43,14 +44,14 @@ Feature: User Registration
     And User enters address "<address>"
     And User enters password "<password>"
     And User clicks on the Register button
-    Then A status message "Email must be in proper format" should be displayed
+    But A status message "Email must be in proper format" should be displayed
 
     Examples:
       | firstName | lastName | userName  | email    | phoneNumber | dob        | address    | password  |
       | John      | Doe      | johndoe01 | john@    | 9876543210  | 15-06-1998 | 123 Street | Pass@1234 |
       | John      | Doe      | johndoe01 | john.com | 9876543210  | 15-06-1998 | 123 Street | Pass@1234 |
 
-  @register4
+  @register_invalid_3
   Scenario Outline: Registration fails when phone number is not 10 digits
     When User enters first name "<firstName>"
     And User enters last name "<lastName>"
@@ -61,14 +62,14 @@ Feature: User Registration
     And User enters address "<address>"
     And User enters password "<password>"
     And User clicks on the Register button
-    Then A status message "Phone number must have 10 digits" should be displayed
+    But A status message "Phone number must have 10 digits" should be displayed
 
     Examples:
       | firstName | lastName | userName  | email            | phoneNumber | dob        | address    | password  |
       | John      | Doe      | johndoe01 | john@example.com | 98765410    | 15-06-1998 | 123 Street | Pass@1234 |
       | John      | Doe      | johndoe01 | john@example.com | 987654310   | 15-06-1998 | 123 Street | Pass@1234 |
 
-  @register5
+  @register_invalid_4
   Scenario Outline: Registration fails when user is younger than 18 years
     When User enters first name "<firstName>"
     And User enters last name "<lastName>"
@@ -79,7 +80,7 @@ Feature: User Registration
     And User enters address "<address>"
     And User enters password "<password>"
     And User clicks on the Register button
-    Then A status message "You should be 18 or above to apply" should be displayed
+    But A status message "You should be 18 or above to apply" should be displayed
 
     Examples:
       | firstName | lastName | userName  | email            | phoneNumber | dob        | address    | password  |

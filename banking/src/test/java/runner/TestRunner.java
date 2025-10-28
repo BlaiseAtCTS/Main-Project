@@ -5,10 +5,10 @@ import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(
         dryRun = false,
-        features = "src/test/resources/features/register",
+        features = "src/test/resources/features",
         glue = { "steps", "core.hooks" },
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        tags = "@register2 or @register3 or @register4 or @register5",
+        tags = "@action",
         plugin = { "pretty" },
         monochrome = true
 )
