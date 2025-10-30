@@ -28,4 +28,5 @@ public class Config {
     public static String userTransactionPageUrl() { return System.getProperty("userTransactionPageUrl", PROPS.getProperty("userTransactionPageUrl")); }
 
     public static String adminDashboardPageUrl() { return System.getProperty("adminDashboardPageUrl", PROPS.getProperty("adminDashboardPageUrl")); }
+    public static String apiBaseUrl() { return System.getProperty("apiBaseUrl", PROPS.getProperty("apiBaseUrl")); }
 }

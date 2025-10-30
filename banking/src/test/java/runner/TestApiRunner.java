@@ -5,12 +5,12 @@ import io.cucumber.testng.CucumberOptions;
 
 @CucumberOptions(
         dryRun = false,
-        features = "src/test/resources/features",
-        glue = { "steps", "core.hooks" },
+        features = "src/test/resources/features/api",
+        glue = { "steps" },
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        tags = "@account_creation",
+        tags = "@api_account_deposit",
         plugin = { "pretty" },
         monochrome = true
 )
-public class TestRunner extends AbstractTestNGCucumberTests {
+public class TestApiRunner extends AbstractTestNGCucumberTests {
 }
