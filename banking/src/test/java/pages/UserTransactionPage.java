@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import payloads.account.AccountTransferData;
 
 public class UserTransactionPage {
     private By sourceAccount = By.id("sourceAccount");
@@ -24,12 +25,14 @@ public class UserTransactionPage {
         select.selectByIndex(0);
     }
 
-    public void enterDestinationAccount(String arg0) {
-        DriverManager.get().findElement(destinationAccount).sendKeys(arg0);
+    public void enterDestinationAccount() {
+        AccountTransferData accountData = new AccountTransferData();
+        DriverManager.get().findElement(destinationAccount).sendKeys(accountData.getDestinationAccountNumber());
     }
 
-    public void enterDepositAmount(String arg0) {
-        DriverManager.get().findElement(transferAmount).sendKeys(arg0);
+    public void enterTransferAmount() {
+        AccountTransferData accountData = new AccountTransferData();
+        DriverManager.get().findElement(transferAmount).sendKeys(accountData.getTransferAmount());
     }
 
     public void clickTransferButton() {

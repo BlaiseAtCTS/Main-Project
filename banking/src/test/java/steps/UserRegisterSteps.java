@@ -18,8 +18,8 @@ public class UserRegisterSteps {
 
     private final AdminDashboardPage adminDashboardPage = new AdminDashboardPage();
 
-    @Given("User is on the Login page")
-    public void userIsOnTheLoginPage() {
+    @Given("{string} is on the Login page")
+    public void isOnTheLoginPage(String arg0) {
         loginPage.open();
         Assert.assertEquals(DriverManager.getCurrUrl(), loginPage.loginPageUrl());
     }
@@ -27,46 +27,6 @@ public class UserRegisterSteps {
     public void userClicksOnTheSignUpLink() {
         loginPage.clickSignUpLink();
         Assert.assertEquals(DriverManager.getCurrUrl(), registerPage.registerPageUrl());
-    }
-    @When("User enters first name {string}")
-    public void userEntersFirstName(String string) {
-        registerPage.enterFirstName(string);
-    }
-    @When("User enters last name {string}")
-    public void userEntersLastName(String string) {
-        registerPage.enterLastName(string);
-    }
-    @When("User enters username {string}")
-    public void userEntersUsername(String string) {
-        if(DriverManager.getCurrUrl().equals(registerPage.registerPageUrl())) {
-            registerPage.enterUserName(string);
-        } else if(DriverManager.getCurrUrl().equals(loginPage.loginPageUrl())) {
-            loginPage.enterUserName(string);
-        }
-    }
-    @When("User enters email {string}")
-    public void userEntersEmail(String string) {
-        registerPage.enterEmail(string);
-    }
-    @When("User enters phone number {string}")
-    public void userEntersPhoneNumber(String string) {
-        registerPage.enterPhoneNumber(string);
-    }
-    @When("User enters date of birth {string}")
-    public void userEntersDateOfBirth(String string) {
-        registerPage.enterDob(string);
-    }
-    @When("User enters address {string}")
-    public void userEntersAddress(String string) {
-        registerPage.enterAddress(string);
-    }
-    @When("User enters password {string}")
-    public void userEntersPassword(String string) {
-        if(DriverManager.getCurrUrl().equals(registerPage.registerPageUrl())) {
-            registerPage.enterPassword(string);
-        } else if(DriverManager.getCurrUrl().equals(loginPage.loginPageUrl())) {
-            loginPage.enterPassword(string);
-        }
     }
     @When("User clicks on the Register button")
     public void userClicksOnTheRegisterButton() {
@@ -93,8 +53,8 @@ public class UserRegisterSteps {
         Assert.assertEquals(registerPage.checkForEmailStatus(), arg0);
     }
 
-    @And("User clicks on the Sign In button")
-    public void userClicksOnTheSignInButton() {
+    @And("{string} clicks on the Sign In button")
+    public void clicksOnTheSignInButton(String arg0) {
         loginPage.clickSignInButton();
     }
 
@@ -114,14 +74,14 @@ public class UserRegisterSteps {
         userDashboardPage.clicksOnAction(arg0);
     }
 
-    @And("User clicks on Account Type as {string}")
-    public void userClicksOnAccountTypeAs(String arg0) {
-        userAccountPage.clicksOnAccountType(arg0);
+    @And("User selects Account Type")
+    public void userSelectsAccountType() {
+        userAccountPage.clicksOnAccountType();
     }
 
-    @And("User enters Initial Balance as {string}")
-    public void userEntersInitialBalanceAs(String arg0) {
-        userAccountPage.enterInitialBalance(arg0);
+    @And("User enters {string} Amount")
+    public void userEntersAmount(String amountType) {
+        userAccountPage.amountType(amountType);
     }
 
     @And("User clicks on Submit Request Button")
@@ -129,15 +89,15 @@ public class UserRegisterSteps {
         userAccountPage.clicksOnSubmitRequestButton();
     }
 
-    @Then("User should be redirected to the admin dashboard page")
-    public void userShouldBeRedirectedToTheAdminDashboardPage() {
+    @Then("Admin should be redirected to the admin dashboard page")
+    public void adminShouldBeRedirectedToTheAdminDashboardPage() {
         adminDashboardPage.waitForDashboardPage();
         Assert.assertEquals(DriverManager.getCurrUrl(), adminDashboardPage.adminDashboardPageUrl());
     }
 
-    @When("Admin clicks on {string} Request")
-    public void adminClicksOnRequest(String arg0) {
-        adminDashboardPage.clickAction(arg0);
+    @When("Admin Approve or Decline the request")
+    public void adminApproveOrDeclineTheRequest() {
+        adminDashboardPage.clickAction();
     }
 
     @And("Admin will accept the Alert")
@@ -158,17 +118,6 @@ public class UserRegisterSteps {
             userWithdrawPage.selectAccountNumber();
         } else if (DriverManager.getCurrUrl().equals(userTransactionPage.userTransactionPageUrl())) {
             userTransactionPage.selectAccountNumber();
-        }
-    }
-
-    @And("User enters Amount {string}")
-    public void userEntersAmount(String arg0) {
-        if(DriverManager.getCurrUrl().equals(userDepositPage.userDepositPageUrl())) {
-            userDepositPage.enterDepositAmount(arg0);
-        } else if(DriverManager.getCurrUrl().equals(userWithdrawPage.userWithdrawPageUrl())) {
-            userWithdrawPage.enterDepositAmount(arg0);
-        } else if(DriverManager.getCurrUrl().equals(userTransactionPage.userTransactionPageUrl())) {
-            userTransactionPage.enterDepositAmount(arg0);
         }
     }
 
@@ -194,8 +143,38 @@ public class UserRegisterSteps {
         }
     }
 
-    @And("User enters {string}")
-    public void userEnters(String arg0) {
-        userTransactionPage.enterDestinationAccount(arg0);
+    @And("User enters Destination Account Number")
+    public void userEntersDestinationAccountNumber() {
+        userTransactionPage.enterDestinationAccount();
+    }
+
+    @When("User enters valid data in registration page")
+    public void userEntersValidDataInRegistrationPage() {
+        registerPage.userEntersValidDataInRegistrationPage(null);
+    }
+
+    @When("User enters invalid {string} in registration page")
+    public void userEntersInvalidInRegistrationPage(String typeOfInvalidInput) {
+        registerPage.userEntersInvalidDataInRegistrationPage(typeOfInvalidInput);
+    }
+
+    @When("User enters valid data in login page")
+    public void userEntersValidDataInLoginPage() {
+        loginPage.userEntersValidDataInLoginPage(null);
+    }
+
+    @When("User enters invalid {string} in login page")
+    public void userEntersInvalidInLoginPage(String typeOfInvalidInput) {
+        loginPage.userEntersInvalidInLoginPage(typeOfInvalidInput);
+    }
+
+    @When("Admin enters username")
+    public void adminEntersUsername() {
+        loginPage.adminEntersUsername();
+    }
+
+    @And("Admin enters password")
+    public void adminEntersPassword() {
+        loginPage.adminEntersPassword();
     }
 }

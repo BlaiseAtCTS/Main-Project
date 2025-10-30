@@ -1,10 +1,14 @@
 package pages;
 
+import api.services.ApiServices;
 import core.config.Config;
 import core.driver.DriverManager;
 import core.util.ExplicitWait;
+import io.restassured.response.Response;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import payloads.AdminData;
+import payloads.LoginData;
 
 public class LoginPage {
     private By signUpLink = By.xpath("//a[.='Sign Up']");
@@ -24,12 +28,21 @@ public class LoginPage {
         DriverManager.get().findElement(signUpLink).click();
     }
 
-    public void enterUserName(String string) {
-        DriverManager.get().findElement(userNameField).sendKeys(string);
+    public void userEntersValidDataInLoginPage(String typeOfInvalidInput) {
+        LoginData loginData = new LoginData();
+        String passwordLocalValue = loginData.getPassword();
+
+        DriverManager.get().findElement(userNameField).sendKeys(loginData.getUserName());
+
+        if(typeOfInvalidInput != null && !typeOfInvalidInput.isEmpty()) {
+            passwordLocalValue = "incorrectPassword";
+        }
+        System.out.println("Password: "+ passwordLocalValue);
+        DriverManager.get().findElement(passwordField).sendKeys(passwordLocalValue);
     }
 
-    public void enterPassword(String string) {
-        DriverManager.get().findElement(passwordField).sendKeys(string);
+    public void userEntersInvalidInLoginPage(String typeOfInvalidInput) {
+        this.userEntersValidDataInLoginPage(typeOfInvalidInput);
     }
 
     public void clickSignInButton() {
@@ -43,5 +56,19 @@ public class LoginPage {
 
     public boolean checkSignInButtonIsDisabled() {
         return DriverManager.get().findElement(signInButton).isEnabled();
+    }
+
+    public void adminEntersUsername() {
+        AdminData adminData = new AdminData();
+        DriverManager.get().findElement(userNameField).sendKeys(adminData.getUserName());
+    }
+
+    public void adminEntersPassword() {
+        AdminData adminData = new AdminData();
+        DriverManager.get().findElement(passwordField).sendKeys(adminData.getPassword());
+    }
+
+    public Response apiPostRequest() {
+        return new ApiServices().postRequest("/user/login", null, new LoginData());
     }
 }

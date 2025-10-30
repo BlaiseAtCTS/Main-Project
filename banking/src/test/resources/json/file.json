@@ -1,0 +1,19 @@
+{
+  "loginData":
+  {
+    "userName": "adamsmith01",
+    "password": "Pass@4321"
+  },
+  "accountData":
+  {
+    "accountNumber": "1571935748",
+    "type": "CHECKING",
+    "destinationAccountNumber": "0129057588"
+  },
+  "adminData":
+  {
+    "userName": "admin",
+    "password": "admin",
+    "action": "Approve Request"
+  }
+}

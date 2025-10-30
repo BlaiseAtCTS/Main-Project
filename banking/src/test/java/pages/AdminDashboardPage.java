@@ -6,14 +6,16 @@ import core.util.ExplicitWait;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import payloads.AdminData;
 
 public class AdminDashboardPage {
     public String adminDashboardPageUrl() {
         return Config.adminDashboardPageUrl();
     }
 
-    public void clickAction(String arg0) {
-        DriverManager.get().findElement(By.xpath("(//button[@title='" + arg0 + "'])[1]")).click();
+    public void clickAction() {
+        AdminData adminData = new AdminData();
+        DriverManager.get().findElement(By.xpath("(//button[@title='" + adminData.getAction() + "'])[1]")).click();
     }
 
     public void handleAlert() {

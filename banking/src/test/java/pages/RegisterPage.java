@@ -1,12 +1,15 @@
 package pages;
 
+import api.services.ApiServices;
 import core.config.Config;
 import core.driver.DriverManager;
 import core.util.ExplicitWait;
+import io.restassured.response.Response;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import payloads.RegistrationData;
 
 public class RegisterPage {
     private By firstName = By.id("firstName");
@@ -24,36 +27,35 @@ public class RegisterPage {
         return Config.registerPageUrl();
     }
 
-    public void enterFirstName(String string) {
-        DriverManager.get().findElement(firstName).sendKeys(string);
+    public void userEntersValidDataInRegistrationPage(String typeOfInvalidInput) {
+        RegistrationData registrationData = new RegistrationData();
+        String emailLocalValue = registrationData.getEmail();
+        String phoneNumberLocalValue = String.valueOf(registrationData.getPhoneNumber());
+        String dobLocalValue = registrationData.getDob();
+
+        DriverManager.get().findElement(firstName).sendKeys(registrationData.getFirstName());
+        DriverManager.get().findElement(lastName).sendKeys(registrationData.getLastName());
+        DriverManager.get().findElement(userName).sendKeys(registrationData.getUserName());
+
+        if(typeOfInvalidInput != null && !typeOfInvalidInput.isEmpty()) {
+            if(typeOfInvalidInput.equalsIgnoreCase("email")) {
+                emailLocalValue = "example.com";
+            } else if(typeOfInvalidInput.equalsIgnoreCase("phoneNumber")) {
+                phoneNumberLocalValue = "1000";
+            } else if(typeOfInvalidInput.equalsIgnoreCase("dob")) {
+                dobLocalValue = "01-01-2020";
+            }
+        }
+
+        DriverManager.get().findElement(email).sendKeys(emailLocalValue);
+        DriverManager.get().findElement(phoneNumber).sendKeys(String.valueOf(phoneNumberLocalValue));
+        DriverManager.get().findElement(dob).sendKeys(dobLocalValue);
+        DriverManager.get().findElement(address).sendKeys(registrationData.getAddress());
+        DriverManager.get().findElement(password).sendKeys(registrationData.getPassword());
     }
 
-    public void enterLastName(String string) {
-        DriverManager.get().findElement(lastName).sendKeys(string);
-    }
-
-    public void enterUserName(String string) {
-        DriverManager.get().findElement(userName).sendKeys(string);
-    }
-
-    public void enterEmail(String string) {
-        DriverManager.get().findElement(email).sendKeys(string);
-    }
-
-    public void enterPhoneNumber(String string) {
-        DriverManager.get().findElement(phoneNumber).sendKeys(string);
-    }
-
-    public void enterDob(String string) {
-        DriverManager.get().findElement(dob).sendKeys(string);
-    }
-
-    public void enterAddress(String string) {
-        DriverManager.get().findElement(address).sendKeys(string);
-    }
-
-    public void enterPassword(String string) {
-        DriverManager.get().findElement(password).sendKeys(string);
+    public void userEntersInvalidDataInRegistrationPage(String typeOfInvalidInput) {
+        this.userEntersValidDataInRegistrationPage(typeOfInvalidInput);
     }
 
     public void clickRegisterButton() {
@@ -68,10 +70,20 @@ public class RegisterPage {
     }
 
     public boolean checkForStatus() {
+        ExplicitWait.getWait().until(ExpectedConditions.visibilityOfElementLocated(statusMessage));
         return DriverManager.get().findElement(statusMessage).isDisplayed();
     }
 
     public String checkForEmailStatus() {
+        ExplicitWait.getWait().until(ExpectedConditions.visibilityOfElementLocated(statusMessage));
         return DriverManager.get().findElement(statusMessage).getText();
+    }
+
+    public Response apiPostRequest() {
+//        9514772220
+        RegistrationData registrationData = new RegistrationData();
+        System.out.println("Username: " + registrationData.getUserName());
+        ApiServices apiServices = new ApiServices();
+        return apiServices.postRequest("/user/register", null, registrationData);
     }
 }
