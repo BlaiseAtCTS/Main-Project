@@ -17,8 +17,7 @@ Feature: User Login
   @login_invalid_1
   Scenario: Login fails when required fields are empty
     When User leaves all fields empty
-    And "User" clicks on the Sign In button
-    But A status message requiring to enter values should be displayed
+    But Sign In button is disabled
 
   @login_invalid_2
   Scenario: Login fails when incorrect password input is given

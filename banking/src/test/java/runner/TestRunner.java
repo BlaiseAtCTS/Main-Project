@@ -8,7 +8,7 @@ import io.cucumber.testng.CucumberOptions;
         features = "src/test/resources/features",
         glue = { "steps", "core.hooks" },
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        tags = "@account_creation",
+        tags = "@login",
         plugin = { "pretty" },
         monochrome = true
 )

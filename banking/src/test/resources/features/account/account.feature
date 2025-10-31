@@ -11,33 +11,51 @@ Feature:
     Then User should be redirected to the user dashboard page
 
   @account_creation
-  Scenario: Successful creation of user account
+  Scenario Outline: Successful creation of user account
     When User clicks on "Create Account" Action
-    And User selects Account Type
-    And User enters "Initial" Amount
+    And User clicks on Account Type as "<AccountType>"
+    And User enters Initial Balance as "<InitialBalance>"
     And User clicks on Submit Request Button
 
+    Examples:
+      | AccountType | InitialBalance |
+      | SAVINGS     | 10000          |
+      | CHECKING    | 12000          |
+      | CREDIT      | 2000           |
+
   @deposit @action
-  Scenario: Successful deposit into user account
+  Scenario Outline: Successful deposit into user account
     When User clicks on "Deposit Money" Action
     And User selects Account Number
-    And User enters "Deposit" Amount
+    And User enters Amount "<DepositAmount>"
     And User clicks on Submit Button
     Then A success message should be displayed
+
+    Examples:
+      | DepositAmount |
+      | 5000          |
 
   @withdraw @action
-  Scenario: Successful withdrawal from user account
+  Scenario Outline: Successful withdrawal from user account
     When User clicks on "Withdraw Money" Action
     And User selects Account Number
-    And User enters "Withdraw" Amount
+    And User enters Amount "<WithdrawAmount>"
     And User clicks on Submit Button
     Then A success message should be displayed
 
+    Examples:
+      | WithdrawAmount |
+      | 3000           |
+
   @transfer @action
-  Scenario: Successful transfer of funds from one user to another user
+  Scenario Outline: Successful transfer of funds from one user to another user
     When User clicks on "Transfer Money" Action
     And User selects Account Number
-    And User enters Destination Account Number
-    And User enters "Transfer" Amount
+    And User enters "<DestinationAccountNumber>"
+    And User enters Amount "<TransferAmount>"
     And User clicks on Submit Button
     Then A success message should be displayed
+
+    Examples:
+      | DestinationAccountNumber | TransferAmount |
+      | 1561001164               | 3              |

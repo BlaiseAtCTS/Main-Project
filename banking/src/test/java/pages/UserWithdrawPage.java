@@ -31,6 +31,10 @@ public class UserWithdrawPage {
         DriverManager.get().findElement(amount).sendKeys(accountData.getWithdrawAmount());
     }
 
+    public void enterDepositAmount(String arg0) {
+        DriverManager.get().findElement(amount).sendKeys(arg0);
+    }
+
     public void clickDepositNowButton() {
         ExplicitWait.getWait().until(ExpectedConditions.elementToBeClickable(withdrawNowButton));
         DriverManager.get().findElement(withdrawNowButton).click();

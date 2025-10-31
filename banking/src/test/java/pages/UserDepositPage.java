@@ -31,6 +31,10 @@ public class UserDepositPage {
         DriverManager.get().findElement(amount).sendKeys(accountData.getAmount());
     }
 
+    public void enterDepositAmount(String arg0) {
+        DriverManager.get().findElement(amount).sendKeys(arg0);
+    }
+
     public void clickDepositNowButton() {
         ExplicitWait.getWait().until(ExpectedConditions.elementToBeClickable(depositNowButton));
         DriverManager.get().findElement(depositNowButton).click();
