@@ -28,9 +28,12 @@ public class UserTransactionPage {
         select.selectByIndex(0);
     }
 
-    public void enterDestinationAccount() {
-        AccountTransferData accountData = new AccountTransferData();
-        DriverManager.get().findElement(destinationAccount).sendKeys(accountData.getDestinationAccountNumber());
+    public void enterDestinationAccount(String arg0) {
+        DriverManager.get().findElement(destinationAccount).sendKeys(arg0);
+    }
+
+    public void enterDepositAmount(String arg0) {
+        DriverManager.get().findElement(transferAmount).sendKeys(arg0);
     }
 
     public void enterTransferAmount() {

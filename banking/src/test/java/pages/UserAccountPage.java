@@ -22,10 +22,9 @@ public class UserAccountPage {
         return Config.userCreateAccountPageUrl();
     }
 
-    public void clicksOnAccountType() {
-        AccountCreateData accountData = new AccountCreateData();
+    public void clicksOnAccountType(String arg0) {
         Select select = new Select(DriverManager.get().findElement(accountType));
-        select.selectByVisibleText(accountData.getType());
+        select.selectByVisibleText(arg0);
     }
 
     public void userEntersAmount() {
@@ -38,6 +37,10 @@ public class UserAccountPage {
         JavascriptExecutor executor = (JavascriptExecutor) DriverManager.get();
         executor.executeScript("arguments[0].scrollIntoView(true)", DriverManager.get().findElement(submitRequestButton));
         executor.executeScript("arguments[0].click()", DriverManager.get().findElement(submitRequestButton));
+    }
+    public void enterInitialBalance(String arg0) {
+        DriverManager.get().findElement(initialBalance).clear();
+        DriverManager.get().findElement(initialBalance).sendKeys(arg0);
     }
 
     public void amountType(String amountType) {

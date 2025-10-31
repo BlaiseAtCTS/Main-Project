@@ -1,14 +1,14 @@
 {
   "loginData":
   {
-    "userName": "adamsmith01",
-    "password": "Pass@4321"
+    "userName": "kavinsu",
+    "password": "Kavin"
   },
   "accountData":
   {
-    "accountNumber": "1571935748",
+    "accountNumber": "1234",
     "type": "CHECKING",
-    "destinationAccountNumber": "0129057588"
+    "destinationAccountNumber": "1561001164"
   },
   "adminData":
   {

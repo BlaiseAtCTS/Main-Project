@@ -74,14 +74,14 @@ public class UserRegisterSteps {
         userDashboardPage.clicksOnAction(arg0);
     }
 
-    @And("User selects Account Type")
-    public void userSelectsAccountType() {
-        userAccountPage.clicksOnAccountType();
+    @And("User clicks on Account Type as {string}")
+    public void userClicksOnAccountTypeAs(String arg0) {
+        userAccountPage.clicksOnAccountType(arg0);
     }
 
-    @And("User enters {string} Amount")
-    public void userEntersAmount(String amountType) {
-        userAccountPage.amountType(amountType);
+    @And("User enters Initial Balance as {string}")
+    public void userEntersInitialBalanceAs(String arg0) {
+        userAccountPage.enterInitialBalance(arg0);
     }
 
     @And("User clicks on Submit Request Button")
@@ -121,6 +121,22 @@ public class UserRegisterSteps {
         }
     }
 
+    @And("User enters Amount {string}")
+    public void userEntersAmount(String arg0) {
+        if(DriverManager.getCurrUrl().equals(userDepositPage.userDepositPageUrl())) {
+            userDepositPage.enterDepositAmount(arg0);
+        } else if(DriverManager.getCurrUrl().equals(userWithdrawPage.userWithdrawPageUrl())) {
+            userWithdrawPage.enterDepositAmount(arg0);
+        } else if(DriverManager.getCurrUrl().equals(userTransactionPage.userTransactionPageUrl())) {
+            userTransactionPage.enterDepositAmount(arg0);
+        }
+    }
+
+    @And("User enters {string}")
+    public void userEnters(String arg0) {
+        userTransactionPage.enterDestinationAccount(arg0);
+    }
+
     @And("User clicks on Submit Button")
     public void userClicksOnSubmitButton() {
         if(DriverManager.getCurrUrl().equals(userDepositPage.userDepositPageUrl())) {
@@ -143,10 +159,10 @@ public class UserRegisterSteps {
         }
     }
 
-    @And("User enters Destination Account Number")
-    public void userEntersDestinationAccountNumber() {
-        userTransactionPage.enterDestinationAccount();
-    }
+//    @And("User enters Destination Account Number")
+//    public void userEntersDestinationAccountNumber() {
+//        userTransactionPage.enterDestinationAccount();
+//    }
 
     @When("User enters valid data in registration page")
     public void userEntersValidDataInRegistrationPage() {
