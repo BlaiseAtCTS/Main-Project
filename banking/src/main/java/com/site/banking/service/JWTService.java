@@ -33,28 +33,16 @@ public class JWTService {
         }
     }
 
-    public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-
-        return Jwts.builder()
-                .claims(claims)
-                .issuer("Humans")
-                .subject(username)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
-                .signWith(getKey())
-                .compact();
-    }
     public String generateTokenWithRole(String username, String role) {
     return Jwts.builder()
-            .setSubject(username)
+            .issuer("Humans")
+            .subject(username)
             .claim("role", role)
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
-            .signWith(getKey(), SignatureAlgorithm.HS256)
+            .issuedAt(new Date(System.currentTimeMillis()))
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+            .signWith(getKey())
             .compact();
-}
-
+    }
 
     private SecretKey getKey() {
         return secretKey;

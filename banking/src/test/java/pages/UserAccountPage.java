@@ -58,7 +58,7 @@ public class UserAccountPage {
     public Response apiPostRequest() {
         ApiServices apiServices = new ApiServices();
         apiServices.getToken();
-        System.out.println("Token: "+apiServices.token);
-        return apiServices.postRequest("/account/create", apiServices.token, new AccountCreateData());
+        System.out.println("Token: "+apiServices.getToken());
+        return apiServices.postRequest("/account/create", apiServices.getToken(), new AccountCreateData());
     }
 }

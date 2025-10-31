@@ -1,12 +1,15 @@
 package pages;
 
+import api.services.ApiServices;
 import core.config.Config;
 import core.driver.DriverManager;
 import core.util.ExplicitWait;
+import io.restassured.response.Response;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import payloads.account.AccountCreateData;
 import payloads.account.AccountTransferData;
 
 public class UserTransactionPage {
@@ -32,7 +35,7 @@ public class UserTransactionPage {
 
     public void enterTransferAmount() {
         AccountTransferData accountData = new AccountTransferData();
-        DriverManager.get().findElement(transferAmount).sendKeys(accountData.getTransferAmount());
+        DriverManager.get().findElement(transferAmount).sendKeys(accountData.getAmount());
     }
 
     public void clickTransferButton() {
@@ -45,5 +48,12 @@ public class UserTransactionPage {
     public boolean checkStatus() {
         ExplicitWait.getWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(status));
         return DriverManager.get().findElement(status).isDisplayed();
+    }
+
+    public Response apiPostRequest() {
+        ApiServices apiServices = new ApiServices();
+        apiServices.getToken();
+        System.out.println("Token: "+apiServices.getToken());
+        return apiServices.postRequest("/transaction/transfer", apiServices.getToken(), new AccountTransferData());
     }
 }

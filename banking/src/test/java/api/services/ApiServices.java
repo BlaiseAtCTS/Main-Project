@@ -9,7 +9,7 @@ import io.restassured.specification.RequestSpecification;
 import payloads.LoginData;
 
 public class ApiServices {
-    public String token;
+    public static String token = null;
 
     private RequestSpecification buildRequest() {
         return new RequestSpecBuilder()
@@ -46,10 +46,13 @@ public class ApiServices {
                 .response();
     }
 
-    public void getToken() {
-        token = new ApiServices()
-                .postRequest("/user/login", null, new LoginData())
-                .jsonPath()
-                .getString("token");
+    public String getToken() {
+        if(token == null) {
+            token = new ApiServices()
+                    .postRequest("/user/login", null, new LoginData())
+                    .jsonPath()
+                    .getString("token");
+        }
+        return token;
     }
 }
