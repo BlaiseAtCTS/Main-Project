@@ -44,7 +44,7 @@ public class UserDepositPage {
     public Response apiPostRequest() {
         ApiServices apiServices = new ApiServices();
         apiServices.getToken();
-        System.out.println("Token: "+apiServices.token);
-        return apiServices.postRequest("/account/deposit", apiServices.token, new AccountDepositData());
+        System.out.println("Token: "+apiServices.getToken());
+        return apiServices.postRequest("/account/deposit", apiServices.getToken(), new AccountDepositData());
     }
 }

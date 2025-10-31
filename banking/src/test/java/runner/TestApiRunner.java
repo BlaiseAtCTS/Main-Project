@@ -8,7 +8,7 @@ import io.cucumber.testng.CucumberOptions;
         features = "src/test/resources/features/api",
         glue = { "steps" },
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        tags = "@api_account_deposit",
+        tags = "@api_account",
         plugin = { "pretty" },
         monochrome = true
 )

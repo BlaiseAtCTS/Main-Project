@@ -41,6 +41,10 @@ public class ApiSteps {
             response = userAccountPage.apiPostRequest();
         } else if(transactionType.equalsIgnoreCase("deposit")) {
             response = userDepositPage.apiPostRequest();
+        } else if(transactionType.equalsIgnoreCase("withdraw")) {
+            response = userWithdrawPage.apiPostRequest();
+        } else if(transactionType.equalsIgnoreCase("transfer")) {
+            response = userTransactionPage.apiPostRequest();
         }
     }
 }

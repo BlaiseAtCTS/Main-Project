@@ -5,29 +5,29 @@ import com.github.javafaker.Faker;
 import loaders.JSONLoader;
 
 public class AccountTransferData {
-    private String type;
+    private String sourceAccountNumber;
     private String destinationAccountNumber;
-    private String transferAmount;
+    private String amount;
 
     Faker faker;
 
     public AccountTransferData() {
         faker = new Faker();
         JsonNode node = JSONLoader.loadJson("accountData");
-        this.type = node.get("accountNumber").asText();
+        this.sourceAccountNumber = node.get("accountNumber").asText();
         this.destinationAccountNumber = node.get("destinationAccountNumber").asText();;
-        this.transferAmount = String.valueOf(faker.number().numberBetween(500, 1000));
+        this.amount = String.valueOf(faker.number().numberBetween(500, 1000));
     }
 
-    public String getType() {
-        return type;
+    public String getSourceAccountNumber() {
+        return sourceAccountNumber;
     }
 
     public String getDestinationAccountNumber() {
         return destinationAccountNumber;
     }
 
-    public String getTransferAmount() {
-        return transferAmount;
+    public String getAmount() {
+        return amount;
     }
 }
