@@ -1,9 +1,11 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { AdminService } from '../../services/admin.service';
-import { AuthService } from '../../services/auth.service';
-import { UserAccountData } from '../../models/admin.model';
+import { RouterModule } from '@angular/router';
+import { useAllUsers } from '../../hooks/use-admin';
+import { CardComponent, CardHeaderComponent, CardContentComponent } from '../ui/card.component';
+import { ButtonComponent } from '../ui/button.component';
+import { SpinnerComponent } from '../ui/spinner.component';
+import { AlertComponent } from '../ui/alert.component';
 
 interface GroupedUser {
   identifier: string;
@@ -22,57 +24,34 @@ interface GroupedUser {
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    CardComponent,
+    CardHeaderComponent,
+    CardContentComponent,
+    ButtonComponent,
+    SpinnerComponent,
+  AlertComponent
+  ],
   templateUrl: './admin-users.html',
-  styleUrl: './admin-users.css',
+  styleUrls: ['./admin-users.css'],
 })
-export class AdminUsersComponent implements OnInit {
-  users = signal<UserAccountData[]>([]);
-  groupedUsers = signal<GroupedUser[]>([]);
-  uniqueUserCount = signal(0);
-  loading = signal(false);
-  error = signal<string | null>(null);
+export class AdminUsersComponent {
+  allUsersQuery = useAllUsers();
 
-  constructor(
-    private adminService: AdminService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  users = computed(() => this.allUsersQuery.data() || []);
+  groupedUsers = computed(() => this.groupUserData());
+  uniqueUserCount = computed(() => this.groupedUsers().length);
+  isLoading = computed(() => this.allUsersQuery.isPending());
 
-  ngOnInit(): void {
-    this.checkAuthentication();
-    this.loadAllUsers();
-  }
+  constructor() {}
 
-  checkAuthentication(): void {
-    if (!this.authService.isAuthenticated() || !this.authService.isAdmin()) {
-      this.router.navigate(['/login']);
-    }
-  }
-
-  loadAllUsers(): void {
-    this.loading.set(true);
-    this.error.set(null);
-
-    this.adminService.getAllUsers().subscribe({
-      next: (data) => {
-        this.users.set(data);
-        this.groupUsersByIdentifier();
-        this.loading.set(false);
-      },
-      error: (error) => {
-        console.error('Error loading users:', error);
-        this.error.set('Failed to load users. Please try again.');
-        this.loading.set(false);
-        this.users.set([]);
-      }
-    });
-  }
-
-  groupUsersByIdentifier(): void {
+  private groupUserData(): GroupedUser[] {
     const userMap = new Map<string, GroupedUser>();
+    const users = this.users();
 
-    this.users().forEach((userAccount: UserAccountData) => {
+    users.forEach((userAccount) => {
       const identifier = userAccount.username 
         || userAccount.email 
         || userAccount.phoneNumber 
@@ -103,15 +82,14 @@ export class AdminUsersComponent implements OnInit {
       });
     });
 
-    this.groupedUsers.set(Array.from(userMap.values()));
-    this.uniqueUserCount.set(this.groupedUsers().length);
+    return Array.from(userMap.values());
   }
 
-  formatCurrency(amount: number | null): string {
-    if (amount === null) return 'N/A';
-    return new Intl.NumberFormat('en-US', {
+  formatCurrency(amount: number | null | undefined): string {
+    if (amount === null || amount === undefined) return '₹0.00';
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   }
 
@@ -119,8 +97,25 @@ export class AdminUsersComponent implements OnInit {
     return accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0);
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  formatDate(dateString?: string | null): string {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+
+  getAccountTypeBadgeColor(type: string): string {
+    switch (type?.toUpperCase()) {
+      case 'SAVINGS': return 'bg-green-100 text-green-700';
+      case 'CHECKING': return 'bg-blue-100 text-blue-700';
+      case 'CREDIT': return 'bg-purple-100 text-purple-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  }
+
+  refresh(): void {
+    this.allUsersQuery.refetch();
   }
 }

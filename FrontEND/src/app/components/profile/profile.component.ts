@@ -1,16 +1,32 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { UserProfile } from '../../models/user.model';
+import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent } from '../ui/card.component';
+import { ButtonComponent } from '../ui/button.component';
+import { SpinnerComponent } from '../ui/spinner.component';
+import { AlertComponent } from '../ui/alert.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    TranslateModule,
+    CardComponent,
+    CardHeaderComponent,
+    CardTitleComponent,
+    CardContentComponent,
+    ButtonComponent,
+    SpinnerComponent,
+  AlertComponent
+  ],
   templateUrl: './profile.html',
-  styleUrl: './profile.css',
+  styleUrls: ['./profile.css'],
 })
 export class ProfileComponent implements OnInit {
   profile = signal<UserProfile | null>(null);
@@ -55,9 +71,9 @@ export class ProfileComponent implements OnInit {
 
   formatCurrency(amount: number | null): string {
     if (amount === null) return 'N/A';
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   }
 

@@ -1,228 +1,298 @@
-<div class="dashboard-container min-vh-100 gradient-bg">
-  <!-- Top Navigation -->
-  <nav class="top-nav">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <i class="fas fa-gem fa-2x text-white me-3"></i>
-        <h4 class="text-white mb-0 fw-bold">Ferroro Bank</h4>
-      </div>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-white"><i class="fas fa-user-circle me-2"></i>{{ username() }}</span>
-        <button class="btn btn-outline-light btn-sm" routerLink="/profile">
-          <i class="fas fa-user me-2"></i>Profile
-        </button>
-        <button class="btn btn-outline-danger btn-sm" (click)="logout()">
-          <i class="fas fa-sign-out-alt me-2"></i>Logout
-        </button>
-      </div>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+  <!-- Welcome Section -->
+  <div class="bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold mb-2">{{ 'DASHBOARD.WELCOME_BACK' | translate }}, {{ username() }}! 👋</h1>
+      <p class="text-white/80">{{ 'DASHBOARD.FINANCIAL_OVERVIEW' | translate }}</p>
     </div>
-  </nav>
+  </div>
 
   <!-- Main Content -->
-  <div class="container-fluid py-4">
-    <!-- Welcome Section -->
-    <div class="welcome-section mb-4">
-      <h2 class="text-white mb-1">Welcome back, {{ username() }}! 👋</h2>
-      <p class="text-white-50">Here's your financial overview</p>
-    </div>
-
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Loading State -->
-    <div *ngIf="loading()" class="text-center py-5">
-      <div class="spinner-border spinner-large text-white" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <p class="mt-3 text-white">Loading your dashboard...</p>
+    <div *ngIf="isLoading()" class="flex flex-col items-center justify-center py-12">
+      <ui-spinner size="lg"></ui-spinner>
+      <p class="mt-4 text-gray-600">{{ 'DASHBOARD.LOADING_DASHBOARD' | translate }}</p>
     </div>
 
     <!-- Error State -->
-    <div *ngIf="error()" class="alert alert-danger" role="alert">
-      <i class="fas fa-exclamation-circle me-2"></i>{{ error() }}
-    </div>
+    <ui-alert *ngIf="profileQuery.isError()" variant="error" class="mb-6">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="ml-2">{{ 'DASHBOARD.LOAD_ERROR' | translate }}</span>
+    </ui-alert>
 
     <!-- Dashboard Content -->
-    <div *ngIf="!loading()" class="fade-in">
+    <div *ngIf="!isLoading()" class="space-y-6 animate-fade-in">
       <!-- Stats Cards -->
-      <div class="row g-4 mb-4">
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon bg-gradient-success">
-              <i class="fas fa-wallet"></i>
-            </div>
-            <div class="stat-content">
-              <p class="stat-label">Total Balance</p>
-              <h2 class="stat-value">{{ formatCurrency(totalBalance()) }}</h2>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon bg-gradient-primary">
-              <i class="fas fa-university"></i>
-            </div>
-            <div class="stat-content">
-              <p class="stat-label">Active Accounts</p>
-              <h2 class="stat-value">{{ activeAccounts() }}</h2>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon bg-gradient-warning">
-              <i class="fas fa-exchange-alt"></i>
-            </div>
-            <div class="stat-content">
-              <p class="stat-label">Recent Transactions</p>
-              <h2 class="stat-value">{{ recentTransactions().length }}</h2>
-            </div>
-          </div>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Total Balance Card -->
+        
+          <ui-card class="border-0 h-full bg-white/50 backdrop-blur">
+            <ui-card-content class="p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">{{ 'DASHBOARD.TOTAL_BALANCE' | translate }}</p>
+                  <h2 class="text-3xl font-bold text-gray-900 mt-2">{{ formatCurrency(totalBalance()) }}</h2>
+                </div>
+                <div class="h-14 w-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                  <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                </div>
+              </div>
+            </ui-card-content>
+          </ui-card>
+        
+
+        <!-- Active Accounts Card -->
+        
+          <ui-card class="border-0 h-full bg-white/50 backdrop-blur">
+            <ui-card-content class="p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">{{ 'DASHBOARD.ACTIVE_ACCOUNTS' | translate }}</p>
+                  <h2 class="text-3xl font-bold text-gray-900 mt-2">{{ activeAccounts() }}</h2>
+                </div>
+                <div class="h-14 w-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                  <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+              </div>
+            </ui-card-content>
+          </ui-card>
+        
+
+        <!-- Recent Transactions Card -->
+        
+          <ui-card class="border-0 h-full bg-white/50 backdrop-blur">
+            <ui-card-content class="p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">{{ 'DASHBOARD.RECENT_TRANSACTIONS' | translate }}</p>
+                  <h2 class="text-3xl font-bold text-gray-900 mt-2">{{ recentTransactions().length }}</h2>
+                </div>
+                <div class="h-14 w-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                  <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                </div>
+              </div>
+            </ui-card-content>
+          </ui-card>
+        
       </div>
 
       <!-- Quick Actions -->
-      <div class="row g-4 mb-4">
-        <div class="col-12">
-          <div class="card border-0 shadow-lg">
-            <div class="card-header bg-gradient-primary text-white">
-              <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
-            </div>
-            <div class="card-body p-4">
-              <div class="row g-3">
-                <div class="col-md-3">
-                  <button class="action-btn w-100" routerLink="/accounts/create">
-                    <i class="fas fa-plus-circle fa-2x mb-2 text-primary"></i>
-                    <p class="mb-0 fw-bold">Create Account</p>
-                  </button>
-                </div>
-                <div class="col-md-3">
-                  <button class="action-btn w-100" routerLink="/accounts/deposit">
-                    <i class="fas fa-arrow-down fa-2x mb-2 text-success"></i>
-                    <p class="mb-0 fw-bold">Deposit Money</p>
-                  </button>
-                </div>
-                <div class="col-md-3">
-                  <button class="action-btn w-100" routerLink="/accounts/withdraw">
-                    <i class="fas fa-arrow-up fa-2x mb-2 text-danger"></i>
-                    <p class="mb-0 fw-bold">Withdraw Money</p>
-                  </button>
-                </div>
-                <div class="col-md-3">
-                  <button class="action-btn w-100" routerLink="/transactions">
-                    <i class="fas fa-exchange-alt fa-2x mb-2 text-info"></i>
-                    <p class="mb-0 fw-bold">Transfer Money</p>
-                  </button>
-                </div>
-              </div>
-            </div>
+      <ui-card>
+        <ui-card-header>
+          <ui-card-title class="flex items-center gap-2">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            {{ 'DASHBOARD.QUICK_ACTIONS' | translate }}
+          </ui-card-title>
+        </ui-card-header>
+        <ui-card-content>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <ui-button variant="outline" routerLink="/accounts/create" class="h-24 flex-col space-y-2">
+              <svg class="h-8 w-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span class="font-semibold">{{ 'DASHBOARD.CREATE_ACCOUNT' | translate }}</span>
+            </ui-button>
+
+            <ui-button variant="outline" routerLink="/accounts/deposit" class="h-24 flex-col space-y-2">
+              <svg class="h-8 w-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m0-16l-4 4m4-4l4 4" />
+              </svg>
+              <span class="font-semibold">{{ 'DASHBOARD.DEPOSIT_MONEY' | translate }}</span>
+            </ui-button>
+
+            <ui-button variant="outline" routerLink="/accounts/withdraw" class="h-24 flex-col space-y-2">
+              <svg class="h-8 w-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4" />
+              </svg>
+              <span class="font-semibold">{{ 'DASHBOARD.WITHDRAW_MONEY' | translate }}</span>
+            </ui-button>
+
+            <ui-button variant="outline" routerLink="/transactions" class="h-24 flex-col space-y-2">
+              <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              <span class="font-semibold">{{ 'DASHBOARD.TRANSFER_MONEY' | translate }}</span>
+            </ui-button>
           </div>
-        </div>
-      </div>
+        </ui-card-content>
+      </ui-card>
 
       <!-- Accounts and Transactions Row -->
-      <div class="row g-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- My Accounts -->
-        <div class="col-lg-6">
-          <div class="card border-0 shadow-lg h-100">
-            <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
-              <h5 class="mb-0"><i class="fas fa-wallet me-2"></i>My Accounts</h5>
-              <button class="btn btn-sm btn-light" routerLink="/accounts">View All</button>
+        <ui-card class="h-full">
+          <ui-card-header class="bg-gradient-to-r from-primary-50 to-secondary-50 border-b">
+            <div class="flex items-center justify-between">
+              <ui-card-title class="flex items-center gap-2">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                {{ 'DASHBOARD.MY_ACCOUNTS' | translate }}
+              </ui-card-title>
+              <ui-button variant="outline" size="sm" routerLink="/accounts">{{ 'DASHBOARD.VIEW_ALL' | translate }}</ui-button>
             </div>
-            <div class="card-body p-4">
-              <div *ngIf="accounts().length === 0" class="text-center py-4">
-                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                <p class="text-muted">No accounts found</p>
-                <button class="btn btn-primary" routerLink="/accounts/create">
-                  <i class="fas fa-plus me-2"></i>Create Your First Account
-                </button>
-              </div>
+          </ui-card-header>
+          <ui-card-content class="p-6">
+            <!-- No Accounts State -->
+            <div *ngIf="accounts().length === 0" class="text-center py-8">
+              <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+              <p class="text-gray-600 mb-4">{{ 'DASHBOARD.NO_ACCOUNTS' | translate }}</p>
+              <ui-button routerLink="/accounts/create">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                {{ 'DASHBOARD.CREATE_FIRST_ACCOUNT' | translate }}
+              </ui-button>
+            </div>
 
-              <div *ngFor="let account of accounts()" class="account-card-mini mb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <div class="account-icon me-3">
-                      <i [class]="getAccountTypeIcon(account.type)"></i>
+            <!-- Accounts List -->
+            <div *ngFor="let account of accounts()" class="mb-4 last:mb-0">
+              <div class="p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-200 bg-gradient-to-br from-white to-gray-50">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="h-12 w-12 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
+                      <svg class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                      </svg>
                     </div>
                     <div>
-                      <span class="badge bg-info mb-1">{{ account.type }}</span>
-                      <p class="mb-0 font-monospace small">{{ account.accountNumber }}</p>
+                      <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 text-primary-700 mb-1">
+                        {{ account.type }}
+                      </span>
+                      <p class="text-sm text-gray-600 font-mono">{{ account.accountNumber }}</p>
                     </div>
                   </div>
-                  <div class="text-end">
-                    <h5 class="mb-0" [class.text-success]="(account.balance || 0) >= 1000" [class.text-danger]="(account.balance || 0) < 1000">
+                  <div class="text-right">
+                    <h5 class="text-xl font-bold" 
+                        [ngClass]="{
+                          'text-slate-700': (account.balance || 0) >= 1000,
+                          'text-amber-700': (account.balance || 0) < 1000
+                        }">
                       {{ formatCurrency(account.balance) }}
                     </h5>
-                    <small class="text-danger" *ngIf="(account.balance || 0) < 1000">Low Balance</small>
+                    <small class="text-amber-600 text-xs" *ngIf="(account.balance || 0) < 1000">{{ 'DASHBOARD.LOW_BALANCE' | translate }}</small>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </ui-card-content>
+        </ui-card>
 
         <!-- Recent Transactions -->
-        <div class="col-lg-6">
-          <div class="card border-0 shadow-lg h-100">
-            <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
-              <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Transactions</h5>
-              <button class="btn btn-sm btn-light" routerLink="/transactions">View All</button>
+        <ui-card class="h-full">
+          <ui-card-header class="bg-gradient-to-r from-primary-50 to-secondary-50 border-b">
+            <div class="flex items-center justify-between">
+              <ui-card-title class="flex items-center gap-2">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {{ 'DASHBOARD.TRANSACTION_HISTORY' | translate }}
+              </ui-card-title>
+              <ui-button variant="outline" size="sm" routerLink="/transactions">{{ 'DASHBOARD.VIEW_ALL' | translate }}</ui-button>
             </div>
-            <div class="card-body p-4">
-              <!-- Account Filter Dropdown -->
-              <div *ngIf="accounts().length > 0" class="mb-4">
-                <label for="transactionAccountSelect" class="form-label fw-bold">
-                  <i class="fas fa-filter me-2"></i>Filter by Account
-                </label>
-                <select 
-                  id="transactionAccountSelect"
-                  class="form-select form-select-lg"
-                  [value]="selectedAccountForTransactions()?.accountNumber"
-                  (change)="onAccountChangeForTransactions($any($event.target).value)"
-                >
-                  <option *ngFor="let account of accounts()" [value]="account.accountNumber">
-                    {{ account.accountNumber }} - {{ account.type }}
-                  </option>
-                </select>
-                
-                <!-- Selected Account Info -->
-                <div *ngIf="selectedAccountForTransactions()" class="mt-3 p-3 bg-light rounded">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <p class="mb-0 fw-bold">Account: {{ selectedAccountForTransactions()?.accountNumber }}</p>
-                      <span class="badge bg-info">{{ selectedAccountForTransactions()?.type }}</span>
-                    </div>
-                    <div class="text-end">
-                      <p class="mb-0 text-muted small">Balance</p>
-                      <h5 class="mb-0 text-success">{{ formatCurrency(selectedAccountForTransactions()?.balance || 0) }}</h5>
-                    </div>
+          </ui-card-header>
+          <ui-card-content class="p-6">
+            <!-- Account Filter -->
+            <div *ngIf="accounts().length > 0" class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                <svg class="inline h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                {{ 'DASHBOARD.FILTER_BY_ACCOUNT' | translate }}
+              </label>
+              <select 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                [value]="selectedAccount()?.accountNumber"
+                (change)="onAccountChangeForTransactions($any($event.target).value)">
+                <option *ngFor="let account of accounts()" [value]="account.accountNumber">
+                  {{ account.accountNumber }} - {{ account.type }}
+                </option>
+              </select>
+
+              <!-- Selected Account Info -->
+              <div *ngIf="selectedAccount()" class="mt-3 p-3 rounded-lg bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-100">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="text-sm font-medium text-gray-700">{{ selectedAccount()?.accountNumber }}</p>
+                    <span class="text-xs px-2 py-1 rounded-full bg-primary-100 text-primary-700">{{ selectedAccount()?.type }}</span>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs text-gray-600">{{ 'DASHBOARD.BALANCE' | translate }}</p>
+                    <h5 class="text-lg font-bold text-slate-700">{{ formatCurrency(selectedAccount()?.balance || 0) }}</h5>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div *ngIf="recentTransactions().length === 0" class="text-center py-4">
-                <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
-                <p class="text-muted">No transactions yet</p>
-              </div>
+            <!-- Transactions Loading -->
+            <div *ngIf="isTransactionsLoading()" class="flex justify-center py-8">
+              <ui-spinner></ui-spinner>
+            </div>
 
-              <div *ngFor="let transaction of recentTransactions()" class="transaction-item mb-3">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <div class="transaction-icon me-3">
-                      <i [class]="getTransactionIcon(transaction.type)"></i>
+            <!-- No Transactions State -->
+            <div *ngIf="!isTransactionsLoading() && recentTransactions().length === 0" class="text-center py-8">
+              <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p class="text-gray-600">{{ 'DASHBOARD.NO_TRANSACTIONS' | translate }}</p>
+            </div>
+
+            <!-- Transactions List -->
+            <div *ngFor="let transaction of recentTransactions()" class="mb-3 last:mb-0">
+              <div class="p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all duration-200">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-full flex items-center justify-center"
+                         [ngClass]="{
+                           'bg-emerald-50': transaction.type === 'DEPOSIT',
+                           'bg-rose-50': transaction.type === 'WITHDRAWAL',
+                           'bg-blue-50': transaction.type === 'TRANSFER'
+                         }">
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                           [ngClass]="{
+                             'text-emerald-600': transaction.type === 'DEPOSIT',
+                             'text-rose-600': transaction.type === 'WITHDRAWAL',
+                             'text-blue-600': transaction.type === 'TRANSFER'
+                           }">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              [attr.d]="transaction.type === 'DEPOSIT' ? 'M12 4v16m0-16l-4 4m4-4l4 4' : 
+                                        transaction.type === 'WITHDRAWAL' ? 'M12 20V4m0 16l-4-4m4 4l4-4' :
+                                        'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'" />
+                      </svg>
                     </div>
                     <div>
-                      <p class="mb-0 fw-bold">{{ transaction.type }}</p>
-                      <small class="text-muted">{{ formatDate(transaction.timestamp) }}</small>
+                      <p class="font-semibold text-gray-900">{{ transaction.type }}</p>
+                      <small class="text-gray-500 text-xs">{{ formatDate(transaction.timestamp) }}</small>
                     </div>
                   </div>
-                  <div class="text-end">
-                    <h6 class="mb-0" [class.text-success]="transaction.type === 'DEPOSIT'" [class.text-danger]="transaction.type === 'WITHDRAWAL'">
+                  <div class="text-right">
+                    <h6 class="font-bold text-lg"
+                        [ngClass]="{
+                          'text-emerald-700': transaction.type === 'DEPOSIT',
+                          'text-rose-700': transaction.type === 'WITHDRAWAL',
+                          'text-blue-700': transaction.type === 'TRANSFER'
+                        }">
                       {{ formatCurrency(transaction.amount) }}
                     </h6>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </ui-card-content>
+        </ui-card>
       </div>
     </div>
   </div>

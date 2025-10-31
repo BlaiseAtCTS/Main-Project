@@ -1,112 +1,53 @@
-<div class="dashboard-container">
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <div class="sidebar-header">
-      <i class="fas fa-gem me-2"></i>
-      <h3>Ferroro Bank</h3>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+  <div class="bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold">{{ 'TRANSACTIONS.TITLE' | translate }}</h1>
     </div>
-    
-    <ul class="nav-links">
-      <li>
-        <a routerLink="/dashboard" routerLinkActive="active">
-          <i class="fas fa-home"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="/accounts" routerLinkActive="active">
-          <i class="fas fa-wallet"></i>
-          <span>Accounts</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="/transactions" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-          <i class="fas fa-exchange-alt"></i>
-          <span>Transactions</span>
-        </a>
-      </li>
-      <li>
-        <a routerLink="/profile" routerLinkActive="active">
-          <i class="fas fa-user"></i>
-          <span>Profile</span>
-        </a>
-      </li>
-    </ul>
-    
-    <div class="sidebar-footer">
-      <button class="logout-btn" (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
-      </button>
-    </div>
-  </nav>
+  </div>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <div class="content-header">
-      <h1><i class="fas fa-exchange-alt"></i> Transactions</h1>
-    </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Status alerts -->
+    <ui-alert *ngIf="error()" variant="error" class="mb-4">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span class="ml-2">{{ error() }}</span>
+    </ui-alert>
+    <ui-alert *ngIf="success()" variant="success" class="mb-4">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+      <span class="ml-2">{{ success() }}</span>
+    </ui-alert>
 
-    <!-- Error/Success Messages -->
-    @if (error()) {
-      <div class="alert alert-danger">
-        <i class="fas fa-exclamation-circle"></i>
-        {{ error() }}
-      </div>
-    }
-
-    @if (success()) {
-      <div class="alert alert-success">
-        <i class="fas fa-check-circle"></i>
-        {{ success() }}
-      </div>
-    }
-
-    <!-- Tab Navigation -->
-    <div class="tab-navigation">
-      <button 
-        class="tab-btn" 
-        [class.active]="activeTab() === 'transfer'"
-        (click)="setActiveTab('transfer')">
-        <i class="fas fa-paper-plane"></i> Transfer Money
-      </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="activeTab() === 'history'"
-        (click)="setActiveTab('history')">
-        <i class="fas fa-history"></i> Transaction History
-      </button>
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6">
+      <ui-button [variant]="activeTab() === 'transfer' ? 'default' : 'outline'" (click)="setActiveTab('transfer')">{{ 'TRANSACTIONS.TRANSFER_MONEY' | translate }}</ui-button>
+      <ui-button [variant]="activeTab() === 'history' ? 'default' : 'outline'" (click)="setActiveTab('history')">{{ 'TRANSACTIONS.TRANSACTION_HISTORY' | translate }}</ui-button>
     </div>
 
     <!-- Transfer Tab -->
     @if (activeTab() === 'transfer') {
-      <div class="transfer-section">
-        <div class="card">
-          <div class="card-header">
-            <h3><i class="fas fa-paper-plane"></i> Transfer Money</h3>
-          </div>
-          <div class="card-body">
+      
+        <ui-card class="border-0 bg-white/70 backdrop-blur">
+          <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
+            <ui-card-title>{{ 'TRANSACTIONS.TRANSFER_MONEY' | translate }}</ui-card-title>
+          </ui-card-header>
+          <ui-card-content class="p-6 space-y-4">
             @if (loading()) {
-              <div class="loading-spinner">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Loading accounts...</p>
+              <div class="flex items-center gap-2 text-gray-600">
+                <ui-spinner size="sm"></ui-spinner>
+                {{ 'COMMON.LOADING' | translate }}
               </div>
             } @else if (accounts().length === 0) {
-              <div class="empty-state">
-                <i class="fas fa-wallet"></i>
-                <p>No accounts available. Please create an account first.</p>
-                <a routerLink="/accounts" class="btn btn-primary">Go to Accounts</a>
+              <div class="text-center py-8">
+                <svg class="h-10 w-10 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10"/></svg>
+                <p class="text-gray-600">{{ 'TRANSACTIONS.NO_ACCOUNTS_AVAILABLE' | translate }}</p>
+                <div class="mt-3">
+                  <ui-button routerLink="/accounts">{{ 'TRANSACTIONS.GO_TO_ACCOUNTS' | translate }}</ui-button>
+                </div>
               </div>
             } @else {
-              <form (ngSubmit)="onTransfer()">
-                <!-- Source Account -->
-                <div class="form-group">
-                  <label for="sourceAccount">From Account</label>
-                  <select 
-                    id="sourceAccount" 
-                    class="form-control"
-                    [value]="sourceAccountNumber()"
-                    (change)="onAccountChange($any($event.target).value)">
+              <form (ngSubmit)="onTransfer()" class="space-y-4">
+                <div>
+                  <label class="block text-sm text-gray-600 mb-1">{{ 'TRANSACTIONS.FROM_ACCOUNT' | translate }}</label>
+                  <select class="w-full border rounded px-3 py-2" [value]="transferSourceAccountNumber()" (change)="onTransferSourceAccountChange($any($event.target).value)">
                     @for (account of accounts(); track account.accountNumber) {
                       <option [value]="account.accountNumber">
                         {{ account.accountNumber }} - {{ account.type }} ({{ formatCurrency(account.balance) }})
@@ -114,228 +55,158 @@
                     }
                   </select>
                 </div>
-
-                <!-- Selected Account Info -->
-                @if (selectedAccount()) {
-                  <div class="account-info">
-                    <div class="info-row">
-                      <span class="label">Available Balance:</span>
-                      <span class="value">{{ formatCurrency(selectedAccount()!.balance) }}</span>
+                @if (selectedTransferSourceAccount()) {
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-3 border rounded">
+                      <p class="text-xs text-gray-500 mb-1">{{ 'TRANSACTIONS.AVAILABLE_BALANCE' | translate }}</p>
+                      <p class="font-medium">{{ formatCurrency(selectedTransferSourceAccount()!.balance) }}</p>
                     </div>
-                    <div class="info-row">
-                      <span class="label">Account Type:</span>
-                      <span class="value">{{ selectedAccount()!.type }}</span>
+                    <div class="p-3 border rounded">
+                      <p class="text-xs text-gray-500 mb-1">{{ 'TRANSACTIONS.ACCOUNT_TYPE' | translate }}</p>
+                      <p class="font-medium">{{ selectedTransferSourceAccount()!.type }}</p>
                     </div>
                   </div>
                 }
-
-                <!-- Destination Account -->
-                <div class="form-group">
-                  <label for="destinationAccount">To Account Number</label>
-                  <input 
-                    type="text" 
-                    id="destinationAccount" 
-                    class="form-control"
-                    placeholder="Enter destination account number"
-                    [value]="destinationAccountNumber()"
-                    (input)="destinationAccountNumber.set($any($event.target).value)"
-                    required>
-                  <small class="form-text">Enter the account number you want to transfer to</small>
+                <div>
+                  <label class="block text-sm text-gray-600 mb-1">{{ 'TRANSACTIONS.DESTINATION_ACCOUNT' | translate }}</label>
+                  <input type="text" class="w-full border rounded px-3 py-2" [placeholder]="'TRANSACTIONS.ENTER_DESTINATION' | translate" [value]="destinationAccountNumber()" (input)="destinationAccountNumber.set($any($event.target).value)" required>
                 </div>
-
-                <!-- Amount -->
-                <div class="form-group">
-                  <label for="transferAmount">Amount</label>
-                  <input 
-                    type="number" 
-                    id="transferAmount" 
-                    class="form-control"
-                    placeholder="0.00"
-                    min="0.01"
-                    step="0.01"
-                    [value]="transferAmount()"
-                    (input)="transferAmount.set(+$any($event.target).value)"
-                    required>
-                  <small class="form-text">Enter the amount you want to transfer</small>
+                <div>
+                  <label class="block text-sm text-gray-600 mb-1">{{ 'TRANSACTIONS.AMOUNT' | translate }}</label>
+                  <input type="number" class="w-full border rounded px-3 py-2" placeholder="0.00" min="0.01" step="0.01" [value]="transferAmount()" (input)="transferAmount.set(+$any($event.target).value)" required>
                 </div>
-
-                <!-- Submit Button -->
-                <div class="form-actions">
-                  <button 
-                    type="submit" 
-                    class="btn btn-primary btn-lg"
-                    [disabled]="loading()">
-                    @if (loading()) {
-                      <i class="fas fa-spinner fa-spin"></i> Processing...
-                    } @else {
-                      <i class="fas fa-paper-plane"></i> Transfer
-                    }
-                  </button>
+                <div>
+                  <ui-button type="submit" [disabled]="loading()">{{ loading() ? ('TRANSACTIONS.PROCESSING' | translate) : ('TRANSACTIONS.TRANSFER' | translate) }}</ui-button>
                 </div>
               </form>
             }
-          </div>
-        </div>
-      </div>
+          </ui-card-content>
+        </ui-card>
+      
     }
 
     <!-- History Tab -->
     @if (activeTab() === 'history') {
-      <div class="history-section">
-        <!-- Filter Section -->
-        <div class="filter-section">
-          <div class="filter-group">
-            <label for="accountFilter">Account</label>
-            <select 
-              id="accountFilter" 
-              class="form-control"
-              [value]="sourceAccountNumber()"
-              (change)="onAccountChange($any($event.target).value)">
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">{{ 'TRANSACTIONS.ACCOUNT' | translate }}</label>
+            <select class="w-full border rounded px-3 py-2" [value]="historyAccountNumber()" (change)="onAccountChange($any($event.target).value)">
               @for (account of accounts(); track account.accountNumber) {
-                <option [value]="account.accountNumber">
-                  {{ account.accountNumber }} - {{ account.type }}
-                </option>
+                <option [value]="account.accountNumber">{{ account.accountNumber }} - {{ account.type }}</option>
               }
             </select>
           </div>
-
-          <div class="filter-group">
-            <label for="searchBox">Search</label>
-            <input 
-              type="text" 
-              id="searchBox" 
-              class="form-control"
-              placeholder="Search transactions..."
-              [value]="searchTerm()"
-              (input)="onSearch($any($event.target).value)">
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">{{ 'TRANSACTIONS.SEARCH' | translate }}</label>
+            <input type="text" class="w-full border rounded px-3 py-2" [placeholder]="'TRANSACTIONS.SEARCH_TRANSACTIONS' | translate" [value]="searchTerm()" (input)="onSearch($any($event.target).value)">
           </div>
         </div>
 
-        <!-- Selected Account Info -->
         @if (selectedAccount()) {
-          <div class="card account-summary-card">
-            <div class="card-body">
-              <div class="account-summary">
-                <div class="summary-item">
-                  <span class="label">Account Number</span>
-                  <span class="value">{{ selectedAccount()!.accountNumber }}</span>
+          
+            <ui-card class="border-0 bg-white/70 backdrop-blur">
+              <ui-card-content class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <p class="text-xs text-gray-500">{{ 'ACCOUNTS.ACCOUNT_NUMBER' | translate }}</p>
+                  <p class="font-medium">{{ selectedAccount()!.accountNumber }}</p>
                 </div>
-                <div class="summary-item">
-                  <span class="label">Type</span>
-                  <span class="value">{{ selectedAccount()!.type }}</span>
+                <div>
+                  <p class="text-xs text-gray-500">{{ 'ACCOUNTS.TYPE' | translate }}</p>
+                  <p class="font-medium">{{ selectedAccount()!.type }}</p>
                 </div>
-                <div class="summary-item">
-                  <span class="label">Balance</span>
-                  <span class="value balance-amount">{{ formatCurrency(selectedAccount()!.balance) }}</span>
+                <div>
+                  <p class="text-xs text-gray-500">{{ 'ACCOUNTS.BALANCE' | translate }}</p>
+                  <p class="font-medium">{{ formatCurrency(selectedAccount()!.balance) }}</p>
                 </div>
-              </div>
-            </div>
-          </div>
+              </ui-card-content>
+            </ui-card>
+          
         }
 
-        <!-- Transaction Summary Cards -->
-        <div class="summary-cards">
-          <div class="summary-card deposits">
-            <div class="icon"><i class="fas fa-arrow-down"></i></div>
-            <div class="details">
-              <h4>Total Deposits</h4>
-              <p class="amount">{{ formatCurrency(totalDeposits()) }}</p>
-            </div>
-          </div>
-
-          <div class="summary-card withdrawals">
-            <div class="icon"><i class="fas fa-arrow-up"></i></div>
-            <div class="details">
-              <h4>Total Withdrawals</h4>
-              <p class="amount">{{ formatCurrency(totalWithdrawals()) }}</p>
-            </div>
-          </div>
-
-          <div class="summary-card transfers">
-            <div class="icon"><i class="fas fa-exchange-alt"></i></div>
-            <div class="details">
-              <h4>Total Transfers</h4>
-              <p class="amount">{{ formatCurrency(totalTransfers()) }}</p>
-            </div>
-          </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+            <ui-card class="border-0 bg-white/70 backdrop-blur">
+              <ui-card-content class="p-4 text-center">
+                <div class="text-sm text-gray-600">{{ 'TRANSACTIONS.TOTAL_DEPOSITS' | translate }}</div>
+                <div class="text-2xl font-semibold">{{ formatCurrency(totalDeposits()) }}</div>
+              </ui-card-content>
+            </ui-card>
+          
+          
+            <ui-card class="border-0 bg-white/70 backdrop-blur">
+              <ui-card-content class="p-4 text-center">
+                <div class="text-sm text-gray-600">{{ 'TRANSACTIONS.TOTAL_WITHDRAWALS' | translate }}</div>
+                <div class="text-2xl font-semibold">{{ formatCurrency(totalWithdrawals()) }}</div>
+              </ui-card-content>
+            </ui-card>
+          
+          
+            <ui-card class="border-0 bg-white/70 backdrop-blur">
+              <ui-card-content class="p-4 text-center">
+                <div class="text-sm text-gray-600">{{ 'TRANSACTIONS.TOTAL_TRANSFERS' | translate }}</div>
+                <div class="text-2xl font-semibold">{{ formatCurrency(totalTransfers()) }}</div>
+              </ui-card-content>
+            </ui-card>
+          
         </div>
 
-        <!-- Transactions Table -->
-        <div class="card">
-          <div class="card-header">
-            <h3><i class="fas fa-list"></i> Transaction History</h3>
-          </div>
-          <div class="card-body">
-            @if (loadingTransactions()) {
-              <div class="loading-spinner">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Loading transactions...</p>
-              </div>
-            } @else if (filteredTransactions().length === 0) {
-              <div class="empty-state">
-                <i class="fas fa-receipt"></i>
-                <p>No transactions found</p>
-                @if (searchTerm()) {
-                  <p class="text-muted">Try adjusting your search term</p>
-                }
-              </div>
-            } @else {
-              <div class="table-responsive">
-                <table class="transactions-table">
-                  <thead>
-                    <tr>
-                      <th (click)="sortBy('id')" class="sortable">
-                        ID
-                        @if (sortField() === 'id') {
-                          <i class="fas" [class.fa-sort-up]="sortDirection() === 'asc'" [class.fa-sort-down]="sortDirection() === 'desc'"></i>
-                        }
-                      </th>
-                      <th (click)="sortBy('type')" class="sortable">
-                        Type
-                        @if (sortField() === 'type') {
-                          <i class="fas" [class.fa-sort-up]="sortDirection() === 'asc'" [class.fa-sort-down]="sortDirection() === 'desc'"></i>
-                        }
-                      </th>
-                      <th>From Account</th>
-                      <th>To Account</th>
-                      <th (click)="sortBy('amount')" class="sortable text-right">
-                        Amount
-                        @if (sortField() === 'amount') {
-                          <i class="fas" [class.fa-sort-up]="sortDirection() === 'asc'" [class.fa-sort-down]="sortDirection() === 'desc'"></i>
-                        }
-                      </th>
-                      <th (click)="sortBy('timestamp')" class="sortable">
-                        Date & Time
-                        @if (sortField() === 'timestamp') {
-                          <i class="fas" [class.fa-sort-up]="sortDirection() === 'asc'" [class.fa-sort-down]="sortDirection() === 'desc'"></i>
-                        }
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (transaction of filteredTransactions(); track transaction.id) {
+        
+          <ui-card class="border-0 bg-white/70 backdrop-blur">
+            <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
+              <ui-card-title>{{ 'TRANSACTIONS.TRANSACTION_HISTORY' | translate }}</ui-card-title>
+            </ui-card-header>
+            <ui-card-content class="p-0">
+              @if (loadingTransactions()) {
+                <div class="p-6 flex items-center gap-2 text-gray-600">
+                  <ui-spinner size="sm"></ui-spinner>
+                  {{ 'COMMON.LOADING' | translate }}
+                </div>
+              } @else if (filteredTransactions().length === 0) {
+                <div class="p-6 text-center text-gray-600">
+                  {{ 'TRANSACTIONS.NO_TRANSACTIONS' | translate }}
+                  @if (searchTerm()) {
+                    <div class="text-xs">{{ 'TRANSACTIONS.ADJUST_SEARCH' | translate }}</div>
+                  }
+                </div>
+              } @else {
+                <div class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
                       <tr>
-                        <td>#{{ transaction.id }}</td>
-                        <td>
-                          <span class="badge" [ngClass]="getTypeBadgeClass(transaction.type)">
-                            {{ transaction.type }}
-                          </span>
-                        </td>
-                        <td>{{ transaction.sourceAccountNumber }}</td>
-                        <td>{{ transaction.destinationAccountNumber }}</td>
-                        <td class="text-right amount" [class.positive]="transaction.type === 'Deposit'" [class.negative]="transaction.type === 'Withdraw'">
-                          {{ formatCurrency(transaction.amount) }}
-                        </td>
-                        <td>{{ formatDate(transaction.timestamp) }}</td>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" (click)="sortBy('id')">{{ 'TRANSACTIONS.ID' | translate }}</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" (click)="sortBy('type')">{{ 'TRANSACTIONS.TYPE' | translate }}</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.FROM_ACCOUNT' | translate }}</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ 'TRANSACTIONS.TO_ACCOUNT' | translate }}</th>
+                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" (click)="sortBy('amount')">{{ 'TRANSACTIONS.AMOUNT' | translate }}</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" (click)="sortBy('timestamp')">{{ 'TRANSACTIONS.DATE_TIME' | translate }}</th>
                       </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            }
-          </div>
-        </div>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                      @for (transaction of filteredTransactions(); track transaction.id) {
+                        <tr>
+                          <td class="px-4 py-2">#{{ transaction.id }}</td>
+                          <td class="px-4 py-2">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold" [ngClass]="{
+                              'bg-emerald-50 text-emerald-700': transaction.type === 'Deposit',
+                              'bg-rose-50 text-rose-700': transaction.type === 'Withdraw',
+                              'bg-blue-100 text-blue-700': transaction.type === 'Transfer'
+                            }">{{ transaction.type }}</span>
+                          </td>
+                          <td class="px-4 py-2">{{ transaction.sourceAccountNumber }}</td>
+                          <td class="px-4 py-2">{{ transaction.destinationAccountNumber }}</td>
+                          <td class="px-4 py-2 text-right">{{ formatCurrency(transaction.amount) }}</td>
+                          <td class="px-4 py-2">{{ formatDate(transaction.timestamp) }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </ui-card-content>
+          </ui-card>
+        
       </div>
     }
-  </main>
+  </div>
 </div>

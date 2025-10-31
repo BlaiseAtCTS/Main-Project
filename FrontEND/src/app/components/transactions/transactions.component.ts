@@ -1,30 +1,51 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
 import { Account } from '../../models/account.model';
 import { Transaction, TransferRequest } from '../../models/transaction.model';
+import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent } from '../ui/card.component';
+import { ButtonComponent } from '../ui/button.component';
+import { SpinnerComponent } from '../ui/spinner.component';
+import { AlertComponent } from '../ui/alert.component';
 
 @Component({
   selector: 'app-transactions',
-  imports: [CommonModule, FormsModule, RouterModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    TranslateModule,
+    CardComponent,
+    CardHeaderComponent,
+    CardTitleComponent,
+    CardContentComponent,
+    ButtonComponent,
+    SpinnerComponent,
+  AlertComponent
+  ],
   templateUrl: './transactions.html',
-  styleUrl: './transactions.css',
+  styleUrls: ['./transactions.css'],
 })
 export class TransactionsComponent implements OnInit {
   // Account data
   accounts = signal<Account[]>([]);
   selectedAccount = signal<Account | null>(null);
   
+  // Transaction history - separate from transfer form
+  historyAccountNumber = signal<string>('');
+  
   // Transaction history
   transactions = signal<Transaction[]>([]);
   filteredTransactions = signal<Transaction[]>([]);
   
-  // Transfer form
-  sourceAccountNumber = signal<string>('');
+  // Transfer form - separate state
+  transferSourceAccountNumber = signal<string>('');
   destinationAccountNumber = signal<string>('');
   transferAmount = signal<number>(0);
   
@@ -39,6 +60,11 @@ export class TransactionsComponent implements OnInit {
   
   // View state
   activeTab = signal<'transfer' | 'history'>('transfer');
+  
+  // Computed values for selected accounts
+  selectedTransferSourceAccount = computed(() => {
+    return this.accounts().find(a => a.accountNumber === this.transferSourceAccountNumber()) || null;
+  });
   
   // Computed values for transaction summary
   totalDeposits = computed(() => {
@@ -63,12 +89,29 @@ export class TransactionsComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService,
     private transactionService: TransactionService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.checkAuthentication();
     this.loadAccounts();
+    
+    // Check for query parameters to set initial state
+    this.route.queryParams.subscribe(params => {
+      // Set the active tab based on query param (default to 'history' if 'tab' param exists)
+      if (params['tab']) {
+        const tab = params['tab'] as 'transfer' | 'history';
+        if (tab === 'transfer' || tab === 'history') {
+          this.activeTab.set(tab);
+        }
+      }
+      
+      // If account parameter is provided, use it for history view
+      if (params['account']) {
+        this.historyAccountNumber.set(params['account']);
+      }
+    });
   }
 
   checkAuthentication(): void {
@@ -85,9 +128,32 @@ export class TransactionsComponent implements OnInit {
       next: (profile) => {
         this.accounts.set(profile.accounts || []);
         if (profile.accounts && profile.accounts.length > 0) {
-          this.selectedAccount.set(profile.accounts[0]);
-          this.sourceAccountNumber.set(profile.accounts[0].accountNumber);
-          this.loadTransactions(profile.accounts[0].accountNumber);
+          // Check if historyAccountNumber was set from query params
+          const accountFromQuery = this.historyAccountNumber();
+          
+          if (accountFromQuery) {
+            // Use the account from query param if it exists
+            const account = profile.accounts.find(a => a.accountNumber === accountFromQuery);
+            if (account) {
+              this.selectedAccount.set(account);
+              this.loadTransactions(accountFromQuery);
+            } else {
+              // Fallback to first account if query param account not found
+              this.selectedAccount.set(profile.accounts[0]);
+              this.historyAccountNumber.set(profile.accounts[0].accountNumber);
+              this.loadTransactions(profile.accounts[0].accountNumber);
+            }
+          } else {
+            // No query param, use first account
+            this.selectedAccount.set(profile.accounts[0]);
+            this.historyAccountNumber.set(profile.accounts[0].accountNumber);
+            this.loadTransactions(profile.accounts[0].accountNumber);
+          }
+          
+          // Always set transfer source to first account (or keep existing if set)
+          if (!this.transferSourceAccountNumber()) {
+            this.transferSourceAccountNumber.set(profile.accounts[0].accountNumber);
+          }
         }
         this.loading.set(false);
       },
@@ -123,9 +189,13 @@ export class TransactionsComponent implements OnInit {
     const account = this.accounts().find(a => a.accountNumber === accountNumber);
     if (account) {
       this.selectedAccount.set(account);
-      this.sourceAccountNumber.set(accountNumber);
+      this.historyAccountNumber.set(accountNumber);
       this.loadTransactions(accountNumber);
     }
+  }
+
+  onTransferSourceAccountChange(accountNumber: string): void {
+    this.transferSourceAccountNumber.set(accountNumber);
   }
 
   onSearch(term: string): void {
@@ -187,7 +257,7 @@ export class TransactionsComponent implements OnInit {
     this.success.set(null);
 
     // Validate inputs
-    if (!this.sourceAccountNumber()) {
+    if (!this.transferSourceAccountNumber()) {
       this.error.set('Please select a source account');
       return;
     }
@@ -202,12 +272,14 @@ export class TransactionsComponent implements OnInit {
       return;
     }
 
-    if (this.sourceAccountNumber() === this.destinationAccountNumber()) {
+    if (this.transferSourceAccountNumber() === this.destinationAccountNumber()) {
+      console.log('Source and destination are the same', this.transferSourceAccountNumber());
+      console.log('Destination', this.destinationAccountNumber());
       this.error.set('Source and destination accounts cannot be the same');
       return;
     }
 
-    const sourceAccount = this.accounts().find(a => a.accountNumber === this.sourceAccountNumber());
+    const sourceAccount = this.accounts().find(a => a.accountNumber === this.transferSourceAccountNumber());
     if (!sourceAccount) {
       this.error.set('Source account not found');
       return;
@@ -220,7 +292,7 @@ export class TransactionsComponent implements OnInit {
 
     // Prepare transfer request
     const transferRequest: TransferRequest = {
-      sourceAccountNumber: this.sourceAccountNumber(),
+      sourceAccountNumber: this.transferSourceAccountNumber(),
       destinationAccountNumber: this.destinationAccountNumber(),
       amount: this.transferAmount()
     };
@@ -259,15 +331,15 @@ export class TransactionsComponent implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   }
 
   formatDate(date: string | undefined): string {
     if (!date) return 'N/A';
-    return new Date(date).toLocaleString('en-US', {
+    return new Date(date).toLocaleString('en-IN', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

@@ -1,233 +1,135 @@
-<div class="withdraw-container min-vh-100 gradient-bg">
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <div class="sidebar-header">
-      <i class="fas fa-university fa-2x text-white mb-2"></i>
-      <h4 class="text-white">Account Management</h4>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+  <div class="bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold mb-1">Withdraw Money</h1>
+        <p class="text-white/80">Withdraw funds from your account</p>
+      </div>
+      <ui-button variant="ghost" routerLink="/accounts" class="">Back to Accounts</ui-button>
     </div>
-    
-    <ul class="nav flex-column mt-4">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard">
-          <i class="fas fa-home me-2"></i> Dashboard
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts">
-          <i class="fas fa-wallet me-2"></i> My Accounts
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/create">
-          <i class="fas fa-plus-circle me-2"></i> Create Account
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/deposit">
-          <i class="fas fa-arrow-down me-2"></i> Deposit
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active">
-          <i class="fas fa-arrow-up me-2"></i> Withdraw
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/delete">
-          <i class="fas fa-trash-alt me-2"></i> Delete Account
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/transactions">
-          <i class="fas fa-list me-2"></i> Transactions
-        </a>
-      </li>
-      <li class="nav-item mt-auto">
-        <a class="nav-link text-danger cursor-pointer" (click)="logout()">
-          <i class="fas fa-sign-out-alt me-2"></i> Logout
-        </a>
-      </li>
-    </ul>
-  </nav>
+  </div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="container py-4">
-      <!-- Header -->
-      <div class="content-header mb-4">
-        <h2 class="mb-1"><i class="fas fa-arrow-up me-2 text-danger"></i>Withdraw Money</h2>
-        <p class="text-muted mb-0">Withdraw funds from your account</p>
-      </div>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <ui-alert *ngIf="success()" variant="success" class="mb-4">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+      <span class="ml-2">{{ success() }}</span>
+    </ui-alert>
+    <ui-alert *ngIf="error()" variant="error" class="mb-4">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span class="ml-2">{{ error() }}</span>
+    </ui-alert>
 
-      <!-- Success Message -->
-      <div *ngIf="success()" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>{{ success() }}
-        <button type="button" class="btn-close" (click)="success.set(null)"></button>
-      </div>
-
-      <!-- Error Message -->
-      <div *ngIf="error()" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i>{{ error() }}
-        <button type="button" class="btn-close" (click)="error.set(null)"></button>
-      </div>
-
-      <div class="row">
-        <!-- Withdraw Form -->
-        <div class="col-md-7">
-          <div class="card border-0 shadow-lg">
-            <div class="card-header bg-gradient-danger text-white">
-              <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Withdrawal Details</h5>
-            </div>
-            <div class="card-body p-4">
-              <form [formGroup]="withdrawForm" (ngSubmit)="onSubmit()">
-                <!-- Account Selection -->
-                <div class="mb-4">
-                  <label for="accountNumber" class="form-label fw-bold">
-                    <i class="fas fa-university me-2 text-primary"></i>Select Account
-                  </label>
-                  <select 
-                    id="accountNumber" 
-                    class="form-select form-select-lg" 
-                    formControlName="accountNumber"
-                    [disabled]="loadingAccounts()">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        
+          <ui-card class="border-0 bg-white/70 backdrop-blur">
+            <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
+              <ui-card-title>Withdrawal Details</ui-card-title>
+            </ui-card-header>
+            <ui-card-content class="p-6">
+              <form [formGroup]="withdrawForm" (ngSubmit)="onSubmit()" class="space-y-5">
+                <div>
+                  <label for="accountNumber" class="block text-sm text-gray-600 mb-1">Select Account</label>
+                  <select id="accountNumber" class="w-full border rounded px-3 py-2" formControlName="accountNumber" [disabled]="loadingAccounts()">
                     <option value="">Choose an account...</option>
                     <option *ngFor="let account of accounts()" [value]="account.accountNumber">
                       {{ account.type }} - {{ account.accountNumber }} ({{ formatCurrency(account.balance) }})
                     </option>
                   </select>
-                  <div *ngIf="loadingAccounts()" class="form-text">
-                    <span class="spinner-border spinner-border-sm me-2"></span>
+                  <div *ngIf="loadingAccounts()" class="text-xs text-gray-500 mt-1 flex items-center gap-2">
+                    <ui-spinner size="sm"></ui-spinner>
                     Loading accounts...
                   </div>
                 </div>
 
-                <!-- Available Balance Warning -->
-                <div *ngIf="getSelectedAccount()" class="alert alert-warning mb-4">
-                  <i class="fas fa-info-circle me-2"></i>
+                <div *ngIf="getSelectedAccount()" class="rounded border p-3 bg-amber-50 text-amber-800 text-sm">
                   <strong>Available Balance:</strong> {{ formatCurrency(getSelectedAccount()?.balance || 0) }}
                 </div>
 
-                <!-- Amount -->
-                <div class="mb-4">
-                  <label for="amount" class="form-label fw-bold">
-                    <i class="fas fa-dollar-sign me-2 text-danger"></i>Withdrawal Amount
-                  </label>
-                  <div class="input-group input-group-lg">
-                    <span class="input-group-text">$</span>
-                    <input 
-                      type="number" 
-                      id="amount" 
-                      class="form-control" 
-                      formControlName="amount"
-                      placeholder="50"
-                      min="1"
-                      step="10"
-                      [max]="getSelectedAccount()?.balance || 0">
+                <div>
+                  <label for="amount" class="block text-sm text-gray-600 mb-1">Withdrawal Amount</label>
+                  <div class="flex items-center gap-2">
+                    <span class="px-3 py-2 rounded bg-gray-100 text-gray-600">$</span>
+                    <input id="amount" type="number" class="flex-1 border rounded px-3 py-2" formControlName="amount" placeholder="50" min="1" step="10" [max]="getSelectedAccount()?.balance || 0" />
                   </div>
-                  <div class="form-text">Enter the amount you want to withdraw</div>
-                  <div *ngIf="withdrawForm.get('amount')?.invalid && withdrawForm.get('amount')?.touched" 
-                       class="text-danger small mt-1">
-                    <i class="fas fa-exclamation-circle me-1"></i>
+                  <div class="text-xs text-gray-500 mt-1">Enter the amount you want to withdraw</div>
+                  <div *ngIf="withdrawForm.get('amount')?.invalid && withdrawForm.get('amount')?.touched" class="text-rose-700 text-xs mt-1">
                     Amount must be greater than $0
                   </div>
-                  <div *ngIf="getSelectedAccount() && withdrawForm.get('amount')?.value > getSelectedAccount()!.balance" 
-                       class="text-danger small mt-1">
-                    <i class="fas fa-exclamation-circle me-1"></i>
+                  <div *ngIf="getSelectedAccount() && withdrawForm.get('amount')?.value > getSelectedAccount()!.balance" class="text-rose-700 text-xs mt-1">
                     Insufficient funds! Maximum withdrawal: {{ formatCurrency(getSelectedAccount()?.balance || 0) }}
                   </div>
                 </div>
 
-                <!-- Buttons -->
-                <div class="d-grid gap-2">
-                  <button 
-                    type="submit" 
-                    class="btn btn-danger btn-lg" 
-                    [disabled]="loading() || withdrawForm.invalid || loadingAccounts() || 
-                               (getSelectedAccount() && withdrawForm.get('amount')?.value > getSelectedAccount()!.balance)">
-                    <span *ngIf="!loading()">
-                      <i class="fas fa-arrow-up me-2"></i>Withdraw Now
-                    </span>
-                    <span *ngIf="loading()">
-                      <span class="spinner-border spinner-border-sm me-2"></span>
+                <div class="flex items-center gap-3">
+                  <ui-button type="submit" [disabled]="loading() || withdrawForm.invalid || loadingAccounts() || (!!getSelectedAccount() && ((withdrawForm.get('amount')?.value || 0) > (getSelectedAccount()!.balance || 0)))">
+                    <ng-container *ngIf="!loading(); else loadingTpl">Withdraw Now</ng-container>
+                  </ui-button>
+                  <ng-template #loadingTpl>
+                    <div class="flex items-center gap-2">
+                      <ui-spinner size="sm"></ui-spinner>
                       Processing...
-                    </span>
-                  </button>
-                  <button 
-                    type="button" 
-                    class="btn btn-outline-secondary" 
-                    routerLink="/accounts">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Accounts
-                  </button>
+                    </div>
+                  </ng-template>
+                  <ui-button variant="outline" routerLink="/accounts">Cancel</ui-button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
+            </ui-card-content>
+          </ui-card>
+        
+      </div>
 
-        <!-- Summary Panel -->
-        <div class="col-md-5">
-          <div class="card border-0 shadow-lg">
-            <div class="card-header bg-gradient-primary text-white">
-              <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Transaction Summary</h5>
-            </div>
-            <div class="card-body p-4">
-              <div *ngIf="!withdrawForm.get('accountNumber')?.value" class="text-center py-4 text-muted">
-                <i class="fas fa-hand-point-left fa-3x mb-3"></i>
-                <p>Select an account to see summary</p>
+      <div class="space-y-6">
+        
+          <ui-card class="border-0 bg-white/70 backdrop-blur">
+            <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
+              <ui-card-title>Transaction Summary</ui-card-title>
+            </ui-card-header>
+            <ui-card-content class="p-6 space-y-4">
+              <div *ngIf="!withdrawForm.get('accountNumber')?.value" class="text-center py-2 text-gray-600">
+                Select an account to see summary
               </div>
-
-              <div *ngIf="withdrawForm.get('accountNumber')?.value">
-                <!-- Selected Account -->
-                <div class="summary-item mb-3">
-                  <p class="text-muted small mb-1">Selected Account</p>
-                  <p class="fw-bold mb-0">{{ getSelectedAccount()?.type }}</p>
-                  <p class="font-monospace small text-muted">{{ getSelectedAccount()?.accountNumber }}</p>
+              <div *ngIf="withdrawForm.get('accountNumber')?.value" class="space-y-2">
+                <div>
+                  <p class="text-xs text-gray-500">Selected Account</p>
+                  <p class="font-medium">{{ getSelectedAccount()?.type }}</p>
+                  <p class="font-mono text-xs text-gray-500">{{ getSelectedAccount()?.accountNumber }}</p>
                 </div>
-
-                <!-- Current Balance -->
-                <div class="summary-item mb-3">
-                  <p class="text-muted small mb-1">Current Balance</p>
-                  <h4 class="mb-0">{{ formatCurrency(getSelectedAccount()?.balance || 0) }}</h4>
+                <div>
+                  <p class="text-xs text-gray-500">Current Balance</p>
+                  <p class="text-lg font-semibold">{{ formatCurrency(getSelectedAccount()?.balance || 0) }}</p>
                 </div>
-
-                <!-- Withdrawal Amount -->
-                <div class="summary-item mb-3">
-                  <p class="text-muted small mb-1">Withdrawal Amount</p>
-                  <h4 class="mb-0 text-danger">- {{ formatCurrency(withdrawForm.get('amount')?.value || 0) }}</h4>
+                <div>
+                  <p class="text-xs text-gray-500">Withdrawal Amount</p>
+                  <p class="text-lg font-semibold text-rose-700">- {{ formatCurrency(withdrawForm.get('amount')?.value || 0) }}</p>
                 </div>
-
-                <hr>
-
-                <!-- New Balance -->
-                <div class="summary-item">
-                  <p class="text-muted small mb-1">New Balance (After Withdrawal)</p>
-                  <h3 class="mb-0" 
-                      [class.text-danger]="(getSelectedAccount()?.balance || 0) - (withdrawForm.get('amount')?.value || 0) < 1000"
-                      [class.text-primary]="(getSelectedAccount()?.balance || 0) - (withdrawForm.get('amount')?.value || 0) >= 1000">
+                <div class="border-t pt-2">
+                  <p class="text-xs text-gray-500">New Balance (After Withdrawal)</p>
+                  <p class="text-xl font-semibold" [class.text-rose-700]="(getSelectedAccount()?.balance || 0) - (withdrawForm.get('amount')?.value || 0) < 1000" [class.text-primary-600]="(getSelectedAccount()?.balance || 0) - (withdrawForm.get('amount')?.value || 0) >= 1000">
                     {{ formatCurrency((getSelectedAccount()?.balance || 0) - (withdrawForm.get('amount')?.value || 0)) }}
-                  </h3>
-                  <p *ngIf="(getSelectedAccount()?.balance || 0) - (withdrawForm.get('amount')?.value || 0) < 1000" 
-                     class="small text-danger mb-0 mt-1">
-                    <i class="fas fa-exclamation-triangle me-1"></i>Low balance warning
+                  </p>
+                  <p *ngIf="(getSelectedAccount()?.balance || 0) - (withdrawForm.get('amount')?.value || 0) < 1000" class="text-xs text-rose-700 mt-1">
+                    Low balance warning
                   </p>
                 </div>
               </div>
-            </div>
-          </div>
+            </ui-card-content>
+          </ui-card>
+        
 
-          <!-- Quick Tips -->
-          <div class="card border-0 shadow-lg mt-3">
-            <div class="card-body p-3">
-              <h6 class="fw-bold mb-2"><i class="fas fa-lightbulb me-2 text-warning"></i>Important:</h6>
-              <ul class="mb-0 small">
+        
+          <ui-card class="border-0 bg-white/70 backdrop-blur">
+            <ui-card-content class="p-6">
+              <h6 class="font-semibold mb-2">Important</h6>
+              <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
                 <li>Ensure sufficient balance before withdrawal</li>
                 <li>Withdrawals are processed instantly</li>
                 <li>No fees for standard withdrawals</li>
                 <li>Maintain minimum balance to avoid restrictions</li>
               </ul>
-            </div>
-          </div>
-        </div>
+            </ui-card-content>
+          </ui-card>
+        
       </div>
     </div>
   </div>

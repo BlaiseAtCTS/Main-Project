@@ -1,16 +1,32 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AccountService } from '../../../services/account.service';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
+import { CardComponent, CardHeaderComponent, CardTitleComponent, CardContentComponent } from '../../ui/card.component';
+import { ButtonComponent } from '../../ui/button.component';
+import { AlertComponent } from '../../ui/alert.component';
+import { SpinnerComponent } from '../../ui/spinner.component';
 
 @Component({
   selector: 'app-create-account',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    CardComponent,
+    CardHeaderComponent,
+    CardTitleComponent,
+    CardContentComponent,
+    ButtonComponent,
+    AlertComponent,
+  SpinnerComponent
+  ],
   templateUrl: './create-account.component.html',
-  styleUrl: './create-account.component.css',
+  styleUrls: ['./create-account.component.css'],
 })
 export class CreateAccountComponent implements OnInit {
   createAccountForm!: FormGroup;
@@ -19,12 +35,13 @@ export class CreateAccountComponent implements OnInit {
   error = signal<string | null>(null);
   accountTypes = ['SAVINGS', 'CHECKING', 'CREDIT'];
 
-  constructor(
-    private fb: FormBuilder,
-    private accountService: AccountService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  private fb = inject(FormBuilder);
+  private accountService = inject(AccountService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.checkAuthentication();
@@ -40,12 +57,13 @@ export class CreateAccountComponent implements OnInit {
   initializeForm(): void {
     this.createAccountForm = this.fb.group({
       type: ['SAVINGS', Validators.required],
-      initialBalance: [1000, [Validators.required, Validators.min(100)]]
+      initialBalance: [1000, [Validators.required, Validators.min(1000)]]
     });
   }
 
   onSubmit(): void {
     if (this.createAccountForm.invalid) {
+      this.toastService.error('Validation Error', 'Please fill in all fields correctly');
       this.error.set('Please fill in all fields correctly');
       return;
     }
@@ -59,7 +77,9 @@ export class CreateAccountComponent implements OnInit {
     this.accountService.createAccount(formValue).subscribe({
       next: (response) => {
         this.loading.set(false);
-        this.success.set('Account creation request submitted successfully! Waiting for admin approval.');
+        const successMsg = 'Account creation request submitted successfully! Waiting for admin approval.';
+        this.toastService.success('Account Request Submitted', successMsg);
+        this.success.set(successMsg);
         this.createAccountForm.reset({ type: 'SAVINGS', initialBalance: 1000 });
         
         // Redirect to accounts page after 3 seconds
@@ -70,7 +90,9 @@ export class CreateAccountComponent implements OnInit {
       error: (err) => {
         console.error('Error creating account:', err);
         this.loading.set(false);
-        this.error.set(err.error?.message || 'Failed to create account. Please try again.');
+        const errorMsg = err.error?.message || 'Failed to create account. Please try again.';
+        this.toastService.error('Account Creation Failed', errorMsg);
+        this.error.set(errorMsg);
       }
     });
   }

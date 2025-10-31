@@ -1,18 +1,34 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AccountService } from '../../../services/account.service';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 import { Account } from '../../../models/account.model';
+import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent } from '../../ui/card.component';
+import { ButtonComponent } from '../../ui/button.component';
+import { SpinnerComponent } from '../../ui/spinner.component';
+import { AlertComponent } from '../../ui/alert.component';
 
 @Component({
   selector: 'app-deposit',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    CardComponent,
+    CardHeaderComponent,
+    CardTitleComponent,
+    CardContentComponent,
+    ButtonComponent,
+    SpinnerComponent,
+  AlertComponent
+  ],
   templateUrl: './deposit.component.html',
-  styleUrl: './deposit.component.css',
+  styleUrls: ['./deposit.component.css'],
 })
 export class DepositComponent implements OnInit {
   depositForm!: FormGroup;
@@ -22,13 +38,14 @@ export class DepositComponent implements OnInit {
   success = signal<string | null>(null);
   error = signal<string | null>(null);
 
-  constructor(
-    private fb: FormBuilder,
-    private accountService: AccountService,
-    private userService: UserService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  private fb = inject(FormBuilder);
+  private accountService = inject(AccountService);
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.checkAuthentication();
@@ -66,6 +83,7 @@ export class DepositComponent implements OnInit {
 
   onSubmit(): void {
     if (this.depositForm.invalid) {
+      this.toastService.error('Validation Error', 'Please fill in all fields correctly');
       this.error.set('Please fill in all fields correctly');
       return;
     }
@@ -79,6 +97,10 @@ export class DepositComponent implements OnInit {
     this.accountService.deposit(formValue).subscribe({
       next: (response) => {
         this.loading.set(false);
+        this.toastService.success(
+          'Deposit Successful',
+          `Successfully deposited $${formValue.amount}! New balance will be reflected shortly.`
+        );
         this.success.set(`Successfully deposited $${formValue.amount}! New balance will be reflected shortly.`);
         this.depositForm.reset();
         
@@ -90,7 +112,9 @@ export class DepositComponent implements OnInit {
       error: (err) => {
         console.error('Error depositing:', err);
         this.loading.set(false);
-        this.error.set(err.error?.message || 'Failed to deposit. Please try again.');
+        const errorMessage = err.error?.message || 'Failed to deposit. Please try again.';
+        this.toastService.error('Deposit Failed', errorMessage);
+        this.error.set(errorMessage);
       }
     });
   }
@@ -101,10 +125,10 @@ export class DepositComponent implements OnInit {
   }
 
   formatCurrency(amount: number | null): string {
-    if (amount === null || amount === undefined) return '$0.00';
-    return new Intl.NumberFormat('en-US', {
+    if (amount === null || amount === undefined) return '₹0.00';
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   }
 

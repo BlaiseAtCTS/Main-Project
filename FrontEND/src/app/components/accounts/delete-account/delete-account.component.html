@@ -1,267 +1,192 @@
-<div class="delete-account-container min-vh-100 gradient-bg">
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <div class="sidebar-header">
-      <i class="fas fa-university fa-2x text-white mb-2"></i>
-      <h4 class="text-white">Account Management</h4>
+﻿<div class="relative">
+  <div class="relative mx-auto max-w-6xl px-4 py-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-semibold tracking-tight">Delete Account</h1>
+      <p class="text-sm text-muted-foreground">Request permanent account closure (requires admin approval)</p>
     </div>
-    
-    <ul class="nav flex-column mt-4">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard">
-          <i class="fas fa-home me-2"></i> Dashboard
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts">
-          <i class="fas fa-wallet me-2"></i> My Accounts
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/create">
-          <i class="fas fa-plus-circle me-2"></i> Create Account
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/deposit">
-          <i class="fas fa-arrow-down me-2"></i> Deposit
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/withdraw">
-          <i class="fas fa-arrow-up me-2"></i> Withdraw
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active">
-          <i class="fas fa-trash-alt me-2"></i> Delete Account
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/transactions">
-          <i class="fas fa-list me-2"></i> Transactions
-        </a>
-      </li>
-      <li class="nav-item mt-auto">
-        <a class="nav-link text-danger cursor-pointer" (click)="logout()">
-          <i class="fas fa-sign-out-alt me-2"></i> Logout
-        </a>
-      </li>
-    </ul>
-  </nav>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="container py-4">
-      <!-- Header -->
-      <div class="content-header mb-4">
-        <h2 class="mb-1"><i class="fas fa-trash-alt me-2 text-danger"></i>Delete Account</h2>
-        <p class="text-muted mb-0">Request permanent account closure (requires admin approval)</p>
+    <!-- Success -->
+    <ui-alert *ngIf="success()" class="mb-4">
+      <div class="flex items-center justify-between">
+        <span>{{ success() }}</span>
+        <button type="button" (click)="success.set(null)" class="text-sm underline">Dismiss</button>
+      </div>
+    </ui-alert>
+
+    <!-- Critical Warning -->
+    <ui-alert class="mb-6 border border-rose-500/30 bg-rose-50 text-rose-800">
+      <div>
+        <p class="font-semibold"> WARNING: Permanent action</p>
+        <p class="text-sm opacity-80">Account deletion is permanent and cant be undone. All account history will be lost.</p>
+      </div>
+    </ui-alert>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <!-- Form -->
+      <div class="lg:col-span-2">
+        <ui-card>
+          <ui-card-header>
+            <ui-card-title>Account deletion request</ui-card-title>
+          </ui-card-header>
+          <ui-card-content>
+            <form [formGroup]="deleteForm" class="space-y-6">
+              <!-- Account Selection -->
+              <div>
+                <label for="accountNumber" class="mb-2 block text-sm font-medium">Select account to delete</label>
+                <select
+                  id="accountNumber"
+                  class="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  formControlName="accountNumber"
+                  (change)="onAccountSelect()"
+                  [disabled]="loadingAccounts()">
+                  <option value="">Choose an account...</option>
+                  <option *ngFor="let account of accounts()" [value]="account.accountNumber">
+                    {{ account.type }} - {{ account.accountNumber }} ({{ formatCurrency(account.balance) }})
+                  </option>
+                </select>
+                <div *ngIf="loadingAccounts()" class="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                  <ui-spinner></ui-spinner>
+                  Loading accounts...
+                </div>
+              </div>
+
+              <!-- Selected Account Summary -->
+              <div *ngIf="showWarning()" class="rounded-lg border p-4">
+                <p class="mb-2 text-sm font-semibold">Account details</p>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p class="mb-1"><span class="opacity-70">Type:</span> {{ getSelectedAccount()?.type }}</p>
+                    <p><span class="opacity-70">Account:</span> {{ getSelectedAccount()?.accountNumber }}</p>
+                  </div>
+                  <div>
+                    <p class="opacity-70">Current balance</p>
+                    <p class="text-base font-semibold"
+                       [class.text-emerald-600]="getSelectedAccount()?.balance === 0"
+                       [class.text-rose-600]="getSelectedAccount()!.balance > 0">
+                      {{ formatCurrency(getSelectedAccount()?.balance || 0) }}
+                    </p>
+                  </div>
+                </div>
+
+                <ui-alert *ngIf="getSelectedAccount() && getSelectedAccount()!.balance > 0" class="mt-3 border border-rose-300/50 bg-rose-50 text-rose-800">
+                  <p class="text-sm"><strong>Cannot delete account with balance.</strong> Please withdraw all funds before requesting deletion.</p>
+                </ui-alert>
+                <ui-alert *ngIf="getSelectedAccount() && getSelectedAccount()!.balance === 0" class="mt-3 border border-emerald-300/50 bg-emerald-50 text-emerald-800">
+                  <p class="text-sm"> Account is eligible for deletion (zero balance).</p>
+                </ui-alert>
+              </div>
+
+              <!-- Requirements Checklist -->
+              <div class="rounded-lg bg-muted/30 p-4">
+                <p class="mb-2 text-sm font-semibold">Deletion requirements</p>
+                <ul class="space-y-1 text-sm">
+                  <li class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full" [class.bg-emerald-500]="deleteForm.get('accountNumber')?.value" [class.bg-muted-foreground]="!deleteForm.get('accountNumber')?.value"></span>
+                    Select account to delete
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full" [class.bg-emerald-500]="getSelectedAccount() && getSelectedAccount()!.balance === 0" [class.bg-muted-foreground]="!getSelectedAccount() || getSelectedAccount()!.balance > 0"></span>
+                    Zero account balance
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex flex-col gap-3 sm:flex-row">
+                <ui-button type="button" (click)="openDeleteDialog()"
+                  [disabled]="loading() || deleteForm.invalid || loadingAccounts() || (!!getSelectedAccount() && getSelectedAccount()!.balance > 0)">
+                  <span *ngIf="!loading()">Submit deletion request</span>
+                  <span class="inline-flex items-center gap-2" *ngIf="loading()"><ui-spinner></ui-spinner> Processing</span>
+                </ui-button>
+                <ui-button type="button" routerLink="/accounts" variant="outline">Cancel and return</ui-button>
+              </div>
+            </form>
+          </ui-card-content>
+        </ui-card>
       </div>
 
-      <!-- Success Message -->
-      <div *ngIf="success()" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>{{ success() }}
-        <button type="button" class="btn-close" (click)="success.set(null)"></button>
-      </div>
+      <!-- Info panel -->
+      <div class="lg:col-span-1">
+        <ui-card class="mb-4">
+          <ui-card-header>
+            <ui-card-title>What happens next?</ui-card-title>
+          </ui-card-header>
+          <ui-card-content>
+            <ol class="list-decimal space-y-2 pl-5 text-sm">
+              <li>
+                <p class="font-medium">Request submitted</p>
+                <p class="text-muted-foreground">Your deletion request is sent to admin.</p>
+              </li>
+              <li>
+                <p class="font-medium">Admin review</p>
+                <p class="text-muted-foreground">Admin reviews and approves the request.</p>
+              </li>
+              <li>
+                <p class="font-medium">Account closed</p>
+                <p class="text-muted-foreground">Account is permanently deleted.</p>
+              </li>
+              <li>
+                <p class="font-medium">Confirmation</p>
+                <p class="text-muted-foreground">You receive notification of closure.</p>
+              </li>
+            </ol>
+          </ui-card-content>
+        </ui-card>
 
-      <!-- Error Message -->
-      <div *ngIf="error()" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i>{{ error() }}
-        <button type="button" class="btn-close" (click)="error.set(null)"></button>
-      </div>
-
-      <!-- Critical Warning Banner -->
-      <div class="alert alert-danger border-danger shadow-lg mb-4">
-        <div class="d-flex align-items-center">
-          <i class="fas fa-exclamation-triangle fa-3x me-3"></i>
-          <div>
-            <h5 class="mb-1"><strong>WARNING: Permanent Action</strong></h5>
-            <p class="mb-0">Account deletion is permanent and cannot be undone. All account history will be lost.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- Delete Form -->
-        <div class="col-md-7">
-          <div class="card border-0 shadow-lg">
-            <div class="card-header bg-gradient-danger text-white">
-              <h5 class="mb-0"><i class="fas fa-exclamation-circle me-2"></i>Account Deletion Request</h5>
-            </div>
-            <div class="card-body p-4">
-              <form [formGroup]="deleteForm" (ngSubmit)="onSubmit()">
-                <!-- Account Selection -->
-                <div class="mb-4">
-                  <label for="accountNumber" class="form-label fw-bold">
-                    <i class="fas fa-university me-2 text-primary"></i>Select Account to Delete
-                  </label>
-                  <select 
-                    id="accountNumber" 
-                    class="form-select form-select-lg" 
-                    formControlName="accountNumber"
-                    (change)="onAccountSelect()"
-                    [disabled]="loadingAccounts()">
-                    <option value="">Choose an account...</option>
-                    <option *ngFor="let account of accounts()" [value]="account.accountNumber">
-                      {{ account.type }} - {{ account.accountNumber }} ({{ formatCurrency(account.balance) }})
-                    </option>
-                  </select>
-                  <div *ngIf="loadingAccounts()" class="form-text">
-                    <span class="spinner-border spinner-border-sm me-2"></span>
-                    Loading accounts...
-                  </div>
-                </div>
-
-                <!-- Selected Account Warning -->
-                <div *ngIf="showWarning()" class="alert alert-warning mb-4">
-                  <h6 class="fw-bold mb-2">
-                    <i class="fas fa-info-circle me-2"></i>Account Details
-                  </h6>
-                  <div class="row">
-                    <div class="col-6">
-                      <p class="small mb-1"><strong>Type:</strong> {{ getSelectedAccount()?.type }}</p>
-                      <p class="small mb-0"><strong>Account:</strong> {{ getSelectedAccount()?.accountNumber }}</p>
-                    </div>
-                    <div class="col-6">
-                      <p class="small mb-0"><strong>Current Balance:</strong></p>
-                      <h5 class="mb-0" 
-                          [class.text-success]="getSelectedAccount()?.balance === 0"
-                          [class.text-danger]="getSelectedAccount()!.balance > 0">
-                        {{ formatCurrency(getSelectedAccount()?.balance || 0) }}
-                      </h5>
-                    </div>
-                  </div>
-                  
-                  <div *ngIf="getSelectedAccount() && getSelectedAccount()!.balance > 0" 
-                       class="alert alert-danger mt-3 mb-0">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <strong>Cannot delete account with balance!</strong>
-                    <br>Please withdraw all funds before requesting deletion.
-                  </div>
-                  <div *ngIf="getSelectedAccount() && getSelectedAccount()!.balance === 0" 
-                       class="alert alert-success mt-3 mb-0">
-                    <i class="fas fa-check-circle me-2"></i>
-                    Account is eligible for deletion (zero balance)
-                  </div>
-                </div>
-
-                <!-- Confirmation Input -->
-                <div class="mb-4">
-                  <label for="confirmation" class="form-label fw-bold">
-                    <i class="fas fa-keyboard me-2 text-danger"></i>Type "DELETE" to Confirm
-                  </label>
-                  <input 
-                    type="text" 
-                    id="confirmation" 
-                    class="form-control form-control-lg" 
-                    formControlName="confirmation"
-                    placeholder="Type DELETE in capital letters"
-                    autocomplete="off">
-                  <div class="form-text">This confirms you understand this action is permanent</div>
-                  <div *ngIf="deleteForm.get('confirmation')?.invalid && deleteForm.get('confirmation')?.touched" 
-                       class="text-danger small mt-1">
-                    <i class="fas fa-exclamation-circle me-1"></i>
-                    You must type "DELETE" exactly (all capitals)
-                  </div>
-                </div>
-
-                <!-- Requirements Checklist -->
-                <div class="card bg-light border-0 mb-4">
-                  <div class="card-body">
-                    <h6 class="fw-bold mb-3">Deletion Requirements:</h6>
-                    <ul class="list-unstyled mb-0">
-                      <li class="mb-2">
-                        <i class="fas fa-check-circle text-success me-2" *ngIf="deleteForm.get('accountNumber')?.value"></i>
-                        <i class="fas fa-circle text-muted me-2" *ngIf="!deleteForm.get('accountNumber')?.value"></i>
-                        Select account to delete
-                      </li>
-                      <li class="mb-2">
-                        <i class="fas fa-check-circle text-success me-2" *ngIf="getSelectedAccount() && getSelectedAccount()!.balance === 0"></i>
-                        <i class="fas fa-circle text-muted me-2" *ngIf="!getSelectedAccount() || getSelectedAccount()!.balance > 0"></i>
-                        Zero account balance
-                      </li>
-                      <li class="mb-0">
-                        <i class="fas fa-check-circle text-success me-2" *ngIf="deleteForm.get('confirmation')?.value === 'DELETE'"></i>
-                        <i class="fas fa-circle text-muted me-2" *ngIf="deleteForm.get('confirmation')?.value !== 'DELETE'"></i>
-                        Confirmation text entered
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="d-grid gap-2">
-                  <button 
-                    type="submit" 
-                    class="btn btn-danger btn-lg" 
-                    [disabled]="loading() || deleteForm.invalid || loadingAccounts() || 
-                               (getSelectedAccount() && getSelectedAccount()!.balance > 0)">
-                    <span *ngIf="!loading()">
-                      <i class="fas fa-trash-alt me-2"></i>Submit Deletion Request
-                    </span>
-                    <span *ngIf="loading()">
-                      <span class="spinner-border spinner-border-sm me-2"></span>
-                      Processing...
-                    </span>
-                  </button>
-                  <button 
-                    type="button" 
-                    class="btn btn-outline-secondary" 
-                    routerLink="/accounts">
-                    <i class="fas fa-arrow-left me-2"></i>Cancel & Return
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <!-- Info Panel -->
-        <div class="col-md-5">
-          <div class="card border-0 shadow-lg mb-3">
-            <div class="card-header bg-gradient-warning text-dark">
-              <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>What Happens Next?</h5>
-            </div>
-            <div class="card-body p-4">
-              <ol class="mb-0">
-                <li class="mb-3">
-                  <strong>Request Submitted</strong>
-                  <p class="small text-muted mb-0">Your deletion request is sent to admin</p>
-                </li>
-                <li class="mb-3">
-                  <strong>Admin Review</strong>
-                  <p class="small text-muted mb-0">Admin reviews and approves the request</p>
-                </li>
-                <li class="mb-3">
-                  <strong>Account Closed</strong>
-                  <p class="small text-muted mb-0">Account is permanently deleted</p>
-                </li>
-                <li class="mb-0">
-                  <strong>Confirmation</strong>
-                  <p class="small text-muted mb-0">You receive notification of closure</p>
-                </li>
-              </ol>
-            </div>
-          </div>
-
-          <!-- Important Notes -->
-          <div class="card border-danger shadow-lg">
-            <div class="card-body p-3">
-              <h6 class="fw-bold text-danger mb-2">
-                <i class="fas fa-exclamation-triangle me-2"></i>Important Notes:
-              </h6>
-              <ul class="mb-0 small">
-                <li>Account must have zero balance</li>
-                <li>Deletion requires admin approval</li>
-                <li>Action is permanent and irreversible</li>
-                <li>All transaction history will be lost</li>
-                <li>Account number cannot be reused</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        <ui-card>
+          <ui-card-content>
+            <p class="mb-2 text-sm font-semibold text-rose-600">Important notes</p>
+            <ul class="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              <li>Account must have zero balance</li>
+              <li>Deletion requires admin approval</li>
+              <li>Action is permanent and irreversible</li>
+              <li>All transaction history will be lost</li>
+              <li>Account number cannot be reused</li>
+            </ul>
+          </ui-card-content>
+        </ui-card>
       </div>
     </div>
   </div>
+
+  <!-- Alert Dialog for Confirmation -->
+  <ui-alert-dialog [open]="showDeleteDialog()" (openChange)="showDeleteDialog.set($event)">
+    <ui-alert-dialog-header>
+      <ui-alert-dialog-title>
+        <svg class="h-5 w-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        Confirm Account Deletion
+      </ui-alert-dialog-title>
+      <ui-alert-dialog-description>
+        This action cannot be undone. This will permanently delete your account and remove all associated data from our servers.
+      </ui-alert-dialog-description>
+    </ui-alert-dialog-header>
+    
+    <ui-alert-dialog-content>
+      <div class="rounded-lg bg-rose-50 border border-rose-200 p-4">
+        <p class="text-sm font-semibold text-rose-900 mb-2">You are about to delete:</p>
+        <div class="text-sm text-rose-800 space-y-1">
+          <p><strong>Account Type:</strong> {{ getSelectedAccount()?.type }}</p>
+          <p><strong>Account Number:</strong> {{ getSelectedAccount()?.accountNumber }}</p>
+          <p><strong>Current Balance:</strong> {{ formatCurrency(getSelectedAccount()?.balance || 0) }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 mt-3">
+        Your request will be sent to an administrator for approval. Once approved, all account data will be permanently removed.
+      </p>
+    </ui-alert-dialog-content>
+    
+    <ui-alert-dialog-footer>
+      <ui-button type="button" (click)="cancelDelete()" variant="outline">
+        Cancel
+      </ui-button>
+      <ui-button type="button" (click)="confirmDelete()" class="bg-rose-600 hover:bg-rose-700 text-white">
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        Yes, delete account
+      </ui-button>
+    </ui-alert-dialog-footer>
+  </ui-alert-dialog>
 </div>

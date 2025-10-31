@@ -1,0 +1,72 @@
+/* Professional Banking Color Scheme */
+/* 
+  This file defines professional, muted colors for banking applications
+  replacing bright greens and reds with sophisticated alternatives
+*/
+
+@layer utilities {
+  /* Professional Positive (Credit/Deposit) Colors */
+  .text-success-professional {
+    color: #059669; /* Emerald-600 - Professional green */
+  }
+  
+  .bg-success-professional-light {
+    background-color: #d1fae5; /* Emerald-100 */
+  }
+  
+  .bg-success-professional {
+    background-color: #10b981; /* Emerald-500 */
+  }
+  
+  .text-success-dark {
+    color: #047857; /* Emerald-700 - Darker, more serious */
+  }
+
+  /* Professional Negative (Debit/Withdrawal) Colors */
+  .text-danger-professional {
+    color: #dc2626; /* Rose-600 - Professional red */
+  }
+  
+  .bg-danger-professional-light {
+    background-color: #ffe4e6; /* Rose-100 */
+  }
+  
+  .bg-danger-professional {
+    background-color: #f43f5e; /* Rose-500 */
+  }
+  
+  .text-danger-dark {
+    color: #b91c1c; /* Rose-700 - Darker, more serious */
+  }
+
+  /* Professional Warning (Amber instead of Yellow) */
+  .text-warning-professional {
+    color: #d97706; /* Amber-600 */
+  }
+  
+  .bg-warning-professional-light {
+    background-color: #fef3c7; /* Amber-100 */
+  }
+  
+  .text-warning-dark {
+    color: #92400e; /* Amber-800 */
+  }
+
+  /* Professional Info Colors */
+  .text-info-professional {
+    color: #0284c7; /* Sky-600 */
+  }
+  
+  .bg-info-professional-light {
+    background-color: #e0f2fe; /* Sky-100 */
+  }
+
+  /* Neutral Balance Display */
+  .text-balance {
+    color: #334155; /* Slate-700 - Professional dark gray */
+  }
+  
+  .text-balance-large {
+    color: #1e293b; /* Slate-800 - Even darker for emphasis */
+  }
+}

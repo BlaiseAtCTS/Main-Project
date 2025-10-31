@@ -26,6 +26,9 @@ export class AuthService {
         if (response.success && response.token) {
           localStorage.setItem('token', response.token);
           localStorage.setItem('role', response.role || 'USER');
+          if (response.username || request.userName) {
+            localStorage.setItem('username', response.username || request.userName);
+          }
           this.currentUserSubject.next(response.token);
         }
       })
@@ -36,6 +39,7 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('userId');
+    localStorage.removeItem('username');
     sessionStorage.clear();
     this.currentUserSubject.next(null);
   }
@@ -54,6 +58,16 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getRole() === 'ADMIN';
+  }
+
+  getUsername(): string | null {
+    // Try to get username from localStorage or decode from token
+    const username = localStorage.getItem('username');
+    if (username) return username;
+    
+    // Fallback: return role or null
+    const role = this.getRole();
+    return role ? role.toLowerCase() : null;
   }
 
   getAuthHeaders(): HttpHeaders {

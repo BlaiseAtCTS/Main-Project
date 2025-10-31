@@ -1,15 +1,179 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 import { UserRegisterRequest } from '../../models/user.model';
+import { useRegister } from '../../hooks/use-auth';
+import { ToastService } from '../../services/toast.service';
+import { ButtonComponent } from '../ui/button.component';
+import { InputComponent } from '../ui/input.component';
+import { 
+  CardComponent,
+  CardHeaderComponent,
+  CardTitleComponent,
+  CardDescriptionComponent,
+  CardContentComponent,
+  CardFooterComponent
+} from '../ui/card.component';
+import { LabelComponent } from '../ui/label.component';
+import { SpinnerComponent } from '../ui/spinner.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule, FormsModule, RouterModule,
+  ButtonComponent, InputComponent, CardComponent,
+  CardHeaderComponent, CardTitleComponent, CardDescriptionComponent,
+  CardContentComponent, CardFooterComponent, LabelComponent,
+  SpinnerComponent
+  ],
   templateUrl: './register.component.html',
+  template: `
+    <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div class="w-full max-w-2xl animate-fade-in">
+        <ui-card>
+          <ui-card-header class="text-center space-y-4">
+            <div class="mx-auto h-16 w-16 rounded-full bg-gray-900 flex items-center justify-center">
+              <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+              </div>
+              <ui-card-title>Join IndiaShield Bank</ui-card-title>
+              <ui-card-description>Create your account today and start banking with us</ui-card-description>
+          </ui-card-header>
+
+            <ui-card-content>
+              <form (ngSubmit)="onSubmit()" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <ui-label>First Name</ui-label>
+                    <ui-input
+                      type="text"
+                      name="firstName"
+                      placeholder="John"
+                      [(ngModel)]="registerData.firstName"
+                      [disabled]="isPending"
+                      class="w-full"
+                    ></ui-input>
+                  </div>
+
+                  <div class="space-y-2">
+                    <ui-label>Last Name</ui-label>
+                    <ui-input
+                      type="text"
+                      name="lastName"
+                      placeholder="Doe"
+                      [(ngModel)]="registerData.lastName"
+                      [disabled]="isPending"
+                      class="w-full"
+                    ></ui-input>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <ui-label>Username</ui-label>
+                  <ui-input
+                    type="text"
+                    name="userName"
+                    placeholder="johndoe"
+                    [(ngModel)]="registerData.userName"
+                    [disabled]="isPending"
+                    class="w-full"
+                  ></ui-input>
+                </div>
+
+                <div class="space-y-2">
+                  <ui-label>Password</ui-label>
+                  <ui-input
+                    type="password"
+                    name="password"
+                    placeholder="••••••••"
+                    [(ngModel)]="registerData.password"
+                    [disabled]="isPending"
+                    class="w-full"
+                  ></ui-input>
+                </div>
+
+                <div class="space-y-2">
+                  <ui-label>Email</ui-label>
+                  <ui-input
+                    type="email"
+                    name="email"
+                    placeholder="john@example.com"
+                    [(ngModel)]="registerData.email"
+                    [disabled]="isPending"
+                    class="w-full"
+                  ></ui-input>
+                </div>
+
+                <div class="space-y-2">
+                  <ui-label>Phone Number</ui-label>
+                  <ui-input
+                    type="tel"
+                    name="phoneNumber"
+                    placeholder="+1 234 567 8900"
+                    [(ngModel)]="registerData.phoneNumber"
+                    [disabled]="isPending"
+                    class="w-full"
+                  ></ui-input>
+                </div>
+
+                <div class="space-y-2">
+                  <ui-label>Date of Birth</ui-label>
+                  <ui-input
+                    type="date"
+                    name="dob"
+                    [(ngModel)]="registerData.dob"
+                    [disabled]="isPending"
+                    class="w-full"
+                  ></ui-input>
+                </div>
+
+                <div class="space-y-2">
+                  <ui-label>Address</ui-label>
+                  <ui-input
+                    type="text"
+                    name="address"
+                    placeholder="123 Main St, City, Country"
+                    [(ngModel)]="registerData.address"
+                    [disabled]="isPending"
+                    class="w-full"
+                  ></ui-input>
+                </div>
+
+                <ui-button
+                  type="submit"
+                  size="lg"
+                  class="w-full"
+                  [disabled]="isPending"
+                >
+                  <span *ngIf="!isPending" class="flex items-center justify-center gap-2">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    Create Account
+                  </span>
+                  <span *ngIf="isPending" class="flex items-center justify-center gap-2">
+                    <ui-spinner size="sm" class="text-white"></ui-spinner>
+                    Creating Account...
+                  </span>
+                </ui-button>
+              </form>
+            </ui-card-content>
+
+              <ui-card-footer class="justify-center">
+              <p class="text-sm text-gray-600">
+                Already have an account?
+                <a routerLink="/login" class="ml-1 font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+                  Sign In
+                </a>
+              </p>
+            </ui-card-footer>
+            </ui-card>
+      </div>
+    </div>
+  `,
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
@@ -24,63 +188,35 @@ export class RegisterComponent {
     address: ''
   };
 
-  error: string | null = null;
-  success: string | null = null;
-  validationError: string | null = null;
-  fieldError: string | null = null;
+  registerMutation = useRegister();
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+
+  constructor() {}
 
   onSubmit(): void {
-    this.error = null;
-    this.success = null;
-    this.validationError = null;
-    this.fieldError = null;
-
-    this.authService.register(this.registerData).subscribe({
-      next: (response) => {
+    this.registerMutation.mutate(this.registerData, {
+      onSuccess: (response) => {
         if (response.success) {
-          this.success = response.message || 'Registration successful! Redirecting to login...';
-          this.cdr.detectChanges(); // Force change detection
+          const successMsg = response.message || 'Registration successful! Redirecting to login...';
+          this.toastService.success('Registration Successful', successMsg);
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 2000);
         } else {
-          // Handle backend validation errors
-          this.error = response.message || 'Registration failed';
-          if (response.error) {
-            this.validationError = response.error;
-          }
-          if (response.field) {
-            this.fieldError = response.field;
-          }
-          this.cdr.detectChanges(); // Force change detection
+          const errorMsg = response.message || 'Registration failed';
+          this.toastService.error('Registration Failed', errorMsg);
         }
       },
-      error: (error) => {
-        console.error('Registration error:', error);
-        
-        // Handle different types of errors from backend
-        if (error.error && typeof error.error === 'object') {
-          // Handle structure: {error: 'Unauthorized', message: 'Authentication required'}
-          this.error = error.error.message || 'Registration failed. Please try again.';
-          if (error.error.error) {
-            this.validationError = error.error.error;
-          }
-          if (error.error.field) {
-            this.fieldError = error.error.field;
-          }
-        } else if (error.error && typeof error.error === 'string') {
-          this.error = error.error;
-        } else {
-          this.error = error.message || 'Registration failed. Please try again.';
-        }
-        this.cdr.detectChanges(); // Force change detection
+      onError: (error: any) => {
+        const errorMsg = error.error?.message || 'Registration failed. Please try again.';
+        this.toastService.error('Registration Failed', errorMsg);
       }
     });
+  }
+
+  get isPending(): boolean {
+    return this.registerMutation.isPending();
   }
 }

@@ -1,38 +1,69 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AccountService } from '../../../services/account.service';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 import { Account } from '../../../models/account.model';
+import { CardComponent, CardContentComponent, CardHeaderComponent, CardTitleComponent } from '../../ui/card.component';
+import { ButtonComponent } from '../../ui/button.component';
+import { SpinnerComponent } from '../../ui/spinner.component';
+import { AlertComponent } from '../../ui/alert.component';
+import { 
+  AlertDialogComponent, 
+  AlertDialogHeaderComponent, 
+  AlertDialogTitleComponent,
+  AlertDialogDescriptionComponent,
+  AlertDialogContentComponent,
+  AlertDialogFooterComponent 
+} from '../../ui/alert-dialog.component';
 
 @Component({
   selector: 'app-delete-account',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    CardComponent,
+    CardHeaderComponent,
+    CardTitleComponent,
+    CardContentComponent,
+    ButtonComponent,
+    SpinnerComponent,
+    AlertComponent,
+    AlertDialogComponent,
+    AlertDialogHeaderComponent,
+    AlertDialogTitleComponent,
+    AlertDialogDescriptionComponent,
+    AlertDialogContentComponent,
+    AlertDialogFooterComponent
+  ],
   templateUrl: './delete-account.component.html',
   styleUrls: ['./delete-account.component.css']
 })
 export class DeleteAccountComponent implements OnInit {
   deleteForm: FormGroup;
   accounts = signal<Account[]>([]);
+  showDeleteDialog = signal<boolean>(false);
   loadingAccounts = signal<boolean>(false);
   loading = signal<boolean>(false);
   success = signal<string | null>(null);
   error = signal<string | null>(null);
   showWarning = signal<boolean>(false);
 
-  constructor(
-    private fb: FormBuilder,
-    private accountService: AccountService,
-    private userService: UserService,
-    private authService: AuthService,
-    private router: Router
-  ) {
+  private fb = inject(FormBuilder);
+  private accountService = inject(AccountService);
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+
+  constructor() {
     this.deleteForm = this.fb.group({
-      accountNumber: ['', Validators.required],
-      confirmation: ['', [Validators.required, Validators.pattern(/^DELETE$/)]]
+      accountNumber: ['', Validators.required]
     });
   }
 
@@ -60,30 +91,34 @@ export class DeleteAccountComponent implements OnInit {
     this.showWarning.set(!!selectedAccount);
   }
 
-  onSubmit(): void {
+  openDeleteDialog(): void {
     if (this.deleteForm.invalid) {
-      this.error.set('Please fill in all required fields correctly.');
-      return;
-    }
-
-    const confirmationText = this.deleteForm.get('confirmation')?.value;
-    if (confirmationText !== 'DELETE') {
-      this.error.set('Please type "DELETE" to confirm account deletion.');
+      this.toastService.error('Validation Error', 'Please select an account to delete.');
       return;
     }
 
     const selectedAccount = this.getSelectedAccount();
     if (!selectedAccount) {
-      this.error.set('Please select an account.');
+      this.toastService.error('Validation Error', 'Please select an account.');
       return;
     }
 
     // Check if account has balance
     if (selectedAccount.balance > 0) {
-      this.error.set(`Cannot delete account with remaining balance of ${this.formatCurrency(selectedAccount.balance)}. Please withdraw all funds first.`);
+      const errorMsg = `Cannot delete account with remaining balance of ${this.formatCurrency(selectedAccount.balance)}. Please withdraw all funds first.`;
+      this.toastService.warning('Balance Remaining', errorMsg);
       return;
     }
 
+    this.showDeleteDialog.set(true);
+  }
+
+  cancelDelete(): void {
+    this.showDeleteDialog.set(false);
+  }
+
+  confirmDelete(): void {
+    this.showDeleteDialog.set(false);
     this.loading.set(true);
     this.error.set(null);
     this.success.set(null);
@@ -92,7 +127,9 @@ export class DeleteAccountComponent implements OnInit {
 
     this.accountService.deleteAccount(accountNumber).subscribe({
       next: (response) => {
-        this.success.set('Account deletion request submitted successfully! Admin approval is required.');
+        const successMsg = 'Account deletion request submitted successfully! Admin approval is required.';
+        this.toastService.success('Deletion Request Submitted', successMsg);
+        this.success.set(successMsg);
         this.loading.set(false);
         this.deleteForm.reset();
         this.showWarning.set(false);
@@ -104,7 +141,9 @@ export class DeleteAccountComponent implements OnInit {
       },
       error: (error) => {
         console.error('Delete account error:', error);
-        this.error.set(error.error?.message || 'Failed to submit deletion request. Please try again.');
+        const errorMsg = error.error?.message || 'Failed to submit deletion request. Please try again.';
+        this.toastService.error('Deletion Failed', errorMsg);
+        this.error.set(errorMsg);
         this.loading.set(false);
       }
     });
@@ -116,9 +155,9 @@ export class DeleteAccountComponent implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   }
 

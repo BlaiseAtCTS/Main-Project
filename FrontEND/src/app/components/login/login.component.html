@@ -1,72 +1,87 @@
-<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center gradient-bg">
-  <div class="row w-100">
-    <div class="col-md-6 col-lg-4 mx-auto">
-      <div class="card shadow-lg border-0 fade-in">
-        <div class="card-body p-5">
-          <div class="text-center mb-4">
-            <i class="fas fa-gem fa-3x text-gradient mb-3"></i>
-            <h2 class="fw-bold">Welcome to Ferroro Bank</h2>
-            <p class="text-muted">Sign in to your account</p>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-secondary-50 to-primary-100 p-4">
+  <div class="w-full max-w-md animate-fade-in">
+      <ui-card>
+        <ui-card-header class="text-center space-y-4">
+          <div class="mx-auto h-16 w-16 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center">
+            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
           </div>
+          <ui-card-title>Welcome to IndiaShield Bank</ui-card-title>
+          <ui-card-description>Sign in to your account to continue</ui-card-description>
+        </ui-card-header>
 
-          <div *ngIf="error" class="alert alert-danger" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
-          </div>
-
-          <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-            <div class="mb-3">
-              <label for="userName" class="form-label fw-semibold">
-                <i class="fas fa-user me-2"></i>Username
-              </label>
-              <input
+  <ui-card-content>
+          <form (ngSubmit)="onSubmit()" class="space-y-5">
+            <div class="space-y-2">
+              <ui-label>
+                <div class="flex items-center gap-2">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Username
+                </div>
+              </ui-label>
+              <ui-input
                 type="text"
-                class="form-control form-control-lg"
-                id="userName"
                 name="userName"
-                [(ngModel)]="loginData.userName"
-                required
                 placeholder="Enter your username"
-              />
+                [(ngModel)]="loginData.userName"
+                [disabled]="isPending"
+                class="w-full"
+              ></ui-input>
             </div>
 
-            <div class="mb-4">
-              <label for="password" class="form-label fw-semibold">
-                <i class="fas fa-lock me-2"></i>Password
-              </label>
-              <input
+            <div class="space-y-2">
+              <ui-label>
+                <div class="flex items-center gap-2">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  Password
+                </div>
+              </ui-label>
+              <ui-input
                 type="password"
-                class="form-control form-control-lg"
-                id="password"
                 name="password"
-                [(ngModel)]="loginData.password"
-                required
                 placeholder="Enter your password"
-              />
+                [(ngModel)]="loginData.password"
+                [disabled]="isPending"
+                class="w-full"
+              ></ui-input>
             </div>
 
-            <button
-              type="submit"
-              class="btn btn-primary btn-lg w-100 gradient-primary border-0"
-              [disabled]="loading || !loginForm.valid"
-            >
-              <span *ngIf="!loading">
-                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-              </span>
-              <span *ngIf="loading">
-                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Signing in...
-              </span>
-            </button>
+            <div class="pt-2">
+              <ui-button
+                type="submit"
+                variant="default"
+                size="lg"
+                class="w-full"
+                [disabled]="isPending || !loginData.userName || !loginData.password"
+              >
+                <span *ngIf="!isPending" class="flex items-center justify-center gap-2">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                  Sign In
+                </span>
+                <span *ngIf="isPending" class="flex items-center justify-center gap-2">
+                  <ui-spinner size="sm"></ui-spinner>
+                  Signing in...
+                </span>
+              </ui-button>
+            </div>
           </form>
+        </ui-card-content>
 
-          <div class="text-center mt-4">
-            <p class="text-muted">
-              Don't have an account?
-              <a routerLink="/register" class="text-decoration-none fw-semibold">Sign Up</a>
-            </p>
+  <ui-card-footer class="flex-col space-y-4">
+          <div class="text-center text-sm text-gray-600">
+            Don't have an account?
+            <a routerLink="/register" class="font-semibold text-primary-600 hover:text-primary-700 transition-colors ml-1">
+              Sign Up
+            </a>
           </div>
-        </div>
-      </div>
-    </div>
+        </ui-card-footer>
+  </ui-card>
   </div>
 </div>

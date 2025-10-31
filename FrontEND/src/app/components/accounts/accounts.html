@@ -1,167 +1,156 @@
-<div class="accounts-container min-vh-100 gradient-bg">
-  <!-- Sidebar Navigation -->
-  <nav class="sidebar">
-    <div class="sidebar-header">
-      <i class="fas fa-gem fa-2x text-white mb-2"></i>
-      <h4 class="text-white">Ferroro Bank</h4>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+  <!-- Header Section -->
+  <div class="bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold mb-2">{{ 'ACCOUNTS.TITLE' | translate }}</h1>
+      <p class="text-white/80">{{ 'ACCOUNTS.OVERVIEW' | translate }}</p>
     </div>
-    
-    <ul class="nav flex-column mt-4">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard">
-          <i class="fas fa-home me-2"></i> Dashboard
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active">
-          <i class="fas fa-wallet me-2"></i> My Accounts
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/create">
-          <i class="fas fa-plus-circle me-2"></i> Create Account
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/deposit">
-          <i class="fas fa-arrow-down me-2"></i> Deposit
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/withdraw">
-          <i class="fas fa-arrow-up me-2"></i> Withdraw
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/accounts/delete">
-          <i class="fas fa-trash-alt me-2"></i> Delete Account
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/transactions">
-          <i class="fas fa-list me-2"></i> Transactions
-        </a>
-      </li>
-      <li class="nav-item mt-auto">
-        <a class="nav-link text-danger cursor-pointer" (click)="logout()">
-          <i class="fas fa-sign-out-alt me-2"></i> Logout
-        </a>
-      </li>
-    </ul>
-  </nav>
+  </div>
 
   <!-- Main Content -->
-  <div class="main-content">
-    <!-- Header -->
-    <div class="content-header">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h2 class="mb-0"><i class="fas fa-wallet me-2"></i>My Accounts</h2>
-          <p class="text-muted mb-0">Manage and view all your accounts</p>
-        </div>
-        <button class="btn btn-primary" routerLink="/accounts/create">
-          <i class="fas fa-plus me-2"></i>Create New Account
-        </button>
-      </div>
-    </div>
-
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Loading State -->
-    <div *ngIf="loading()" class="text-center py-5">
-      <div class="spinner-border spinner-large text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <p class="mt-3 text-muted">Loading accounts...</p>
+    <div *ngIf="isLoading()" class="flex flex-col items-center justify-center py-12">
+      <ui-spinner size="lg"></ui-spinner>
+      <p class="mt-4 text-gray-600">{{ 'COMMON.LOADING' | translate }}</p>
     </div>
 
     <!-- Error State -->
-    <div class="container-fluid px-4">
-      <div *ngIf="error()" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i>{{ error() }}
-        <button type="button" class="btn-close" (click)="error.set(null)"></button>
-      </div>
-    </div>
+    <ui-alert *ngIf="profileQuery.isError()" variant="error" class="mb-6">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="ml-2">{{ 'MESSAGES.LOAD_ERROR' | translate }}</span>
+    </ui-alert>
 
-    <!-- No Accounts State -->
-    <div *ngIf="!loading() && accounts().length === 0 && !error()" class="text-center py-5">
-      <i class="fas fa-wallet fa-5x text-muted mb-3"></i>
-      <h4 class="text-muted">No Accounts Found</h4>
-      <p class="text-muted">You don't have any accounts yet. Create your first account to get started!</p>
-      <button class="btn btn-primary btn-lg" routerLink="/accounts/create">
-        <i class="fas fa-plus me-2"></i>Create Your First Account
-      </button>
-    </div>
-
-    <!-- Accounts Grid -->
-    <div *ngIf="!loading() && accounts().length > 0" class="container-fluid px-4">
+    <!-- Content -->
+    <div *ngIf="!isLoading()" class="space-y-6">
       <!-- Summary Card -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <div class="card border-0 shadow-lg bg-gradient-primary text-white">
-            <div class="card-body p-4">
-              <div class="row align-items-center">
-                <div class="col-md-6">
-                  <h3 class="mb-1">Total Balance Across All Accounts</h3>
-                  <h1 class="display-4 mb-0">{{ formatCurrency(getTotalBalance()) }}</h1>
-                </div>
-                <div class="col-md-6 text-md-end">
-                  <p class="mb-1 opacity-75">Total Active Accounts</p>
-                  <h2 class="mb-0">{{ accounts().length }}</h2>
-                </div>
+      
+        <ui-card class="border-0 bg-white/50 backdrop-blur">
+          <ui-card-content class="p-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <p class="text-sm font-medium text-gray-600 mb-1">{{ 'ACCOUNTS.TOTAL_BALANCE' | translate }}</p>
+                <h2 class="text-4xl font-bold text-gray-900">{{ formatCurrency(totalBalance()) }}</h2>
+              </div>
+              <div class="flex gap-3">
+                <ui-button routerLink="/accounts/create">
+                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  {{ 'ACCOUNTS.CREATE_NEW' | translate }}
+                </ui-button>
               </div>
             </div>
-          </div>
-        </div>
+          </ui-card-content>
+        </ui-card>
+      
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <ui-button variant="outline" routerLink="/accounts/deposit" class="h-20 flex-col space-y-2">
+          <svg class="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m0-16l-4 4m4-4l4 4" />
+          </svg>
+          <span class="font-semibold">{{ 'ACCOUNTS.DEPOSIT' | translate }}</span>
+        </ui-button>
+
+        <ui-button variant="outline" routerLink="/accounts/withdraw" class="h-20 flex-col space-y-2">
+          <svg class="h-6 w-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4" />
+          </svg>
+          <span class="font-semibold">{{ 'ACCOUNTS.WITHDRAW' | translate }}</span>
+        </ui-button>
+
+        <ui-button variant="outline" routerLink="/transactions" class="h-20 flex-col space-y-2">
+          <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <span class="font-semibold">{{ 'ACCOUNTS.TRANSFER' | translate }}</span>
+        </ui-button>
+
+        <ui-button variant="outline" routerLink="/accounts/delete" class="h-20 flex-col space-y-2">
+          <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          <span class="font-semibold">{{ 'ACCOUNTS.DELETE' | translate }}</span>
+        </ui-button>
       </div>
 
-      <!-- Accounts Cards -->
-      <div class="row g-4">
-        <div *ngFor="let account of accounts()" class="col-md-6 col-lg-4">
-          <div class="card account-card border-0 shadow-lg h-100">
-            <div class="card-header bg-gradient-primary text-white">
-              <div class="d-flex align-items-center">
-                <div class="account-icon-large me-3">
-                  <i [class]="getAccountTypeIcon(account.type) + ' fa-2x'"></i>
-                </div>
-                <div>
-                  <h5 class="mb-0">{{ account.type }}</h5>
-                  <small class="opacity-75">Account</small>
-                </div>
-              </div>
-            </div>
-            <div class="card-body p-4">
-              <!-- Account Number -->
-              <div class="mb-3">
-                <p class="text-muted small mb-1">Account Number</p>
-                <p class="font-monospace fw-bold mb-0">{{ account.accountNumber }}</p>
-              </div>
+      <!-- No Accounts State -->
+      <div *ngIf="accounts().length === 0" class="text-center py-12">
+        <svg class="h-24 w-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        </svg>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ 'ACCOUNTS.NO_ACCOUNTS' | translate }}</h3>
+        <p class="text-gray-600 mb-6">{{ 'ACCOUNTS.GET_STARTED' | translate }}</p>
+        <ui-button routerLink="/accounts/create">
+          <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          {{ 'ACCOUNTS.CREATE_NEW' | translate }}
+        </ui-button>
+      </div>
 
-              <!-- Balance -->
-              <div class="mb-3">
-                <p class="text-muted small mb-1">Current Balance</p>
-                <h3 class="mb-0" 
-                    [class.text-success]="(account.balance || 0) >= 1000" 
-                    [class.text-danger]="(account.balance || 0) < 1000">
-                  {{ formatCurrency(account.balance) }}
-                </h3>
-                <small class="text-danger fw-bold" *ngIf="(account.balance || 0) < 1000">
-                  <i class="fas fa-exclamation-triangle me-1"></i>Low Balance Alert
-                </small>
-              </div>
+      <!-- Accounts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let account of accounts()" class="transform transition-all duration-300 hover:scale-105">
+          
+            <ui-card class="border-0 h-full bg-white/70 backdrop-blur">
+              <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
+                <div class="flex items-center justify-between">
+                  <span class="px-3 py-1 text-xs font-semibold rounded-full" 
+                        [ngClass]="getAccountTypeBadgeColor(account.type)">
+                    {{ account.type }}
+                  </span>
+                  <div class="h-10 w-10 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
+                    <svg class="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                  </div>
+                </div>
+              </ui-card-header>
+              <ui-card-content class="p-6">
+                <div class="space-y-4">
+                  <div>
+                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">{{ 'ACCOUNTS.ACCOUNT_NUMBER' | translate }}</p>
+                    <p class="text-sm font-mono font-semibold text-gray-900">{{ account.accountNumber }}</p>
+                  </div>
+                  
+                  <div class="pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">{{ 'ACCOUNTS.BALANCE' | translate }}</p>
+                    <h3 class="text-3xl font-bold" 
+                        [ngClass]="{
+                          'text-slate-700': (account.balance || 0) >= 1000,
+                          'text-amber-700': (account.balance || 0) >= 100 && (account.balance || 0) < 1000,
+                          'text-rose-700': (account.balance || 0) < 100
+                        }">
+                      {{ formatCurrency(account.balance) }}
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1" *ngIf="(account.balance || 0) < 100">
+                      ⚠️ {{ 'ACCOUNTS.LOW_BALANCE_WARNING' | translate }}
+                    </p>
+                  </div>
 
-              <!-- Quick Actions -->
-              <div class="d-grid gap-2 mt-3">
-                <button class="btn btn-sm btn-success" routerLink="/accounts/deposit">
-                  <i class="fas fa-arrow-down me-2"></i>Deposit
-                </button>
-                <button class="btn btn-sm btn-warning" routerLink="/accounts/withdraw">
-                  <i class="fas fa-arrow-up me-2"></i>Withdraw
-                </button>
-                <button class="btn btn-sm btn-outline-danger" routerLink="/accounts/delete">
-                  <i class="fas fa-trash me-2"></i>Delete Request
-                </button>
-              </div>
-            </div>
-          </div>
+                  <div class="pt-4 border-t border-gray-200 flex gap-2">
+                    <ui-button size="sm" variant="outline" class="flex-1" routerLink="/transactions" [queryParams]="{tab: 'history', account: account.accountNumber}">
+                      <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                      {{ 'ACCOUNTS.VIEW_HISTORY' | translate }}
+                    </ui-button>
+                    <ui-button size="sm" class="flex-1" routerLink="/transactions" [queryParams]="{tab: 'history', account: account.accountNumber}">
+                      <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                      </svg>
+                      {{ 'ACCOUNTS.TRANSFER' | translate }}
+                    </ui-button>
+                  </div>
+                </div>
+              </ui-card-content>
+            </ui-card>
+          
         </div>
       </div>
     </div>
