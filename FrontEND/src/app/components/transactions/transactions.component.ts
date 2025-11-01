@@ -2,7 +2,6 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { TransactionService } from '../../services/transaction.service';
@@ -20,7 +19,6 @@ import { AlertComponent } from '../ui/alert.component';
     CommonModule,
     FormsModule,
     RouterModule,
-    TranslateModule,
     CardComponent,
     CardHeaderComponent,
     CardTitleComponent,

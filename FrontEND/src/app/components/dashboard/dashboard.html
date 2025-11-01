@@ -2,8 +2,8 @@
   <!-- Welcome Section -->
   <div class="bg-gradient-to-r from-primary-600 to-secondary-600 text-white py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-      <h1 class="text-3xl font-bold mb-2">{{ 'DASHBOARD.WELCOME_BACK' | translate }}, {{ username() }}! 👋</h1>
-      <p class="text-white/80">{{ 'DASHBOARD.FINANCIAL_OVERVIEW' | translate }}</p>
+      <h1 class="text-3xl font-bold mb-2">Welcome Back, {{ username() }}! 👋</h1>
+      <p class="text-white/80">Here's your financial overview</p>
     </div>
   </div>
 
@@ -12,7 +12,7 @@
     <!-- Loading State -->
     <div *ngIf="isLoading()" class="flex flex-col items-center justify-center py-12">
       <ui-spinner size="lg"></ui-spinner>
-      <p class="mt-4 text-gray-600">{{ 'DASHBOARD.LOADING_DASHBOARD' | translate }}</p>
+      <p class="mt-4 text-gray-600">Loading dashboard...</p>
     </div>
 
     <!-- Error State -->
@@ -20,7 +20,7 @@
       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <span class="ml-2">{{ 'DASHBOARD.LOAD_ERROR' | translate }}</span>
+      <span class="ml-2">Failed to load dashboard data</span>
     </ui-alert>
 
     <!-- Dashboard Content -->
@@ -33,7 +33,7 @@
             <ui-card-content class="p-6">
               <div class="flex items-center justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-600">{{ 'DASHBOARD.TOTAL_BALANCE' | translate }}</p>
+                  <p class="text-sm font-medium text-gray-600">Total Balance</p>
                   <h2 class="text-3xl font-bold text-gray-900 mt-2">{{ formatCurrency(totalBalance()) }}</h2>
                 </div>
                 <div class="h-14 w-14 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
@@ -52,7 +52,7 @@
             <ui-card-content class="p-6">
               <div class="flex items-center justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-600">{{ 'DASHBOARD.ACTIVE_ACCOUNTS' | translate }}</p>
+                  <p class="text-sm font-medium text-gray-600">Active Accounts</p>
                   <h2 class="text-3xl font-bold text-gray-900 mt-2">{{ activeAccounts() }}</h2>
                 </div>
                 <div class="h-14 w-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
@@ -71,7 +71,7 @@
             <ui-card-content class="p-6">
               <div class="flex items-center justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-600">{{ 'DASHBOARD.RECENT_TRANSACTIONS' | translate }}</p>
+                  <p class="text-sm font-medium text-gray-600">Recent Transactions</p>
                   <h2 class="text-3xl font-bold text-gray-900 mt-2">{{ recentTransactions().length }}</h2>
                 </div>
                 <div class="h-14 w-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
@@ -92,7 +92,7 @@
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            {{ 'DASHBOARD.QUICK_ACTIONS' | translate }}
+            Quick Actions
           </ui-card-title>
         </ui-card-header>
         <ui-card-content>
@@ -101,28 +101,28 @@
               <svg class="h-8 w-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
-              <span class="font-semibold">{{ 'DASHBOARD.CREATE_ACCOUNT' | translate }}</span>
+              <span class="font-semibold">Create Account</span>
             </ui-button>
 
             <ui-button variant="outline" routerLink="/accounts/deposit" class="h-24 flex-col space-y-2">
               <svg class="h-8 w-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m0-16l-4 4m4-4l4 4" />
               </svg>
-              <span class="font-semibold">{{ 'DASHBOARD.DEPOSIT_MONEY' | translate }}</span>
+              <span class="font-semibold">Deposit Money</span>
             </ui-button>
 
             <ui-button variant="outline" routerLink="/accounts/withdraw" class="h-24 flex-col space-y-2">
               <svg class="h-8 w-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m0 16l-4-4m4 4l4-4" />
               </svg>
-              <span class="font-semibold">{{ 'DASHBOARD.WITHDRAW_MONEY' | translate }}</span>
+              <span class="font-semibold">Withdraw Money</span>
             </ui-button>
 
             <ui-button variant="outline" routerLink="/transactions" class="h-24 flex-col space-y-2">
               <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
-              <span class="font-semibold">{{ 'DASHBOARD.TRANSFER_MONEY' | translate }}</span>
+              <span class="font-semibold">Transfer Money</span>
             </ui-button>
           </div>
         </ui-card-content>
@@ -138,9 +138,9 @@
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                {{ 'DASHBOARD.MY_ACCOUNTS' | translate }}
+                My Accounts
               </ui-card-title>
-              <ui-button variant="outline" size="sm" routerLink="/accounts">{{ 'DASHBOARD.VIEW_ALL' | translate }}</ui-button>
+              <ui-button variant="outline" size="sm" routerLink="/accounts">View All</ui-button>
             </div>
           </ui-card-header>
           <ui-card-content class="p-6">
@@ -149,12 +149,12 @@
               <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
-              <p class="text-gray-600 mb-4">{{ 'DASHBOARD.NO_ACCOUNTS' | translate }}</p>
+              <p class="text-gray-600 mb-4">You don't have any accounts yet</p>
               <ui-button routerLink="/accounts/create">
                 <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                {{ 'DASHBOARD.CREATE_FIRST_ACCOUNT' | translate }}
+                Create Your First Account
               </ui-button>
             </div>
 
@@ -183,7 +183,7 @@
                         }">
                       {{ formatCurrency(account.balance) }}
                     </h5>
-                    <small class="text-amber-600 text-xs" *ngIf="(account.balance || 0) < 1000">{{ 'DASHBOARD.LOW_BALANCE' | translate }}</small>
+                    <small class="text-amber-600 text-xs" *ngIf="(account.balance || 0) < 1000">Low Balance</small>
                   </div>
                 </div>
               </div>
@@ -199,9 +199,9 @@
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {{ 'DASHBOARD.TRANSACTION_HISTORY' | translate }}
+                Transaction History
               </ui-card-title>
-              <ui-button variant="outline" size="sm" routerLink="/transactions">{{ 'DASHBOARD.VIEW_ALL' | translate }}</ui-button>
+              <ui-button variant="outline" size="sm" routerLink="/transactions">View All</ui-button>
             </div>
           </ui-card-header>
           <ui-card-content class="p-6">
@@ -211,7 +211,7 @@
                 <svg class="inline h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
-                {{ 'DASHBOARD.FILTER_BY_ACCOUNT' | translate }}
+                Filter by Account
               </label>
               <select 
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
@@ -230,7 +230,7 @@
                     <span class="text-xs px-2 py-1 rounded-full bg-primary-100 text-primary-700">{{ selectedAccount()?.type }}</span>
                   </div>
                   <div class="text-right">
-                    <p class="text-xs text-gray-600">{{ 'DASHBOARD.BALANCE' | translate }}</p>
+                    <p class="text-xs text-gray-600">Balance</p>
                     <h5 class="text-lg font-bold text-slate-700">{{ formatCurrency(selectedAccount()?.balance || 0) }}</h5>
                   </div>
                 </div>
@@ -247,7 +247,7 @@
               <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <p class="text-gray-600">{{ 'DASHBOARD.NO_TRANSACTIONS' | translate }}</p>
+              <p class="text-gray-600">No transactions yet</p>
             </div>
 
             <!-- Transactions List -->

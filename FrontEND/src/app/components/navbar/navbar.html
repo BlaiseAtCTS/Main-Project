@@ -76,9 +76,6 @@
       <!-- Right Side Actions -->
       <div class="flex items-center gap-4">
         <div *ngIf="isAuthenticated" class="hidden md:flex md:items-center md:space-x-4">
-          <!-- Settings Menu (Theme & Language) -->
-          <app-settings-menu></app-settings-menu>
-          
           <ui-button variant="outline" size="sm" (click)="logout()">
             <span class="flex items-center gap-2">
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,11 +183,6 @@
       </a>
 
       <div class="border-t border-gray-200 mt-2 pt-2">
-        <!-- Language Toggle in Mobile Menu -->
-        <div class="px-3 py-2">
-          <app-settings-menu></app-settings-menu>
-        </div>
-        
         <button 
           (click)="logout()"
           class="w-full text-left border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900 block pl-3 pr-4 py-2 text-base font-medium transition-colors">

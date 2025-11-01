@@ -25,15 +25,12 @@
 
       <!-- User Info -->
       <div *ngIf="isAuthenticated()" class="flex items-center gap-3">
-        <!-- Language Toggle (Shadcn-style) -->
-        <ui-language-toggle></ui-language-toggle>
-        
         <span class="text-sm text-gray-700 dark:text-gray-300 hidden sm:block">{{ username() }}</span>
         <button
           (click)="logout()"
           class="px-3 py-1.5 text-sm bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 rounded-md transition-colors"
         >
-          {{ 'AUTH.LOGOUT' | translate }}
+          Logout
         </button>
       </div>
     </div>
@@ -69,7 +66,7 @@
 
     <!-- Account Actions - Only visible to regular users -->
     <div *ngIf="!isAdmin()" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-      <div class="text-xs text-gray-500 dark:text-gray-400 px-3 mb-2">{{ 'NAV.ACCOUNT_ACTIONS' | translate }}</div>
+      <div class="text-xs text-gray-500 dark:text-gray-400 px-3 mb-2">Account Actions</div>
       <a
         routerLink="/accounts/create"
         routerLinkActive="bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
@@ -79,7 +76,7 @@
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
-        <span class="font-medium">{{ 'CREATE_ACCOUNT.TITLE' | translate }}</span>
+        <span class="font-medium">Create New Account</span>
       </a>
       <a
         routerLink="/accounts/deposit"
@@ -90,7 +87,7 @@
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8l-8 8-8-8" />
         </svg>
-        <span class="font-medium">{{ 'DEPOSIT.TITLE' | translate }}</span>
+        <span class="font-medium">Deposit Money</span>
       </a>
       <a
         routerLink="/accounts/withdraw"
@@ -101,7 +98,7 @@
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20V4m8 8l-8-8-8 8" />
         </svg>
-        <span class="font-medium">{{ 'WITHDRAW.TITLE' | translate }}</span>
+        <span class="font-medium">Withdraw Money</span>
       </a>
     </div>
   </ui-sheet>

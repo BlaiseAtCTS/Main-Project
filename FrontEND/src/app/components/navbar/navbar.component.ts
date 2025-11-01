@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { useAuth, useLogout } from '../../hooks/use-auth';
 import { ButtonComponent } from '../ui/button.component';
-import { SettingsMenuComponent } from '../settings-menu/settings-menu.component';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, ButtonComponent, SettingsMenuComponent, TranslateModule],
+  imports: [CommonModule, RouterModule, ButtonComponent],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })

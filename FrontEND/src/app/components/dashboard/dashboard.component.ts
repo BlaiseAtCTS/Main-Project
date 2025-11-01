@@ -12,7 +12,6 @@ import { CardComponent, CardHeaderComponent, CardTitleComponent, CardContentComp
 import { ButtonComponent } from '../ui/button.component';
 import { SpinnerComponent } from '../ui/spinner.component';
 import { AlertComponent } from '../ui/alert.component';
-import { TranslateModule } from '@ngx-translate/core';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -28,8 +27,7 @@ import { lastValueFrom } from 'rxjs';
     CardContentComponent,
     ButtonComponent,
     SpinnerComponent,
-    AlertComponent,
-    TranslateModule
+    AlertComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',

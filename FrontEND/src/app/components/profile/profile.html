@@ -6,12 +6,12 @@
           <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          {{ 'PROFILE.TITLE' | translate }}
+          My Profile
         </h1>
-        <p class="text-white/80">{{ 'PROFILE.SUBTITLE' | translate }}</p>
+        <p class="text-white/80">Manage your account information</p>
       </div>
       <ui-button variant="ghost" routerLink="/dashboard" class="">
-        {{ 'PROFILE.BACK_TO_DASHBOARD' | translate }}
+        Back to Dashboard
       </ui-button>
     </div>
   </div>
@@ -20,7 +20,7 @@
     <!-- Loading -->
     <div *ngIf="loading()" class="flex flex-col items-center justify-center py-12">
       <ui-spinner size="lg"></ui-spinner>
-      <p class="mt-4 text-gray-600">{{ 'COMMON.LOADING' | translate }}</p>
+      <p class="mt-4 text-gray-600">Loading...</p>
     </div>
 
     <!-- Error -->
@@ -45,8 +45,8 @@
               <h3 class="text-xl font-semibold">{{ profile()!.firstName }} {{ profile()!.lastName }}</h3>
               <p class="text-gray-600">{{ profile()!.username }}</p>
               <div class="mt-2">
-                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-white/70 text-primary-700" *ngIf="isAdmin()">{{ 'PROFILE.ADMINISTRATOR' | translate }}</span>
-                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-white/70 text-slate-700" *ngIf="!isAdmin()">{{ 'PROFILE.USER' | translate }}</span>
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-white/70 text-primary-700" *ngIf="isAdmin()">Administrator</span>
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-white/70 text-slate-700" *ngIf="!isAdmin()">User</span>
               </div>
             </ui-card-content>
           </ui-card>
@@ -55,20 +55,20 @@
         
           <ui-card class="border-0 bg-white/70 backdrop-blur">
             <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
-              <ui-card-title>{{ 'PROFILE.QUICK_STATS' | translate }}</ui-card-title>
+              <ui-card-title>Quick Stats</ui-card-title>
             </ui-card-header>
             <ui-card-content class="p-6 space-y-4">
               <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">$</div>
                 <div>
-                  <p class="text-sm text-gray-600">{{ 'PROFILE.TOTAL_BALANCE' | translate }}</p>
+                  <p class="text-sm text-gray-600">Total Balance</p>
                   <p class="text-lg font-semibold text-gray-900">{{ formatCurrency(getTotalBalance()) }}</p>
                 </div>
               </div>
               <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center">#</div>
                 <div>
-                  <p class="text-sm text-gray-600">{{ 'PROFILE.TOTAL_ACCOUNTS' | translate }}</p>
+                  <p class="text-sm text-gray-600">Total Accounts</p>
                   <p class="text-lg font-semibold text-gray-900">{{ profile()!.accounts.length || 0 }}</p>
                 </div>
               </div>
@@ -82,23 +82,23 @@
         
           <ui-card class="border-0 bg-white/70 backdrop-blur">
             <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
-              <ui-card-title>{{ 'PROFILE.PERSONAL_INFO' | translate }}</ui-card-title>
+              <ui-card-title>Personal Information</ui-card-title>
             </ui-card-header>
             <ui-card-content class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p class="text-xs text-gray-500 uppercase mb-1">{{ 'PROFILE.EMAIL' | translate }}</p>
+                <p class="text-xs text-gray-500 uppercase mb-1">Email Address</p>
                 <p class="text-sm font-medium text-gray-900">{{ profile()!.email }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 uppercase mb-1">{{ 'PROFILE.PHONE' | translate }}</p>
+                <p class="text-xs text-gray-500 uppercase mb-1">Phone Number</p>
                 <p class="text-sm font-medium text-gray-900">{{ profile()!.phoneNumber }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 uppercase mb-1">{{ 'PROFILE.DOB' | translate }}</p>
+                <p class="text-xs text-gray-500 uppercase mb-1">Date of Birth</p>
                 <p class="text-sm font-medium text-gray-900">{{ profile()!.dob }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 uppercase mb-1">{{ 'PROFILE.ADDRESS' | translate }}</p>
+                <p class="text-xs text-gray-500 uppercase mb-1">Address</p>
                 <p class="text-sm font-medium text-gray-900">{{ profile()!.address }}</p>
               </div>
             </ui-card-content>
@@ -108,14 +108,14 @@
         
           <ui-card class="border-0 bg-white/70 backdrop-blur">
             <ui-card-header class="border-b bg-gradient-to-r from-gray-50 to-white">
-              <ui-card-title>{{ 'PROFILE.MY_ACCOUNTS' | translate }}</ui-card-title>
+              <ui-card-title>My Accounts</ui-card-title>
             </ui-card-header>
             <ui-card-content class="p-6">
               <div *ngIf="!profile()!.accounts || profile()!.accounts.length === 0" class="text-center py-6">
                 <svg class="h-10 w-10 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4" />
                 </svg>
-                <p class="text-gray-600">{{ 'ACCOUNTS.NO_ACCOUNTS' | translate }}</p>
+                <p class="text-gray-600">No Accounts Yet</p>
               </div>
               <div *ngFor="let account of profile()!.accounts" class="p-4 border rounded-lg mb-3 flex items-center justify-between">
                 <div>
@@ -123,7 +123,7 @@
                   <p class="mt-1 text-xs text-gray-500 font-mono">{{ account.accountNumber }}</p>
                 </div>
                 <div class="text-right">
-                  <p class="text-xs text-gray-500">{{ 'ACCOUNTS.BALANCE' | translate }}</p>
+                  <p class="text-xs text-gray-500">Balance</p>
                   <p class="text-lg font-semibold text-slate-700">{{ formatCurrency(account.balance) }}</p>
                 </div>
               </div>

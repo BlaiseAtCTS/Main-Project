@@ -6,8 +6,6 @@ import { SheetComponent } from '../ui/sheet.component';
 import { BreadcrumbsComponent, BreadcrumbItem } from '../ui/breadcrumbs.component';
 import { AuthService } from '../../services/auth.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LanguageToggleComponent } from '../ui/language-toggle.component';
-import { TranslateModule } from '@ngx-translate/core';
 
 interface NavItem {
   label: string;
@@ -20,7 +18,7 @@ interface NavItem {
 @Component({
   selector: 'app-shell-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule, SheetComponent, BreadcrumbsComponent, LanguageToggleComponent, TranslateModule],
+  imports: [CommonModule, RouterModule, SheetComponent, BreadcrumbsComponent],
   templateUrl: './shell-layout.component.html',
   styleUrls: ['./shell-layout.component.css']
 })

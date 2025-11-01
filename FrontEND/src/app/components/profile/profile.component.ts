@@ -1,7 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { UserProfile } from '../../models/user.model';
@@ -16,7 +15,6 @@ import { AlertComponent } from '../ui/alert.component';
   imports: [
     CommonModule,
     RouterModule,
-    TranslateModule,
     CardComponent,
     CardHeaderComponent,
     CardTitleComponent,
