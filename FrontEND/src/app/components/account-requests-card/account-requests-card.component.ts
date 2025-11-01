@@ -59,14 +59,14 @@ import { AccountRequest } from '../../models/account-request.model';
                    [ngClass]="{
                      'border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 hover:border-amber-300': request.status === 'PENDING',
                      'border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 hover:border-green-300': request.status === 'APPROVED',
-                     'border-red-200 bg-gradient-to-r from-red-50 to-rose-50 hover:border-red-300': request.status === 'DECLINED'
+                     'border-red-200 bg-gradient-to-r from-red-50 to-rose-50 hover:border-red-300': request.status === 'REJECTED'
                    }">
                 <!-- Status indicator bar -->
                 <div class="absolute left-0 top-0 bottom-0 w-1 transition-all group-hover:w-2"
                      [ngClass]="{
                        'bg-gradient-to-b from-amber-400 to-amber-600': request.status === 'PENDING',
                        'bg-gradient-to-b from-green-400 to-green-600': request.status === 'APPROVED',
-                       'bg-gradient-to-b from-red-400 to-red-600': request.status === 'DECLINED'
+                       'bg-gradient-to-b from-red-400 to-red-600': request.status === 'REJECTED'
                      }"></div>
 
                 <div class="p-5 pl-6">
@@ -78,14 +78,14 @@ import { AccountRequest } from '../../models/account-request.model';
                              [ngClass]="{
                                'bg-amber-100': request.status === 'PENDING',
                                'bg-green-100': request.status === 'APPROVED',
-                               'bg-red-100': request.status === 'DECLINED'
+                               'bg-red-100': request.status === 'REJECTED'
                              }">
                           @if (request.requestType === 'CREATE') {
                             <svg class="h-5 w-5"
                                  [ngClass]="{
                                    'text-amber-600': request.status === 'PENDING',
                                    'text-green-600': request.status === 'APPROVED',
-                                   'text-red-600': request.status === 'DECLINED'
+                                   'text-red-600': request.status === 'REJECTED'
                                  }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
@@ -94,7 +94,7 @@ import { AccountRequest } from '../../models/account-request.model';
                                  [ngClass]="{
                                    'text-amber-600': request.status === 'PENDING',
                                    'text-green-600': request.status === 'APPROVED',
-                                   'text-red-600': request.status === 'DECLINED'
+                                   'text-red-600': request.status === 'REJECTED'
                                  }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
@@ -148,7 +148,7 @@ import { AccountRequest } from '../../models/account-request.model';
                           <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          Declined
+                          REJECTED
                         </span>
                       }
                     </div>
