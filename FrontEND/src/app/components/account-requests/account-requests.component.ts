@@ -311,7 +311,7 @@ export class AccountRequestsComponent {
       if (data) {
         this.pendingCount.set(data.filter((r: AccountRequest) => r.status === 'PENDING').length);
         this.approvedCount.set(data.filter((r: AccountRequest) => r.status === 'APPROVED').length);
-        this.declinedCount.set(data.filter((r: AccountRequest) => r.status === 'DECLINED').length);
+        this.declinedCount.set(data.filter((r: AccountRequest) => r.status === 'REJECTED').length);
       }
     });
   }
