@@ -70,18 +70,6 @@ export class TransactionsComponent implements OnInit {
       .filter(t => t.type === 'Deposit')
       .reduce((sum, t) => sum + t.amount, 0);
   });
-  
-  totalWithdrawals = computed(() => {
-    return this.filteredTransactions()
-      .filter(t => t.type === 'Withdraw')
-      .reduce((sum, t) => sum + t.amount, 0);
-  });
-  
-  totalTransfers = computed(() => {
-    return this.filteredTransactions()
-      .filter(t => t.type === 'Transfer')
-      .reduce((sum, t) => sum + t.amount, 0);
-  });
 
   constructor(
     private userService: UserService,

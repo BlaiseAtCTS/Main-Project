@@ -119,4 +119,13 @@ public class AccountRequestService {
             }
         }
     }
+    
+    // User-facing methods to get their own requests
+    public List<AccountRequest> getUserRequests(Long userId) {
+        return requestRepo.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+    
+    public List<AccountRequest> getUserPendingRequests(Long userId) {
+        return requestRepo.findByUserIdAndStatus(userId, "PENDING");
+    }
 }

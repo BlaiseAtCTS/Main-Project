@@ -77,15 +77,15 @@ export class CreateAccountComponent implements OnInit {
     this.accountService.createAccount(formValue).subscribe({
       next: (response) => {
         this.loading.set(false);
-        const successMsg = 'Account creation request submitted successfully! Waiting for admin approval.';
+        const successMsg = 'Account creation request submitted successfully! Redirecting to view your request status...';
         this.toastService.success('Account Request Submitted', successMsg);
         this.success.set(successMsg);
         this.createAccountForm.reset({ type: 'SAVINGS', initialBalance: 1000 });
         
-        // Redirect to accounts page after 3 seconds
+        // Redirect to account requests page after 2 seconds
         setTimeout(() => {
-          this.router.navigate(['/accounts']);
-        }, 3000);
+          this.router.navigate(['/account-requests']);
+        }, 2000);
       },
       error: (err) => {
         console.error('Error creating account:', err);

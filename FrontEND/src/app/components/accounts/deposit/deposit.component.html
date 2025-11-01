@@ -45,12 +45,12 @@
                 <div>
                   <label for="amount" class="block text-sm text-gray-600 mb-1">Deposit Amount</label>
                   <div class="flex items-center gap-2">
-                    <span class="px-3 py-2 rounded bg-gray-100 text-gray-600">$</span>
+                    <span class="px-3 py-2 rounded bg-gray-100 text-gray-600">₹</span>
                     <input id="amount" type="number" class="flex-1 border rounded px-3 py-2" formControlName="amount" placeholder="100" min="1" step="10" />
                   </div>
                   <div class="text-xs text-gray-500 mt-1">Enter the amount you want to deposit</div>
                   <div *ngIf="depositForm.get('amount')?.invalid && depositForm.get('amount')?.touched" class="text-red-600 text-xs mt-1">
-                    Amount must be greater than $0
+                    Amount must be greater than ₹0
                   </div>
                 </div>
 

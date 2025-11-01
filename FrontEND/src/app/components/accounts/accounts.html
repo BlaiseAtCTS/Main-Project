@@ -35,6 +35,17 @@
                 <h2 class="text-4xl font-bold text-gray-900">{{ formatCurrency(totalBalance()) }}</h2>
               </div>
               <div class="flex gap-3">
+                <ui-button variant="outline" routerLink="/account-requests" class="group relative">
+                  <svg class="h-4 w-4 mr-2 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  View Requests
+                  @if (pendingCount() > 0) {
+                    <span class="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center animate-pulse">
+                      {{ pendingCount() }}
+                    </span>
+                  }
+                </ui-button>
                 <ui-button routerLink="/accounts/create">
                   <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -48,7 +59,19 @@
       
 
       <!-- Quick Actions -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <ui-button variant="outline" routerLink="/account-requests" class="h-20 flex-col space-y-2 group relative">
+          <svg class="h-6 w-6 text-amber-600 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="font-semibold">View Requests</span>
+          @if (pendingCount() > 0) {
+            <span class="absolute top-2 right-2 h-7 w-7 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center animate-pulse shadow-lg">
+              {{ pendingCount() }}
+            </span>
+          }
+        </ui-button>
+
         <ui-button variant="outline" routerLink="/accounts/deposit" class="h-20 flex-col space-y-2">
           <svg class="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m0-16l-4 4m4-4l4 4" />

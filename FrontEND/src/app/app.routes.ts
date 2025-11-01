@@ -53,6 +53,12 @@ export const routes: Routes = [
         data: { breadcrumb: 'Delete Account' }
       },
       { 
+        path: 'account-requests', 
+        loadComponent: () => import('./components/account-requests/account-requests.component').then(m => m.AccountRequestsComponent),
+        canActivate: [nonAdminGuard],
+        data: { breadcrumb: 'Account Requests' }
+      },
+      { 
         path: 'transactions', 
         loadComponent: () => import('./components/transactions/transactions.component').then(m => m.TransactionsComponent),
         canActivate: [nonAdminGuard],

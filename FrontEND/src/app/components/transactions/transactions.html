@@ -124,28 +124,13 @@
           
         }
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 gap-4">
           
             <ui-card class="border-0 bg-white/70 backdrop-blur">
               <ui-card-content class="p-4 text-center">
                 <div class="text-sm text-gray-600">Total Deposits</div>
-                <div class="text-2xl font-semibold">{{ formatCurrency(totalDeposits()) }}</div>
-              </ui-card-content>
-            </ui-card>
-          
-          
-            <ui-card class="border-0 bg-white/70 backdrop-blur">
-              <ui-card-content class="p-4 text-center">
-                <div class="text-sm text-gray-600">Total Withdrawals</div>
-                <div class="text-2xl font-semibold">{{ formatCurrency(totalWithdrawals()) }}</div>
-              </ui-card-content>
-            </ui-card>
-          
-          
-            <ui-card class="border-0 bg-white/70 backdrop-blur">
-              <ui-card-content class="p-4 text-center">
-                <div class="text-sm text-gray-600">Total Transfers</div>
-                <div class="text-2xl font-semibold">{{ formatCurrency(totalTransfers()) }}</div>
+                <div class="text-2xl font-semibold text-green-600">{{ formatCurrency(totalDeposits()) }}</div>
+                <div class="text-xs text-gray-500 mt-1">All deposits to this account</div>
               </ui-card-content>
             </ui-card>
           
