@@ -1,14 +1,12 @@
 package pages;
 
-import api.services.ApiServices;
 import core.config.Config;
 import core.driver.DriverManager;
 import core.util.ExplicitWait;
-import io.restassured.response.Response;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import payloads.AdminData;
-import payloads.LoginData;
+import pages.payloads.AdminData;
+import pages.payloads.LoginData;
 
 public class LoginPage {
     private By signUpLink = By.xpath("//a[.='Sign Up']");
@@ -21,7 +19,7 @@ public class LoginPage {
     }
 
     public String loginPageUrl() {
-        return Config.loginPageUrl();
+        return Config.baseUrl() + "/login";
     }
 
     public void clickSignUpLink() {
@@ -66,9 +64,5 @@ public class LoginPage {
     public void adminEntersPassword() {
         AdminData adminData = new AdminData();
         DriverManager.get().findElement(passwordField).sendKeys(adminData.getPassword());
-    }
-
-    public Response apiPostRequest() {
-        return new ApiServices().postRequest("/user/login", null, new LoginData());
     }
 }

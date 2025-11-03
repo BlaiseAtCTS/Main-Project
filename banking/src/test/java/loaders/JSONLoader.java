@@ -11,11 +11,10 @@ import java.io.IOException;
 import java.util.List;
 
 public class JSONLoader {
-    public static JsonNode loadJson(String jsonKey) {
+    public static JsonNode loadJson(String fileName) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            JsonNode root = objectMapper.readTree(new File("src/test/resources/json/file.json"));
-            return root.get(jsonKey);
+            return objectMapper.readTree(new File("src/test/resources/json/"+fileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

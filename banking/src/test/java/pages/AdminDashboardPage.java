@@ -6,11 +6,11 @@ import core.util.ExplicitWait;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import payloads.AdminData;
+import pages.payloads.AdminData;
 
 public class AdminDashboardPage {
     public String adminDashboardPageUrl() {
-        return Config.adminDashboardPageUrl();
+        return Config.baseUrl() + "/admin/dashboard";
     }
 
     public void clickAction() {
@@ -25,6 +25,7 @@ public class AdminDashboardPage {
     }
 
     public boolean checkStatus() {
+        ExplicitWait.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@role='alert']")));
         return DriverManager.get().findElement(By.xpath("//div[@role='alert']")).isDisplayed();
     }
 

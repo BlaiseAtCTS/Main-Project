@@ -6,9 +6,9 @@ import io.cucumber.testng.CucumberOptions;
 @CucumberOptions(
         dryRun = false,
         features = "src/test/resources/features/api",
-        glue = { "steps" },
+        glue = { "steps", "api.hooks" },
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        tags = "@api_account",
+        tags = "@api_account_transfer",
         plugin = { "pretty" },
         monochrome = true
 )

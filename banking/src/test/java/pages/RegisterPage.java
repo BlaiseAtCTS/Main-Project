@@ -8,8 +8,7 @@ import io.restassured.response.Response;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import payloads.RegistrationData;
+import pages.payloads.RegistrationData;
 
 public class RegisterPage {
     private By firstName = By.id("firstName");
@@ -24,7 +23,7 @@ public class RegisterPage {
     private By statusMessage = By.xpath("//div[@role='alert']//child::p");
 
     public String registerPageUrl() {
-        return Config.registerPageUrl();
+        return Config.baseUrl() + "/register";
     }
 
     public void userEntersValidDataInRegistrationPage(String typeOfInvalidInput) {
@@ -77,13 +76,5 @@ public class RegisterPage {
     public String checkForEmailStatus() {
         ExplicitWait.getWait().until(ExpectedConditions.visibilityOfElementLocated(statusMessage));
         return DriverManager.get().findElement(statusMessage).getText();
-    }
-
-    public Response apiPostRequest() {
-//        9514772220
-        RegistrationData registrationData = new RegistrationData();
-        System.out.println("Username: " + registrationData.getUserName());
-        ApiServices apiServices = new ApiServices();
-        return apiServices.postRequest("/user/register", null, registrationData);
     }
 }

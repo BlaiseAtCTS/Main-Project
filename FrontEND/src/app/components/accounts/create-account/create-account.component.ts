@@ -65,7 +65,7 @@ export class CreateAccountComponent implements OnInit {
         // Redirect to accounts page after 3 seconds
         setTimeout(() => {
           this.router.navigate(['/accounts']);
-        }, 3000);
+        }, 15000);
       },
       error: (err) => {
         console.error('Error creating account:', err);

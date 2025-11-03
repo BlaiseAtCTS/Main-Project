@@ -16,6 +16,7 @@ Feature:
     And User clicks on Account Type as "<AccountType>"
     And User enters Initial Balance as "<InitialBalance>"
     And User clicks on Submit Request Button
+    Then A success message "Account creation request submitted successfully! Waiting for admin approval." should be displayed
 
     Examples:
       | AccountType | InitialBalance |
@@ -29,7 +30,7 @@ Feature:
     And User selects Account Number
     And User enters Amount "<DepositAmount>"
     And User clicks on Submit Button
-    Then A success message should be displayed
+    Then A success message "Successfully deposited $5000! New balance will be reflected shortly." should be displayed
 
     Examples:
       | DepositAmount |
@@ -41,7 +42,7 @@ Feature:
     And User selects Account Number
     And User enters Amount "<WithdrawAmount>"
     And User clicks on Submit Button
-    Then A success message should be displayed
+    Then A success message "Successfully withdrew $3,000.00 from your account!" should be displayed
 
     Examples:
       | WithdrawAmount |
@@ -54,8 +55,8 @@ Feature:
     And User enters "<DestinationAccountNumber>"
     And User enters Amount "<TransferAmount>"
     And User clicks on Submit Button
-    Then A success message should be displayed
+    Then A success message "Transfer completed successfully!" should be displayed
 
     Examples:
       | DestinationAccountNumber | TransferAmount |
-      | 1561001164               | 3              |
+      | 0129057588               | 300            |

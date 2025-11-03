@@ -1,32 +1,26 @@
 package steps;
 
-import io.restassured.response.ResponseBody;
-import io.restassured.response.ResponseBodyData;
-import pages.*;
-import payloads.LoginData;
-import payloads.RegistrationData;
-import api.services.ApiServices;
+import api.pages.*;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import org.testng.Assert;
 
 public class ApiSteps {
-    private RegisterPage registerPage = new RegisterPage();
-    private LoginPage loginPage = new LoginPage();
-    private UserAccountPage userAccountPage = new UserAccountPage();
-    private UserDepositPage userDepositPage = new UserDepositPage();
-    private UserWithdrawPage userWithdrawPage = new UserWithdrawPage();
-    private UserTransactionPage userTransactionPage = new UserTransactionPage();
-
+    private ApiRegisterPage apiRegisterPage = new ApiRegisterPage();
+    private ApiLoginPage apiLoginPage = new ApiLoginPage();
+    private ApiAccountPage apiAccountPage = new ApiAccountPage();
+    private ApiDepositPage apiDepositPage = new ApiDepositPage();
+    private ApiWithdrawPage apiWithdrawPage = new ApiWithdrawPage();
+    private ApiTransactionPage apiTransactionPage = new ApiTransactionPage();
     private Response response;
 
     @When("User sends POST request to {string} page")
     public void userSendsPOSTRequestToPage(String arg0) {
         if(arg0.equalsIgnoreCase("register")) {
-            response = registerPage.apiPostRequest();
+            response = apiRegisterPage.apiPostRequest();
         } else if(arg0.equalsIgnoreCase("login")) {
-            response = loginPage.apiPostRequest();
+            response = apiLoginPage.apiPostRequest();
         }
     }
 
@@ -35,16 +29,31 @@ public class ApiSteps {
         Assert.assertEquals(response.statusCode(), status);
     }
 
-    @When("User sends POST request to Account {string} page")
-    public void userSendsPOSTRequestToAccountPage(String transactionType) {
-        if(transactionType.equalsIgnoreCase("create")) {
-            response = userAccountPage.apiPostRequest();
-        } else if(transactionType.equalsIgnoreCase("deposit")) {
-            response = userDepositPage.apiPostRequest();
-        } else if(transactionType.equalsIgnoreCase("withdraw")) {
-            response = userWithdrawPage.apiPostRequest();
-        } else if(transactionType.equalsIgnoreCase("transfer")) {
-            response = userTransactionPage.apiPostRequest();
+    @When("User sends {string} request to Account Create page")
+    public void userSendsRequestToAccountCreatePage(String arg0) {
+        if(arg0.equalsIgnoreCase("post")) {
+            response = apiAccountPage.apiPostRequest();
+        }
+    }
+
+    @When("User sends {string} request to Account Deposit page")
+    public void userSendsRequestToAccountDepositPage(String arg0) {
+        if(arg0.equalsIgnoreCase("post")) {
+            response = apiDepositPage.apiPostRequest();
+        }
+    }
+
+    @When("User sends {string} request to Account Withdraw page")
+    public void userSendsRequestToAccountWithdrawPage(String arg0) {
+        if(arg0.equalsIgnoreCase("post")) {
+            response = apiWithdrawPage.apiPostRequest();
+        }
+    }
+
+    @When("User sends {string} request to Account Transfer page")
+    public void userSendsRequestToAccountTransferPage(String arg0) {
+        if(arg0.equalsIgnoreCase("post")) {
+            response = apiTransactionPage.apiPostRequest();
         }
     }
 }

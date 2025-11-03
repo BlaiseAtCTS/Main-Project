@@ -1,4 +1,4 @@
-package payloads.account;
+package api.payloads.account;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.javafaker.Faker;
@@ -12,7 +12,7 @@ public class AccountCreateData {
 
     public AccountCreateData() {
         faker = new Faker();
-        JsonNode node = JSONLoader.loadJson("accountData");
+        JsonNode node = JSONLoader.loadJson("accountData.json");
         this.type = node.get("type").asText();
         this.initialBalance = String.valueOf(faker.number().numberBetween(10000, 12000));
     }

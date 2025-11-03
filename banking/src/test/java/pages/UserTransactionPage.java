@@ -9,8 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import payloads.account.AccountCreateData;
-import payloads.account.AccountTransferData;
+import pages.payloads.account.AccountTransferData;
 
 public class UserTransactionPage {
     private By sourceAccount = By.id("sourceAccount");
@@ -20,7 +19,7 @@ public class UserTransactionPage {
     private By status = By.xpath("//div[starts-with(@class, 'alert')]");
 
     public String userTransactionPageUrl() {
-        return Config.userTransactionPageUrl();
+        return Config.baseUrl() + "/transactions";
     }
 
     public void selectAccountNumber() {
@@ -48,15 +47,8 @@ public class UserTransactionPage {
         executor.executeScript("arguments[0].click()", DriverManager.get().findElement(transferButton));
     }
 
-    public boolean checkStatus() {
+    public String checkStatus() {
         ExplicitWait.getWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(status));
-        return DriverManager.get().findElement(status).isDisplayed();
-    }
-
-    public Response apiPostRequest() {
-        ApiServices apiServices = new ApiServices();
-        apiServices.getToken();
-        System.out.println("Token: "+apiServices.getToken());
-        return apiServices.postRequest("/transaction/transfer", apiServices.getToken(), new AccountTransferData());
+        return DriverManager.get().findElement(status).getText();
     }
 }

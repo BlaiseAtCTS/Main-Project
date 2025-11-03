@@ -1,4 +1,4 @@
-package payloads;
+package api.payloads;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import loaders.JSONLoader;
@@ -8,7 +8,7 @@ public class LoginData {
     private String password;
 
     public LoginData() {
-        JsonNode node = JSONLoader.loadJson("loginData");
+        JsonNode node = JSONLoader.loadJson("loginData.json");
         this.userName = node.get("userName").asText();
         this.password = node.get("password").asText();
     }

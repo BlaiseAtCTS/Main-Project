@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -23,7 +23,8 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onSubmit(): void {
@@ -47,11 +48,13 @@ export class LoginComponent {
           }
         } else {
           this.error = response.message || 'Login failed';
+          this.cdr.detectChanges();
         }
       },
       error: (error) => {
         this.loading = false;
         this.error = error.error?.message || 'Login failed. Please try again.';
+          this.cdr.detectChanges();
       }
     });
   }

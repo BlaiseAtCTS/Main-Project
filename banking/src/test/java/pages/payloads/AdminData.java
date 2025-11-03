@@ -1,4 +1,4 @@
-package payloads;
+package pages.payloads;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import loaders.JSONLoader;
@@ -9,7 +9,7 @@ public class AdminData {
     private String action;
 
     public AdminData() {
-        JsonNode node = JSONLoader.loadJson("adminData");
+        JsonNode node = JSONLoader.loadJson("adminData.json");
         this.userName = node.get("userName").asText();
         this.password = node.get("password").asText();
         this.action = node.get("action").asText();

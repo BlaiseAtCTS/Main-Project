@@ -1,4 +1,4 @@
-package payloads;
+package pages.payloads;
 
 import com.github.javafaker.Faker;
 

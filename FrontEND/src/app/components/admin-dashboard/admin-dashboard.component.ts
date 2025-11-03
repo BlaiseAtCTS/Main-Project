@@ -70,7 +70,7 @@ export class AdminDashboardComponent implements OnInit {
         this.successMessage.set('Request approved successfully!');
         this.error.set(null);
         this.loadPendingRequests();
-        setTimeout(() => this.successMessage.set(null), 3000);
+        setTimeout(() => this.successMessage.set(null), 10000);
       },
       error: (error) => {
         this.error.set('Failed to approve request. Please try again.');
@@ -90,7 +90,7 @@ export class AdminDashboardComponent implements OnInit {
         this.successMessage.set('Request declined successfully!');
         this.error.set(null);
         this.loadPendingRequests();
-        setTimeout(() => this.successMessage.set(null), 3000);
+        setTimeout(() => this.successMessage.set(null), 10000);
       },
       error: (error) => {
         this.error.set('Failed to decline request. Please try again.');

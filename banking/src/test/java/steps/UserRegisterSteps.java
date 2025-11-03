@@ -148,21 +148,18 @@ public class UserRegisterSteps {
         }
     }
 
-    @Then("A success message should be displayed")
-    public void aSuccessMessageShouldBeDisplayed() {
-        if(DriverManager.getCurrUrl().equals(userDepositPage.userDepositPageUrl())) {
-            Assert.assertTrue(userDepositPage.checkStatus());
+    @Then("A success message {string} should be displayed")
+    public void aSuccessMessageShouldBeDisplayed(String arg0) {
+        if(DriverManager.getCurrUrl().equals(userAccountPage.userCreateAccountPageUrl())) {
+            Assert.assertEquals(arg0, userAccountPage.checkStatus());
+        } else if(DriverManager.getCurrUrl().equals(userDepositPage.userDepositPageUrl())) {
+            Assert.assertEquals(arg0, userDepositPage.checkStatus());
         } else if(DriverManager.getCurrUrl().equals(userWithdrawPage.userWithdrawPageUrl())) {
-            Assert.assertTrue(userWithdrawPage.checkStatus());
+            Assert.assertEquals(arg0, userWithdrawPage.checkStatus());
         } else if(DriverManager.getCurrUrl().equals(userTransactionPage.userTransactionPageUrl())) {
-            Assert.assertTrue(userTransactionPage.checkStatus());
+            Assert.assertEquals(arg0, userTransactionPage.checkStatus());
         }
     }
-
-//    @And("User enters Destination Account Number")
-//    public void userEntersDestinationAccountNumber() {
-//        userTransactionPage.enterDestinationAccount();
-//    }
 
     @When("User enters valid data in registration page")
     public void userEntersValidDataInRegistrationPage() {

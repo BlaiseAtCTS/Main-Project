@@ -1,12 +1,13 @@
 package api.services;
 
+import api.payloads.LoginData;
 import core.config.Config;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import payloads.LoginData;
+import pages.payloads.account.AccountTransferData;
 
 public class ApiServices {
     public static String token = null;
@@ -54,5 +55,24 @@ public class ApiServices {
                     .getString("token");
         }
         return token;
+    }
+
+    public Response getRequest(String endpoint, String token, Object object) {
+        RequestSpecification requestSpecification;
+        if(token == null || token.isEmpty()) {
+            requestSpecification = this.buildRequest();
+            System.out.println("token is null for "+endpoint);
+        } else {
+            requestSpecification = this.buildRequest(token);
+            System.out.println("token is not null for "+endpoint);
+        }
+        return RestAssured
+                .given(requestSpecification)
+                .body(object)
+                .when()
+                .get(endpoint)
+                .then()
+                .extract()
+                .response();
     }
 }

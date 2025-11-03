@@ -1,15 +1,12 @@
 package pages;
 
-import api.services.ApiServices;
 import core.config.Config;
 import core.driver.DriverManager;
 import core.util.ExplicitWait;
-import io.restassured.response.Response;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import payloads.account.AccountCreateData;
-import payloads.account.AccountDepositData;
+import pages.payloads.account.AccountDepositData;
 
 public class UserDepositPage {
     private By accountNumber = By.id("accountNumber");
@@ -18,7 +15,7 @@ public class UserDepositPage {
     private By status = By.xpath("//div[@role='alert']");
 
     public String userDepositPageUrl() {
-        return Config.userDepositPageUrl();
+        return Config.baseUrl() + "/deposit";
     }
 
     public void selectAccountNumber() {
@@ -40,15 +37,8 @@ public class UserDepositPage {
         DriverManager.get().findElement(depositNowButton).click();
     }
 
-    public boolean checkStatus() {
+    public String checkStatus() {
         ExplicitWait.getWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(status));
-        return DriverManager.get().findElement(status).isDisplayed();
-    }
-
-    public Response apiPostRequest() {
-        ApiServices apiServices = new ApiServices();
-        apiServices.getToken();
-        System.out.println("Token: "+apiServices.getToken());
-        return apiServices.postRequest("/account/deposit", apiServices.getToken(), new AccountDepositData());
+        return DriverManager.get().findElement(status).getText();
     }
 }

@@ -13,7 +13,7 @@ import java.sql.Driver;
 public class UserDashboardPage {
 
     public String userDashboardPageUrl() {
-        return Config.userDashboardPageUrl();
+        return Config.baseUrl() + "/dashboard";
     }
 
     public void clicksOnAction(String arg0) {

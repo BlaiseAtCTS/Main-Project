@@ -1,4 +1,4 @@
-package payloads.account;
+package pages.payloads.account;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.javafaker.Faker;
@@ -12,7 +12,7 @@ public class AccountWithdrawData {
 
     public AccountWithdrawData() {
         faker = new Faker();
-        JsonNode node = JSONLoader.loadJson("accountData");
+        JsonNode node = JSONLoader.loadJson("accountData.json");
         this.accountNumber = node.get("accountNumber").asText();
         this.withdrawAmount = String.valueOf(faker.number().numberBetween(1000, 2000));
     }

@@ -1,25 +1,26 @@
 package pages;
 
-import api.services.ApiServices;
 import core.config.Config;
 import core.driver.DriverManager;
-import io.restassured.response.Response;
+import core.util.ExplicitWait;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import payloads.account.AccountCreateData;
+import pages.payloads.account.AccountCreateData;
 
 public class UserAccountPage {
     private By accountType = By.id("accountType");
     private By initialBalance = By.id("initialBalance");
     private By submitRequestButton = By.xpath("//button[@type='submit']");
+    private By status = By.xpath("//div[@role='alert']");
 
     public String userAccountPageUrl() {
-        return Config.userAccountPageUrl();
+        return Config.baseUrl() + "/accounts";
     }
 
     public String userCreateAccountPageUrl() {
-        return Config.userCreateAccountPageUrl();
+        return Config.baseUrl() + "/accounts/create";
     }
 
     public void clicksOnAccountType(String arg0) {
@@ -58,10 +59,8 @@ public class UserAccountPage {
         }
     }
 
-    public Response apiPostRequest() {
-        ApiServices apiServices = new ApiServices();
-        apiServices.getToken();
-        System.out.println("Token: "+apiServices.getToken());
-        return apiServices.postRequest("/account/create", apiServices.getToken(), new AccountCreateData());
+    public String checkStatus() {
+        ExplicitWait.getWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(status));
+        return DriverManager.get().findElement(status).getText();
     }
 }

@@ -1,4 +1,4 @@
-package core.hooks;
+package api.hooks;
 
 import api.services.ApiServices;
 import io.cucumber.java.Before;
