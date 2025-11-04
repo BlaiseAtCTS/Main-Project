@@ -18,6 +18,7 @@
               <ui-label>First Name</ui-label>
               <ui-input
                 type="text"
+                id="firstName"
                 name="firstName"
                 placeholder="John"
                 [(ngModel)]="registerData.firstName"
@@ -30,6 +31,7 @@
               <ui-label>Last Name</ui-label>
               <ui-input
                 type="text"
+                id="lastName"
                 name="lastName"
                 placeholder="Doe"
                 [(ngModel)]="registerData.lastName"
@@ -43,6 +45,7 @@
             <ui-label>Username</ui-label>
             <ui-input
               type="text"
+              id="username"
               name="userName"
               placeholder="johndoe"
               [(ngModel)]="registerData.userName"
@@ -55,6 +58,7 @@
             <ui-label>Password</ui-label>
             <ui-input
               type="password"
+              id="password"
               name="password"
               placeholder="••••••••"
               [(ngModel)]="registerData.password"
@@ -67,6 +71,7 @@
             <ui-label>Email</ui-label>
             <ui-input
               type="email"
+              id="email"
               name="email"
               placeholder="john@example.com"
               [(ngModel)]="registerData.email"
@@ -79,6 +84,7 @@
             <ui-label>Phone Number</ui-label>
             <ui-input
               type="tel"
+              id="phone"
               name="phoneNumber"
               placeholder="+1 234 567 8900"
               [(ngModel)]="registerData.phoneNumber"
@@ -112,6 +118,7 @@
 
           <ui-button
             type="submit"
+            id="register-button"
             size="lg"
             class="w-full"
             [disabled]="isPending"
@@ -133,7 +140,7 @@
       <ui-card-footer class="justify-center">
         <p class="text-sm text-gray-600">
           Already have an account?
-          <a routerLink="/login" class="ml-1 font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+          <a routerLink="/login" id="login-link" class="ml-1 font-semibold text-primary-600 hover:text-primary-700 transition-colors">
             Sign In
           </a>
         </p>

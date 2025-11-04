@@ -45,9 +45,9 @@ import { trigger, transition, style, animate } from '@angular/animations';
           </div>
           
           <!-- Content -->
-          <div class="flex-1">
+          <div class="flex-1" >
             <p class="text-sm font-semibold">{{ toast.title }}</p>
-            <p *ngIf="toast.description" class="text-sm opacity-90 mt-1">{{ toast.description }}</p>
+            <p *ngIf="toast.description" class="text-sm opacity-90 mt-1" id="toast-description">{{ toast.description }}</p>
           </div>
         </div>
         

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Banking Application Test Suite" parallel="false" thread-count="1" verbose="1">
+    
+    <listeners>
+        <!-- Add any custom listeners here if needed -->
+    </listeners>
+    
+    <test name="Cucumber BDD Tests">
+        <classes>
+            <class name="com.site.banking.runner.TestRunner"/>
+        </classes>
+    </test>
+    
+</suite>

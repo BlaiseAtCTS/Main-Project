@@ -16,6 +16,8 @@ import { cn } from '../../lib/utils';
   ],
   template: `
     <input
+      [id]="id"
+      [name]="name"
       [class]="computedClass"
       [type]="type"
       [placeholder]="placeholder"
@@ -28,6 +30,8 @@ import { cn } from '../../lib/utils';
   styles: []
 })
 export class InputComponent implements ControlValueAccessor {
+  @Input() id = '';
+  @Input() name = '';
   @Input() type = 'text';
   @Input() placeholder = '';
   @Input() disabled = false;

@@ -8,6 +8,7 @@ import { cn } from '../../lib/utils';
   imports: [CommonModule],
   template: `
     <button
+      [id]="id"
       [class]="computedClass"
       [disabled]="disabled"
       [type]="type"
@@ -19,6 +20,7 @@ import { cn } from '../../lib/utils';
   styles: []
 })
 export class ButtonComponent {
+  @Input() id = '';
   @Input() variant: 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive' = 'default';
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
   @Input() disabled = false;

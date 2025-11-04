@@ -54,7 +54,7 @@ export class LoginComponent {
         if (response.success) {
           const role = response.role || 'USER';
           const userName = response.username || this.loginData.userName;
-          this.toastService.success('Login Successful', `Welcome back, ${userName}!`);
+          this.toastService.success('Login Successful', `Welcome back, ${userName}!`) ;
           
           if (role === 'ADMIN') {
             this.router.navigate(['/admin/dashboard']);

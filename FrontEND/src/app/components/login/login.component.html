@@ -25,6 +25,7 @@
               <ui-input
                 type="text"
                 name="userName"
+                id="username"
                 placeholder="Enter your username"
                 [(ngModel)]="loginData.userName"
                 [disabled]="isPending"
@@ -48,6 +49,7 @@
                 [(ngModel)]="loginData.password"
                 [disabled]="isPending"
                 class="w-full"
+                id="password"
               ></ui-input>
             </div>
 
@@ -57,6 +59,7 @@
                 variant="default"
                 size="lg"
                 class="w-full"
+                id="sign-in-button"
                 [disabled]="isPending || !loginData.userName || !loginData.password"
               >
                 <span *ngIf="!isPending" class="flex items-center justify-center gap-2">
@@ -77,7 +80,7 @@
   <ui-card-footer class="flex-col space-y-4">
           <div class="text-center text-sm text-gray-600">
             Don't have an account?
-            <a routerLink="/register" class="font-semibold text-primary-600 hover:text-primary-700 transition-colors ml-1">
+            <a routerLink="/register" id="register-link" class="font-semibold text-primary-600 hover:text-primary-700 transition-colors ml-1">
               Sign Up
             </a>
           </div>
