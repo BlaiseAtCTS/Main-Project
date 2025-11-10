@@ -18,6 +18,7 @@ public class UserDashboardPage {
 
     public void clicksOnAction(String arg0) {
         UserAccountPage userAccountPage = new UserAccountPage();
+        ExplicitWait.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[.='" + arg0 + "']")));
         DriverManager.get().findElement(By.xpath("//button[.='" + arg0 + "']")).click();
         ExplicitWait.getWait().until(ExpectedConditions.not(ExpectedConditions.urlToBe(userDashboardPageUrl())));
     }

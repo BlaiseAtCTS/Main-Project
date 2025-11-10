@@ -15,7 +15,7 @@ public class AccountTransferData {
         faker = new Faker();
         JsonNode node = JSONLoader.loadJson("accountData.json");
         this.sourceAccountNumber = node.get("accountNumber").asText();
-        this.destinationAccountNumber = node.get("destinationAccountNumber").asText();;
+        this.destinationAccountNumber = node.get("destinationAccountNumber").asText();
         this.amount = String.valueOf(faker.number().numberBetween(500, 1000));
     }
 

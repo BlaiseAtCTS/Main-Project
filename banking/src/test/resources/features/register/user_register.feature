@@ -8,31 +8,31 @@ Feature: User Registration
   Background:
     Given "User" is on the Login page
     When User clicks on the Sign Up link
-  @register_valid
+  @register_valid @regression
   Scenario: Successful user registration with valid details
     When User enters valid data in registration page
     And User clicks on the Register button
     Then User should be redirected to the Login page
 
-  @register_invalid_1
+  @register_invalid_1 @regression
   Scenario: Registration fails when required fields are empty
     When User leaves all fields empty
     And User clicks on the Register button
     But A status message requiring to enter values should be displayed
 
-  @register_invalid_2
+  @register_invalid_2 @regression
   Scenario: Registration fails when email format is invalid
     When User enters invalid "email" in registration page
     And User clicks on the Register button
     But A status message "Email must be in proper format" should be displayed
 
-  @register_invalid_3
+  @register_invalid_3 @regression
   Scenario: Registration fails when phone number is not 10 digits
     When User enters invalid "phoneNumber" in registration page
     And User clicks on the Register button
     But A status message "Phone number must have 10 digits" should be displayed
 
-  @register_invalid_4
+  @register_invalid_4 @regression
   Scenario: Registration fails when user is younger than 18 years
     When User enters invalid "dob" in registration page
     And User clicks on the Register button

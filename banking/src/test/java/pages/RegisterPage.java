@@ -73,8 +73,9 @@ public class RegisterPage {
         return DriverManager.get().findElement(statusMessage).isDisplayed();
     }
 
-    public String checkForEmailStatus() {
+    public String getStatusMessage() {
         ExplicitWait.getWait().until(ExpectedConditions.visibilityOfElementLocated(statusMessage));
+        System.out.println(DriverManager.get().findElement(statusMessage).getText());
         return DriverManager.get().findElement(statusMessage).getText();
     }
 }

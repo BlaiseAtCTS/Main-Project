@@ -1,10 +1,15 @@
 package steps;
 
+import api.loader.ApiJsonLoader;
 import api.pages.*;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import org.testng.Assert;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ApiSteps {
     private ApiRegisterPage apiRegisterPage = new ApiRegisterPage();
@@ -13,6 +18,7 @@ public class ApiSteps {
     private ApiDepositPage apiDepositPage = new ApiDepositPage();
     private ApiWithdrawPage apiWithdrawPage = new ApiWithdrawPage();
     private ApiTransactionPage apiTransactionPage = new ApiTransactionPage();
+    private ApiJsonLoader apiJsonLoader = new ApiJsonLoader();
     private Response response;
 
     @When("User sends POST request to {string} page")
@@ -46,7 +52,7 @@ public class ApiSteps {
     @When("User sends {string} request to Account Withdraw page")
     public void userSendsRequestToAccountWithdrawPage(String arg0) {
         if(arg0.equalsIgnoreCase("post")) {
-            response = apiWithdrawPage.apiPostRequest();
+            System.out.println("Response is: "+response.getBody().asString());
         }
     }
 
@@ -54,6 +60,15 @@ public class ApiSteps {
     public void userSendsRequestToAccountTransferPage(String arg0) {
         if(arg0.equalsIgnoreCase("post")) {
             response = apiTransactionPage.apiPostRequest();
+        }
+    }
+
+    @Then("User receives expected response for Account {string}")
+    public void userReceivesExpectedResponseForAccount(String arg0) {
+        if (arg0.equalsIgnoreCase("creation")) {
+            Assert.assertEquals(response.getBody().asString(), apiJsonLoader.loadJson("api_account_create.json"), "Wrong response body");
+        } else {
+            Assert.fail("Incorrect Api Account Request");
         }
     }
 }

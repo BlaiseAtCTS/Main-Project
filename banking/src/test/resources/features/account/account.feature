@@ -10,7 +10,7 @@ Feature:
     And "User" clicks on the Sign In button
     Then User should be redirected to the user dashboard page
 
-  @account_creation
+  @account_creation @regression
   Scenario Outline: Successful creation of user account
     When User clicks on "Create Account" Action
     And User clicks on Account Type as "<AccountType>"
@@ -24,7 +24,7 @@ Feature:
       | CHECKING    | 12000          |
       | CREDIT      | 2000           |
 
-  @deposit @action
+  @deposit @regression
   Scenario Outline: Successful deposit into user account
     When User clicks on "Deposit Money" Action
     And User selects Account Number
@@ -36,7 +36,7 @@ Feature:
       | DepositAmount |
       | 5000          |
 
-  @withdraw @action
+  @withdraw @regression
   Scenario Outline: Successful withdrawal from user account
     When User clicks on "Withdraw Money" Action
     And User selects Account Number
@@ -48,7 +48,7 @@ Feature:
       | WithdrawAmount |
       | 3000           |
 
-  @transfer @action
+  @transfer @regression
   Scenario Outline: Successful transfer of funds from one user to another user
     When User clicks on "Transfer Money" Action
     And User selects Account Number
