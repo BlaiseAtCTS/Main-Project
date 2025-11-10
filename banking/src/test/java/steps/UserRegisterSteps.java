@@ -50,7 +50,11 @@ public class UserRegisterSteps {
 
     @But("A status message {string} should be displayed")
     public void aStatusMessageShouldBeDisplayed(String arg0) {
-        Assert.assertEquals(registerPage.checkForEmailStatus(), arg0);
+        if(DriverManager.getCurrUrl().equals(registerPage.registerPageUrl())) {
+            Assert.assertEquals(registerPage.getStatusMessage(), arg0);
+        } else if(DriverManager.getCurrUrl().equals(loginPage.loginPageUrl())) {
+            Assert.assertEquals(loginPage.getStatusMessage(), arg0);
+        }
     }
 
     @And("{string} clicks on the Sign In button")

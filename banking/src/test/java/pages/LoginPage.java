@@ -13,6 +13,7 @@ public class LoginPage {
     private By userNameField = By.id("userName");
     private By passwordField = By.id("password");
     private By signInButton = By.xpath("//button[@type='submit']");
+    private By statusMessage = By.xpath("//div[@role='alert']");
 
     public void open() {
         DriverManager.get().get(Config.baseUrl());
@@ -28,14 +29,16 @@ public class LoginPage {
 
     public void userEntersValidDataInLoginPage(String typeOfInvalidInput) {
         LoginData loginData = new LoginData();
+        String usernameLocalValue = loginData.getUserName();
         String passwordLocalValue = loginData.getPassword();
 
-        DriverManager.get().findElement(userNameField).sendKeys(loginData.getUserName());
-
-        if(typeOfInvalidInput != null && !typeOfInvalidInput.isEmpty()) {
+        if(typeOfInvalidInput != null && typeOfInvalidInput.equalsIgnoreCase("username")) {
+            usernameLocalValue = "adamsmith0";
+        }
+        else if(typeOfInvalidInput != null && typeOfInvalidInput.equalsIgnoreCase("password")) {
             passwordLocalValue = "incorrectPassword";
         }
-        System.out.println("Password: "+ passwordLocalValue);
+        DriverManager.get().findElement(userNameField).sendKeys(usernameLocalValue);
         DriverManager.get().findElement(passwordField).sendKeys(passwordLocalValue);
     }
 
@@ -64,5 +67,11 @@ public class LoginPage {
     public void adminEntersPassword() {
         AdminData adminData = new AdminData();
         DriverManager.get().findElement(passwordField).sendKeys(adminData.getPassword());
+    }
+
+    public String getStatusMessage() {
+        ExplicitWait.getWait().until(ExpectedConditions.visibilityOfElementLocated(statusMessage));
+        System.out.println(DriverManager.get().findElement(statusMessage).getText());
+        return DriverManager.get().findElement(statusMessage).getText();
     }
 }

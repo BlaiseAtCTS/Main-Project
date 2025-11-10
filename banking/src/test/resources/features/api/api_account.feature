@@ -4,7 +4,7 @@ Feature: Open a bank account for an user in Banking App
   @api_account_create
   Scenario:
     When User sends "POST" request to Account Create page
-    Then User receives Status 200
+    Then User receives expected response for Account "Creation"
 
   @api_account_deposit
   Scenario:
