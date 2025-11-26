@@ -7,15 +7,10 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
 
 public class Hooks {
-    @Before
-    public void browserInit() {
-        RemoteWebDriver driver = DriverFactory.newDriver(Config.browser(), Config.headless());
-        driver.manage().window().maximize();
-        DriverManager.set(driver);
-    }
-
     @After
     public void tearDown(Scenario scenario) {
         DriverManager.unload();
