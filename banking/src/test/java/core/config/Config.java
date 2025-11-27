@@ -20,4 +20,5 @@ public class Config {
     public static boolean screenshotOnFailure(){ return Boolean.parseBoolean(PROPS.getProperty("screenshotOnFailure","true")); }
 
     public static String apiBaseUrl() { return System.getProperty("apiBaseUrl", PROPS.getProperty("apiBaseUrl")); }
+    public static String hubUrl() { return System.getProperty("hubUrl", PROPS.getProperty("hubUrl")); }
 }

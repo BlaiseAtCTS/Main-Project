@@ -1,5 +1,7 @@
 package core.driver;
 
+import core.config.Config;
+import loaders.JSONLoader;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -7,6 +9,9 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public final class DriverFactory {
     private DriverFactory(){}
@@ -25,7 +30,12 @@ public final class DriverFactory {
         if (headless) {
             options.addArguments("--headless=new","--no-sandbox","--disable-dev-shm-usage");
         }
-        return new ChromeDriver(options);
+        try {
+            URL hubUrl = new URL(Config.hubUrl());
+            return new RemoteWebDriver(hubUrl, options);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static RemoteWebDriver createFirefox(boolean headless){
@@ -33,7 +43,12 @@ public final class DriverFactory {
         if (headless) {
             options.addArguments("-headless");
         }
-        return new FirefoxDriver(options);
+        try {
+            URL hubUrl = new URL(Config.hubUrl());
+            return new RemoteWebDriver(hubUrl, options);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static RemoteWebDriver createEdge(boolean headless){
@@ -41,6 +56,11 @@ public final class DriverFactory {
         if (headless) {
             options.addArguments("--headless=new");
         }
-        return new EdgeDriver(options);
+        try {
+            URL hubUrl = new URL(Config.hubUrl());
+            return new RemoteWebDriver(hubUrl, options);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
