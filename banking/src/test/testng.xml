@@ -3,14 +3,14 @@
 <suite name="Cross Browser Parallel Suite" parallel="tests" thread-count="3">
     <test name="Chrome Login Tests">
         <parameter name="browser" value="chrome"/>
-        <parameter name="cucumber.filter.tags" value="@login_valid"/>
+        <parameter name="cucumber.filter.tags" value="@login"/>
         <classes>
             <class name="runner.TestRunner"/>
         </classes>
     </test>
     <test name="Edge Login Tests">
         <parameter name="browser" value="edge"/>
-        <parameter name="cucumber.filter.tags" value="@login_valid"/>
+        <parameter name="cucumber.filter.tags" value="@login"/>
         <classes>
             <class name="runner.TestRunner"/>
         </classes>

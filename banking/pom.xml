@@ -143,6 +143,13 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.20.0</version>
         </dependency>
+
+        <!-- Extent Report -->
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>5.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>
